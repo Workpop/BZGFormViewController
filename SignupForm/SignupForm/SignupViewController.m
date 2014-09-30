@@ -16,6 +16,7 @@ static NSString *const MAILGUN_PUBLIC_KEY = @"pubkey-501jygdalut926-6mb1ozo8ay9c
 
 typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
     SignupViewControllerSectionPrimaryInfo,
+    SignupViewControllerSectionAddress,
     SignupViewControllerSectionSecondaryInfo,
     SignupViewControllerSectionSignUpButton,
     SignupViewControllerSectionCount
@@ -32,31 +33,72 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self configureUsernameCell];
-    [self configureEmailCell];
-    [self configurePhoneCell];
-    [self configurePasswordCell];
+    
+    [self configureFirstNameCell];
+    [self configureLastNameCell];
 
-    [self addFormCells:@[self.usernameCell, self.emailCell, self.passwordCell] atSection:SignupViewControllerSectionPrimaryInfo];
-    [self addFormCells:@[self.phoneCell] atSection:SignupViewControllerSectionSecondaryInfo];
+    
+    [self configureEmailCell];
+    
+    [self configurePhoneCell];
+    
+    
+//    [self configurePasswordCell];
+    
+    
+    
+    [self configureAddressCell];
+    [self configureCityCell];
+    [self configureStateCell];
+    [self configureZipcodeCell];
+
+    
+    [self configureMonthYearPicker];
+    [self configureDateCell];
+
+
+    //basic info
+    [self addFormCells:@[self.firstName, self.lastName, self.emailCell/*, self.monthYearCell*/] atSection:SignupViewControllerSectionPrimaryInfo];
+    
+    //address
+    [self addFormCells:@[self.addressCell, self.cityCell, self.stateCell, self.zipcodeCell] atSection:SignupViewControllerSectionAddress];
+
+    
+    [self addFormCells:@[self.phoneCell, self.dateCell] atSection:SignupViewControllerSectionSecondaryInfo];
+    
+    
+    
     self.emailValidator = [BZGMailgunEmailValidator validatorWithPublicKey:MAILGUN_PUBLIC_KEY];
     self.showsKeyboardControl = YES;
     self.title = @"BZGFormViewController";
     self.tableView.tableFooterView = [UIView new];
     
-    [self.usernameCell becomeFirstResponder];
+    
+    //UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark"]];
+   // imageView.frame = CGRectMake(0, 0, 24, 24);
+   // [[BZGTextFieldCell appearance] setValidAccessoryView:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark"]]];
+   
+    [[BZGTextFieldCell appearance] setAccessoryImage:[UIImage imageNamed:@"checkmark"]];
+    
+
+
+    
+    [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleSingleLine];
+    
+    [self.firstName becomeFirstResponder];
 }
 
-- (void)configureUsernameCell
+- (void)configureFirstNameCell
 {
-    self.usernameCell = [BZGTextFieldCell new];
-    self.usernameCell.label.text = @"Username";
-    self.usernameCell.textField.placeholder = @"username";
-    self.usernameCell.textField.keyboardType = UIKeyboardTypeASCIICapable;
-    self.usernameCell.shouldChangeTextBlock = ^BOOL(BZGTextFieldCell *cell, NSString *newText) {
-        if (newText.length < 5) {
+    self.firstName = [[BZGTextFieldCell alloc] initWithFloatField];
+    self.firstName.textField.placeholder = @"First Name";
+    self.firstName.textField.accessibilityHint = @"This is a test hint of what we're doing. This goes here.";
+    
+    self.firstName.textField.keyboardType = UIKeyboardTypeASCIICapable;
+    self.firstName.shouldChangeTextBlock = ^BOOL(BZGTextFieldCell *cell, NSString *newText) {
+        if (newText.length < 1) {
             cell.validationState = BZGValidationStateInvalid;
-            [cell.infoCell setText:@"Username must be at least 5 characters long."];
+            [cell.infoCell setText:@"First Name must be at least 1 character."];
         } else {
             cell.validationState = BZGValidationStateValid;
         }
@@ -64,11 +106,127 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
     };
 }
 
+- (void)configureLastNameCell
+{
+    self.lastName = [[BZGTextFieldCell alloc] initWithFloatField];
+    self.lastName.textField.placeholder = @"Last Name";
+    self.lastName.textField.accessibilityHint = @"This is a test hint of what we're doing. This goes here.";
+    self.lastName.textField.keyboardType = UIKeyboardTypeASCIICapable;
+    self.lastName.shouldChangeTextBlock = ^BOOL(BZGTextFieldCell *cell, NSString *newText) {
+        if (newText.length < 2) {
+            cell.validationState = BZGValidationStateInvalid;
+            [cell.infoCell setText:@"Last Name must be at least 2 characters long."];
+        } else {
+            cell.validationState = BZGValidationStateValid;
+        }
+        return YES;
+    };
+}
+
+
+//second section
+
+- (void)configureAddressCell
+{
+    self.addressCell = [[BZGTextFieldCell alloc] initWithFloatField];
+    self.addressCell.textField.placeholder = @"Address";
+    self.addressCell.textField.accessibilityHint = @"This is a test hint of what we're doing. This goes here.";
+    
+    self.addressCell.textField.keyboardType = UIKeyboardTypeASCIICapable;
+    self.addressCell.shouldChangeTextBlock = ^BOOL(BZGTextFieldCell *cell, NSString *newText) {
+        if (newText.length < 1) {
+            cell.validationState = BZGValidationStateInvalid;
+            [cell.infoCell setText:@"First Name must be at least 1 character."];
+        } else {
+            cell.validationState = BZGValidationStateValid;
+        }
+        return YES;
+    };
+}
+
+- (void)configureCityCell
+{
+    self.cityCell = [[BZGTextFieldCell alloc] initWithFloatField];
+    self.cityCell.textField.placeholder = @"City";
+    self.cityCell.textField.accessibilityHint = @"This is a test hint of what we're doing. This goes here.";
+    
+    self.cityCell.textField.keyboardType = UIKeyboardTypeASCIICapable;
+    self.cityCell.shouldChangeTextBlock = ^BOOL(BZGTextFieldCell *cell, NSString *newText) {
+        if (newText.length < 1) {
+            cell.validationState = BZGValidationStateInvalid;
+            [cell.infoCell setText:@"First Name must be at least 1 character."];
+        } else {
+            cell.validationState = BZGValidationStateValid;
+        }
+        return YES;
+    };
+}
+
+
+- (void)configureZipcodeCell
+{
+    self.zipcodeCell = [[BZGTextFieldCell alloc] initWithFloatField];
+    self.zipcodeCell.textField.placeholder = @"Zip Code";
+    self.zipcodeCell.textField.accessibilityHint = @"This is a test hint of what we're doing. This goes here.";
+    
+    self.zipcodeCell.textField.keyboardType = UIKeyboardTypeNumberPad;
+    self.zipcodeCell.shouldChangeTextBlock = ^BOOL(BZGTextFieldCell *cell, NSString *newText) {
+        if (newText.length < 1) {
+            cell.validationState = BZGValidationStateInvalid;
+            [cell.infoCell setText:@"First Name must be at least 1 character."];
+        } else {
+            cell.validationState = BZGValidationStateValid;
+        }
+        return YES;
+    };
+}
+
+- (void)configureStateCell
+{
+    self.stateCell = [[BZGStateTextFieldCell alloc] initWithFloatField];
+    self.stateCell.textField.placeholder = @"State";
+    self.stateCell.textField.accessibilityHint = @"What state do you live in?";
+    self.stateCell.showsCheckmarkWhenValid = YES;
+    self.stateCell.shouldChangeTextBlock = ^BOOL(BZGTextFieldCell *cell, NSString *newText) {
+        cell.validationState = BZGValidationStateValid;
+        return YES;
+    };
+}
+
+
+
+- (void)configureMonthYearPicker
+{
+    self.monthYearCell = [[BZGMonthYearTextFieldCell alloc] initWithFloatField];
+    self.monthYearCell.textField.placeholder = @"Birthday";
+    self.monthYearCell.textField.accessibilityHint = @"When is your birthday?";
+    self.monthYearCell.showsCheckmarkWhenValid = YES;
+    self.monthYearCell.shouldChangeTextBlock = ^BOOL(BZGTextFieldCell *cell, NSString *newText) {
+        cell.validationState = BZGValidationStateValid;
+        return YES;
+    };
+}
+
+- (void)configureDateCell
+{
+    self.dateCell = [[BZGDateTextFieldCell alloc] initWithFloatField];
+    self.dateCell.textField.placeholder = @"Birth Date";
+    self.dateCell.textField.accessibilityHint = @"Where should we go on what date?";
+    self.dateCell.showsCheckmarkWhenValid = YES;
+    self.dateCell.shouldChangeTextBlock = ^BOOL(BZGTextFieldCell *cell, NSString *newText) {
+        cell.validationState = BZGValidationStateValid;
+        return YES;
+    };
+    self.dateCell.showsValidationWhileEditing = YES;
+}
+
+
+
+
 - (void)configureEmailCell
 {
-    self.emailCell = [BZGTextFieldCell new];
-    self.emailCell.label.text = @"Email";
-    self.emailCell.textField.placeholder = @"name@example.com";
+    self.emailCell = [[BZGTextFieldCell alloc] initWithFloatField];
+    self.emailCell.textField.placeholder = @"Email";
     self.emailCell.textField.keyboardType = UIKeyboardTypeEmailAddress;
     @weakify(self)
     self.emailCell.didEndEditingBlock = ^(BZGTextFieldCell *cell, NSString *text) {
@@ -111,9 +269,8 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
 
 - (void)configurePhoneCell
 {
-    self.phoneCell = [BZGPhoneTextFieldCell new];
-    self.phoneCell.label.text = @"Phone";
-    self.phoneCell.textField.placeholder = @"(555) 555-2016";
+    self.phoneCell = [[BZGPhoneTextFieldCell alloc] initWithFloatField];
+    self.phoneCell.textField.placeholder = @"Phone Number";
 }
 
 - (void)configurePasswordCell
@@ -192,7 +349,8 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
 {
     if (indexPath.section == SignupViewControllerSectionSignUpButton) {
         return 44;
-    } else {
+    }
+    else {
         return [super tableView:tableView heightForRowAtIndexPath:indexPath];
     }
 }
@@ -204,7 +362,13 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
         label.text = @"Secondary Info";
         label.textAlignment = NSTextAlignmentCenter;
         return label;
-    } else {
+    }
+    else if (section == SignupViewControllerSectionAddress) {
+        UIView *label = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 50)];
+        label.backgroundColor = [UIColor clearColor];
+        return label;
+    }
+    else {
         return nil;
     }
 }
@@ -212,10 +376,19 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     if (section == SignupViewControllerSectionSecondaryInfo) {
-        return 50;
-    } else {
-        return 0;
+        return 30;
     }
+    if (section == SignupViewControllerSectionAddress) {
+        return 30;
+    }
+    else {
+        return CGFLOAT_MIN;
+    }
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return CGFLOAT_MIN;
 }
 
 @end

@@ -1,6 +1,7 @@
 PODS:
-  - BZGMailgunEmailValidation (1.1.0)
-  - Expecta (0.3.0)
+  - BZGMailgunEmailValidation (1.1.1)
+  - Expecta (0.3.1)
+  - JVFloatLabeledTextField (0.0.9)
   - libextobjc (0.4):
     - libextobjc/EXTADT
     - libextobjc/EXTConcreteProtocol
@@ -36,39 +37,44 @@ PODS:
     - libextobjc/RuntimeExtensions
   - libextobjc/RuntimeExtensions (0.4)
   - libextobjc/UmbrellaHeader (0.4)
-  - libPhoneNumber-iOS (0.7.2)
+  - libPhoneNumber-iOS (0.7.3)
   - OCHamcrest (3.0.1)
   - OCMock (2.2.4)
   - OCMockito (1.1.0):
     - OCHamcrest (~> 3.0)
-  - ReactiveCocoa (2.3):
+  - ReactiveCocoa (2.3.1):
     - ReactiveCocoa/UI
-  - ReactiveCocoa/Core (2.3):
+  - ReactiveCocoa/Core (2.3.1):
     - ReactiveCocoa/no-arc
-  - ReactiveCocoa/no-arc (2.3)
-  - ReactiveCocoa/UI (2.3):
+  - ReactiveCocoa/no-arc (2.3.1)
+  - ReactiveCocoa/UI (2.3.1):
     - ReactiveCocoa/Core
   - Specta (0.2.1)
+  - TOMSMorphingLabel (0.2.3)
 
 DEPENDENCIES:
   - BZGMailgunEmailValidation
   - Expecta (~> 0.3.0)
+  - JVFloatLabeledTextField (~> 0.0.9)
   - libextobjc (~> 0.4)
   - libPhoneNumber-iOS (~> 0.7)
   - OCMock (~> 2.2.3)
   - OCMockito (~> 1.1.0)
   - ReactiveCocoa (~> 2.3)
   - Specta (~> 0.2.1)
+  - TOMSMorphingLabel (~> 0.2.3)
 
 SPEC CHECKSUMS:
-  BZGMailgunEmailValidation: abe6c4b55cf27a0ae89f00e0c78fd4ac82637ed0
-  Expecta: ce8a51b9fad15a2cd573b291cb2909aaed865350
+  BZGMailgunEmailValidation: 134975d405312a9e647785e9778861301516c333
+  Expecta: 03aabd0a89d8dea843baecb19a7fd7466a69a31d
+  JVFloatLabeledTextField: b6c7d824d231b3c01d14692feada878808480af8
   libextobjc: ba42e4111f433273a886cd54f0ddaddb7f62f82f
-  libPhoneNumber-iOS: 207db9b19395d5ba8898398626620568282fa2bc
+  libPhoneNumber-iOS: 98fc07d70c8fdb5e6a8e3442c37e97353065c20e
   OCHamcrest: 207233b7d7a44dadd66aca398947cc7e029c9be5
   OCMock: 6db79185520e24f9f299548f2b8b07e41d881bd5
   OCMockito: bf7def7b3939f794b1e7b44420f611250b1f2781
-  ReactiveCocoa: 2066583826c17dde8e90c41e489f682048cc57c9
+  ReactiveCocoa: dca75777b9d18990c8714a3a6f2149f29b4d1462
   Specta: 9141310f46b1f68b676650ff2854e1ed0b74163a
+  TOMSMorphingLabel: f2443dbb4be2137847ed910ae2dd6adf3289c71c
 
 COCOAPODS: 0.33.1

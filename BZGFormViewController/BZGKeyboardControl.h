@@ -5,6 +5,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <TOMSMorphingLabel/TOMSMorphingLabel.h>
 
 @class BZGTextFieldCell;
 
@@ -16,5 +17,6 @@
 @property (nonatomic, strong) BZGTextFieldCell *previousCell;
 @property (nonatomic, strong) BZGTextFieldCell *currentCell;
 @property (nonatomic, strong) BZGTextFieldCell *nextCell;
+@property (nonatomic, strong) TOMSMorphingLabel *textLabel;
 
 @end

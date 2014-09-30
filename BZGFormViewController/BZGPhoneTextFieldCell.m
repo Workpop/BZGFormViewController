@@ -21,21 +21,35 @@
 
 @implementation BZGPhoneTextFieldCell
 
-- (id)init
+-(id)initWithFloatField
 {
-    self = [super init];
+    self = [super initWithFloatField];
     if (self) {
-        NSLocale *locale = [NSLocale currentLocale];
-        self.regionCode = [[locale localeIdentifier] substringFromIndex:3];
-        self.phoneFormatter = [[NBAsYouTypeFormatter alloc] initWithRegionCode:self.regionCode];
-        self.phoneUtil = [NBPhoneNumberUtil sharedInstance];   
-        self.invalidText = @"Please enter a valid phone number";
-        self.textField.keyboardType = UIKeyboardTypePhonePad;
+        [self setupCell];
     }
     return self;
 }
 
--(void)addGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer 
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        [self setupCell];
+    }
+    return self;
+}
+
+-(void)setupCell
+{
+    NSLocale *locale = [NSLocale currentLocale];
+    self.regionCode = [[locale localeIdentifier] substringFromIndex:3];
+    self.phoneFormatter = [[NBAsYouTypeFormatter alloc] initWithRegionCode:self.regionCode];
+    self.phoneUtil = [NBPhoneNumberUtil sharedInstance];
+    self.invalidText = @"Please enter a valid phone number";
+    self.textField.keyboardType = UIKeyboardTypeNumberPad;
+}
+
+-(void)addGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
     // Disable long press
     if ([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]]) 

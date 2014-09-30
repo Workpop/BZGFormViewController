@@ -12,6 +12,17 @@
 		3A1F56A918F432F90090E732 /* BZGKeyboardControlSpecs.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1F56A818F432F90090E732 /* BZGKeyboardControlSpecs.m */; };
 		799AEBE944DD4B758103BA7E /* libPods-SignupFormTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51A99866C8474A4D9FA92F85 /* libPods-SignupFormTests.a */; };
 		8CE100451965E4DD00287E0B /* NSError+BZGFormViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8CE100441965E4DD00287E0B /* NSError+BZGFormViewController.m */; };
+		E895A0D719DA161100485190 /* BZGStatePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = E895A0D519DA161100485190 /* BZGStatePicker.m */; };
+		E895A0DF19DA1C7900485190 /* BZGMonthYearPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = E895A0DE19DA1C7900485190 /* BZGMonthYearPicker.m */; };
+		E895A0E019DA1C7900485190 /* BZGMonthYearPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = E895A0DE19DA1C7900485190 /* BZGMonthYearPicker.m */; };
+		E895A0E319DA1D0A00485190 /* BZGMonthYearTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E895A0E219DA1D0A00485190 /* BZGMonthYearTextFieldCell.m */; };
+		E895A0E419DA1D0A00485190 /* BZGMonthYearTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E895A0E219DA1D0A00485190 /* BZGMonthYearTextFieldCell.m */; };
+		E895A0E719DA2F0B00485190 /* BZGDateTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E895A0E619DA2F0B00485190 /* BZGDateTextFieldCell.m */; };
+		E895A0E819DA2F0B00485190 /* BZGDateTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E895A0E619DA2F0B00485190 /* BZGDateTextFieldCell.m */; };
+		E895A0ED19DA6B1700485190 /* checkmark.png in Resources */ = {isa = PBXBuildFile; fileRef = E895A0EC19DA6B1700485190 /* checkmark.png */; };
+		E895A0EE19DA6B1700485190 /* checkmark.png in Resources */ = {isa = PBXBuildFile; fileRef = E895A0EC19DA6B1700485190 /* checkmark.png */; };
+		E895A0F119DB29CD00485190 /* BZGStateTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E895A0F019DB29CD00485190 /* BZGStateTextFieldCell.m */; };
+		E895A0F219DB29CD00485190 /* BZGStateTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E895A0F019DB29CD00485190 /* BZGStateTextFieldCell.m */; };
 		EB102241190B078E00F973F0 /* BZGPhoneTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = EB102240190B078E00F973F0 /* BZGPhoneTextFieldCell.m */; };
 		EB18C91A18DE628500F23064 /* BZGFormCell.m in Sources */ = {isa = PBXBuildFile; fileRef = EB18C91918DE628500F23064 /* BZGFormCell.m */; };
 		EB18C91C18DE62BC00F23064 /* BZGFormCellSpecs.m in Sources */ = {isa = PBXBuildFile; fileRef = EB18C91B18DE62BC00F23064 /* BZGFormCellSpecs.m */; };
@@ -56,6 +67,17 @@
 		8CE100431965E4DD00287E0B /* NSError+BZGFormViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSError+BZGFormViewController.h"; path = "../../BZGFormViewController/NSError+BZGFormViewController.h"; sourceTree = "<group>"; };
 		8CE100441965E4DD00287E0B /* NSError+BZGFormViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSError+BZGFormViewController.m"; path = "../../BZGFormViewController/NSError+BZGFormViewController.m"; sourceTree = "<group>"; };
 		90F90CF32A864DEC854302D2 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		E895A0D419DA161100485190 /* BZGStatePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BZGStatePicker.h; path = ../../BZGFormViewController/BZGStatePicker.h; sourceTree = "<group>"; };
+		E895A0D519DA161100485190 /* BZGStatePicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BZGStatePicker.m; path = ../../BZGFormViewController/BZGStatePicker.m; sourceTree = "<group>"; };
+		E895A0DD19DA1C7900485190 /* BZGMonthYearPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BZGMonthYearPicker.h; path = ../../BZGFormViewController/BZGMonthYearPicker.h; sourceTree = "<group>"; };
+		E895A0DE19DA1C7900485190 /* BZGMonthYearPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BZGMonthYearPicker.m; path = ../../BZGFormViewController/BZGMonthYearPicker.m; sourceTree = "<group>"; };
+		E895A0E119DA1D0A00485190 /* BZGMonthYearTextFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BZGMonthYearTextFieldCell.h; path = ../../BZGFormViewController/BZGMonthYearTextFieldCell.h; sourceTree = "<group>"; };
+		E895A0E219DA1D0A00485190 /* BZGMonthYearTextFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BZGMonthYearTextFieldCell.m; path = ../../BZGFormViewController/BZGMonthYearTextFieldCell.m; sourceTree = "<group>"; };
+		E895A0E519DA2F0B00485190 /* BZGDateTextFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BZGDateTextFieldCell.h; path = ../../BZGFormViewController/BZGDateTextFieldCell.h; sourceTree = "<group>"; };
+		E895A0E619DA2F0B00485190 /* BZGDateTextFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BZGDateTextFieldCell.m; path = ../../BZGFormViewController/BZGDateTextFieldCell.m; sourceTree = "<group>"; };
+		E895A0EC19DA6B1700485190 /* checkmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = checkmark.png; path = ../../../../../Desktop/checkmark.png; sourceTree = "<group>"; };
+		E895A0EF19DB29CD00485190 /* BZGStateTextFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BZGStateTextFieldCell.h; path = ../../BZGFormViewController/BZGStateTextFieldCell.h; sourceTree = "<group>"; };
+		E895A0F019DB29CD00485190 /* BZGStateTextFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BZGStateTextFieldCell.m; path = ../../BZGFormViewController/BZGStateTextFieldCell.m; sourceTree = "<group>"; };
 		EB10223F190B078E00F973F0 /* BZGPhoneTextFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BZGPhoneTextFieldCell.h; path = ../../BZGFormViewController/BZGPhoneTextFieldCell.h; sourceTree = "<group>"; };
 		EB102240190B078E00F973F0 /* BZGPhoneTextFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BZGPhoneTextFieldCell.m; path = ../../BZGFormViewController/BZGPhoneTextFieldCell.m; sourceTree = "<group>"; };
 		EB18C91818DE628500F23064 /* BZGFormCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BZGFormCell.h; path = ../../BZGFormViewController/BZGFormCell.h; sourceTree = "<group>"; };
@@ -121,21 +143,31 @@
 		EB59ED66180B2DB900DAA992 /* BZGFormViewController */ = {
 			isa = PBXGroup;
 			children = (
-				3A1F56A518F388B40090E732 /* BZGKeyboardControl.h */,
-				3A1F56A618F388B40090E732 /* BZGKeyboardControl.m */,
 				EB18C91818DE628500F23064 /* BZGFormCell.h */,
 				EB18C91918DE628500F23064 /* BZGFormCell.m */,
-				EB59ED5C180B2DB100DAA992 /* BZGTextFieldCell.h */,
-				EB59ED5D180B2DB100DAA992 /* BZGTextFieldCell.m */,
-				EB10223F190B078E00F973F0 /* BZGPhoneTextFieldCell.h */,
-				EB102240190B078E00F973F0 /* BZGPhoneTextFieldCell.m */,
-				EB59ED5E180B2DB100DAA992 /* BZGInfoCell.h */,
-				EB59ED5F180B2DB100DAA992 /* BZGInfoCell.m */,
+				E895A0E519DA2F0B00485190 /* BZGDateTextFieldCell.h */,
+				E895A0E619DA2F0B00485190 /* BZGDateTextFieldCell.m */,
 				EB59ED6A180B2F0800DAA992 /* BZGFormViewController.h */,
 				EB59ED6B180B2F0800DAA992 /* BZGFormViewController.m */,
+				EB59ED5E180B2DB100DAA992 /* BZGInfoCell.h */,
+				EB59ED5F180B2DB100DAA992 /* BZGInfoCell.m */,
+				3A1F56A518F388B40090E732 /* BZGKeyboardControl.h */,
+				3A1F56A618F388B40090E732 /* BZGKeyboardControl.m */,
+				E895A0DD19DA1C7900485190 /* BZGMonthYearPicker.h */,
+				E895A0DE19DA1C7900485190 /* BZGMonthYearPicker.m */,
+				E895A0E119DA1D0A00485190 /* BZGMonthYearTextFieldCell.h */,
+				E895A0E219DA1D0A00485190 /* BZGMonthYearTextFieldCell.m */,
+				EB10223F190B078E00F973F0 /* BZGPhoneTextFieldCell.h */,
+				EB102240190B078E00F973F0 /* BZGPhoneTextFieldCell.m */,
+				E895A0D419DA161100485190 /* BZGStatePicker.h */,
+				E895A0D519DA161100485190 /* BZGStatePicker.m */,
+				EB59ED5C180B2DB100DAA992 /* BZGTextFieldCell.h */,
+				EB59ED5D180B2DB100DAA992 /* BZGTextFieldCell.m */,
 				EBDC9F3F18763ACF002EB25F /* Constants.h */,
 				8CE100431965E4DD00287E0B /* NSError+BZGFormViewController.h */,
 				8CE100441965E4DD00287E0B /* NSError+BZGFormViewController.m */,
+				E895A0EF19DB29CD00485190 /* BZGStateTextFieldCell.h */,
+				E895A0F019DB29CD00485190 /* BZGStateTextFieldCell.m */,
 			);
 			name = BZGFormViewController;
 			sourceTree = "<group>";
@@ -183,6 +215,7 @@
 				EB59ED6D180B313000DAA992 /* SignupViewController.h */,
 				EB59ED6E180B313000DAA992 /* SignupViewController.m */,
 				EB83D532180B2CA9001037F5 /* Images.xcassets */,
+				E895A0EC19DA6B1700485190 /* checkmark.png */,
 				EB83D527180B2CA9001037F5 /* Supporting Files */,
 			);
 			path = SignupForm;
@@ -304,6 +337,7 @@
 			files = (
 				EB83D52B180B2CA9001037F5 /* InfoPlist.strings in Resources */,
 				EB83D533180B2CA9001037F5 /* Images.xcassets in Resources */,
+				E895A0ED19DA6B1700485190 /* checkmark.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,6 +345,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E895A0EE19DA6B1700485190 /* checkmark.png in Resources */,
 				EB83D544180B2CA9001037F5 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -387,13 +422,18 @@
 			files = (
 				EB18C91A18DE628500F23064 /* BZGFormCell.m in Sources */,
 				EB59ED6C180B2F0800DAA992 /* BZGFormViewController.m in Sources */,
+				E895A0DF19DA1C7900485190 /* BZGMonthYearPicker.m in Sources */,
+				E895A0E719DA2F0B00485190 /* BZGDateTextFieldCell.m in Sources */,
 				EB59ED63180B2DB100DAA992 /* BZGTextFieldCell.m in Sources */,
 				EB59ED64180B2DB100DAA992 /* BZGInfoCell.m in Sources */,
 				8CE100451965E4DD00287E0B /* NSError+BZGFormViewController.m in Sources */,
 				3A1F56A718F388B40090E732 /* BZGKeyboardControl.m in Sources */,
 				EB83D531180B2CA9001037F5 /* AppDelegate.m in Sources */,
+				E895A0D719DA161100485190 /* BZGStatePicker.m in Sources */,
+				E895A0E319DA1D0A00485190 /* BZGMonthYearTextFieldCell.m in Sources */,
 				EB83D52D180B2CA9001037F5 /* main.m in Sources */,
 				EB59ED6F180B313000DAA992 /* SignupViewController.m in Sources */,
+				E895A0F119DB29CD00485190 /* BZGStateTextFieldCell.m in Sources */,
 				EB102241190B078E00F973F0 /* BZGPhoneTextFieldCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -405,9 +445,13 @@
 				3A1F56A918F432F90090E732 /* BZGKeyboardControlSpecs.m in Sources */,
 				EB59ED58180B2D9200DAA992 /* BZGTextFieldCellSpecs.m in Sources */,
 				EB59ED73180B378A00DAA992 /* BZGFormViewControllerSpecs.m in Sources */,
+				E895A0F219DB29CD00485190 /* BZGStateTextFieldCell.m in Sources */,
+				E895A0E819DA2F0B00485190 /* BZGDateTextFieldCell.m in Sources */,
 				EB18C91C18DE62BC00F23064 /* BZGFormCellSpecs.m in Sources */,
 				EB59ED71180B377900DAA992 /* BZGInfoCellSpecs.m in Sources */,
+				E895A0E419DA1D0A00485190 /* BZGMonthYearTextFieldCell.m in Sources */,
 				EB9A0BED190B18CF0085B5A8 /* BZGPhoneTextFieldCellSpec.m in Sources */,
+				E895A0E019DA1C7900485190 /* BZGMonthYearPicker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

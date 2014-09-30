@@ -158,7 +158,7 @@
     for (UITableViewCell *cell in [self allFormCellsFlattened]) {
         if ([cell isKindOfClass:[BZGTextFieldCell class]]) {
             if (((BZGTextFieldCell *)cell).validationState == validationState) {
-                return cell;
+                return (BZGTextFieldCell *)cell;
             }
         }
     }
@@ -293,6 +293,9 @@
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
+    [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidEndEditingNotification object:textField];
+    [textField sendActionsForControlEvents:UIControlEventEditingDidEnd];
+    
     BZGTextFieldCell *cell = [BZGTextFieldCell parentCellForTextField:textField];
     if (!cell) {
         return;

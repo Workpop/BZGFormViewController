@@ -11,32 +11,69 @@
 #import "BZGInfoCell.h"
 #import "Constants.h"
 
+@interface BZGTextFieldCell ()
+/// Whether to use a float textfield or label and textfield
+@property (assign, nonatomic) BOOL isFloatField;
+@end
+
 @implementation BZGTextFieldCell
+
+- (id)initWithFloatField
+{
+    self = [super init];
+    if (self) {
+        self.isFloatField = YES;
+        [self setup];
+    }
+    return self;
+}
 
 - (id)init
 {
     self = [super init];
     if (self) {
-        self.showsCheckmarkWhenValid = YES;
-        self.showsValidationWhileEditing = NO;
-        self.infoCell = [[BZGInfoCell alloc] init];
-
-        [self configureActivityIndicatorView];
-        [self configureTextField];
-        [self configureLabel];
-        [self configureTap];
-        [self configureBindings];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(textFieldTextDidEndEditing:)
-                                                     name:UITextFieldTextDidEndEditingNotification
-                                                   object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(textFieldTextDidChange:)
-                                                     name:UITextFieldTextDidChangeNotification
-                                                   object:nil];
+        self.isFloatField = NO;
+        [self setup];
     }
     return self;
+}
+
+-(void)setup
+{
+    self.showsCheckmarkWhenValid = YES;
+    self.showsValidationWhileEditing = NO;
+    self.infoCell = [[BZGInfoCell alloc] init];
+
+    [self configureActivityIndicatorView];
+    
+    if (!_isFloatField) {
+        [self configureLabel];
+    }
+    [self configureTextField];
+    
+    [self configureTap];
+    [self configureBindings];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(textFieldTextDidEndEditing:)
+                                                 name:UITextFieldTextDidEndEditingNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(textFieldTextDidChange:)
+                                                 name:UITextFieldTextDidChangeNotification
+                                               object:nil];
+}
+
+-(void)layoutSubviews
+{
+    
+    [super layoutSubviews];
+    
+    if (self.textField) {
+        CGRect rect = self.textField.frame;
+        rect.size.height = self.bounds.size.height;
+        self.textField.frame = rect;
+    }
 }
 
 - (void)dealloc
@@ -46,17 +83,30 @@
 
 - (void)configureTextField
 {
-    CGFloat textFieldX = self.bounds.size.width * 0.35;
     CGFloat textFieldY = 0;
     if ([[[UIDevice currentDevice] systemVersion] floatValue] < 7.0) {
         textFieldY = 12;
     }
     self.textField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    CGRect textFieldFrame = CGRectMake(textFieldX,
-                                       textFieldY,
-                                       self.bounds.size.width - textFieldX - self.activityIndicatorView.frame.size.width,
-                                       self.bounds.size.height);
-    self.textField = [[UITextField alloc] initWithFrame:textFieldFrame];
+
+    if (self.isFloatField) {
+        CGFloat textFieldX = self.separatorInset.left;
+        CGRect textFieldFrame = CGRectMake(textFieldX,
+                                           textFieldY,
+                                           self.bounds.size.width - textFieldX - self.activityIndicatorView.frame.size.width,
+                                           self.bounds.size.height);
+        self.textField = [[JVFloatLabeledTextField alloc] initWithFrame:textFieldFrame];
+        ((JVFloatLabeledTextField*)self.textField).floatingLabelYPadding = 5;
+    }
+    else{
+        CGFloat textFieldX = self.bounds.size.width * 0.35;
+        CGRect textFieldFrame = CGRectMake(textFieldX,
+                                           textFieldY,
+                                           self.bounds.size.width - textFieldX - self.activityIndicatorView.frame.size.width,
+                                           self.bounds.size.height);
+        self.textField = [[UITextField alloc] initWithFrame:textFieldFrame];
+    }
+    
     self.textField.autocorrectionType = UITextAutocorrectionTypeNo;
     self.textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     self.textFieldNormalColor = BZG_TEXTFIELD_NORMAL_COLOR;
@@ -145,8 +195,19 @@
         if (validationState.integerValue == BZGValidationStateValid &&
             (!self.textField.editing || self.showsValidationWhileEditing) &&
             self.showsCheckmarkWhenValid) {
+
+            if (self.accessoryImage) {
+                [self setAccessoryViewImage:self.accessoryImage];
+                return @(UITableViewCellAccessoryNone);
+            }
+            
             return @(UITableViewCellAccessoryCheckmark);
         } else {
+
+            if (self.accessoryImage) {
+                self.accessoryView = nil;
+            }
+            
             return @(UITableViewCellAccessoryNone);
         }
     }];
@@ -168,6 +229,18 @@
     self.validationState = self.validationState;
 }
 
+-(void)setFloatingLabelYPadding:(CGFloat)floatingLabelYPadding
+{
+    if ([self.textField isKindOfClass:[JVFloatLabeledTextField class]]) {
+        ((JVFloatLabeledTextField*)self.textField).floatingLabelYPadding = floatingLabelYPadding;
+    }
+}
+
+- (void)setAccessoryViewImage:(UIImage *)image {
+    self.accessoryView = [[UIImageView alloc] initWithImage:image];
+    self.accessoryView.frame = CGRectMake(0, 0, 24, 24);
+}
+
 #pragma mark - UITextField notification selectors
 // I'm using these notifications to flush the validation state signal.
 // It works, but seems hacky. Is there a better way?
@@ -182,6 +255,14 @@
         // If it seems like the text field has been cleared,
         // invoke the text change delegate method again to ensure proper validation.
         if (textField.secureTextEntry && textField.text.length <= 1) {
+            [self.textField.delegate textField:self.textField
+                 shouldChangeCharactersInRange:NSMakeRange(0, textField.text.length)
+                             replacementString:textField.text];
+        }
+        
+        // PickerViews require forwarding the event to shouldchangeCharactersInRange
+        if ([textField.inputView isKindOfClass:[UIPickerView class]] ||
+            [textField.inputView isKindOfClass:[UIDatePicker class]]) {
             [self.textField.delegate textField:self.textField
                  shouldChangeCharactersInRange:NSMakeRange(0, textField.text.length)
                              replacementString:textField.text];

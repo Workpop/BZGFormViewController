@@ -5,6 +5,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <JVFloatLabeledTextField/JVFloatLabeledTextField.h>
 #import "BZGFormCell.h"
 
 @interface BZGTextFieldCell : BZGFormCell
@@ -17,6 +18,9 @@
 
 /// The color of the text field's text when the cell's state is invalid.
 @property (strong, nonatomic) UIColor *textFieldInvalidColor;
+
+/// The color of the text field's text when the cell's state is invalid.
+@property (assign, nonatomic) CGFloat floatingLabelYPadding;
 
 @property (strong, nonatomic) UIActivityIndicatorView *activityIndicatorView;
 
@@ -40,6 +44,12 @@
 
 /// The block called before the text field returns. Return NO if the text field shouldn't return.
 @property (copy, nonatomic) BOOL (^shouldReturnBlock)(BZGTextFieldCell *cell, NSString *text);
+
+/// A custom view used to replace the valid checkmark
+@property (strong, nonatomic) UIImage *accessoryImage UI_APPEARANCE_SELECTOR;
+
+/// Use float field instead of label/textfield
+- (id)initWithFloatField;
 
 /**
  * Returns the parent BZGTextFieldCell for the given text field. If no cell is found, returns nil.
