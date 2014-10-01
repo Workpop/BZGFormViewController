@@ -9,6 +9,7 @@
 #import "BZGStateTextFieldCell.h"
 #import "BZGMonthYearTextFieldCell.h"
 #import "BZGDateTextFieldCell.h"
+#import "BZGSwitchCell.h"
 
 @class BZGMailgunEmailValidator;
 
@@ -23,14 +24,13 @@
 @property (nonatomic, strong) BZGTextFieldCell *zipcodeCell;
 @property (nonatomic, strong) BZGStateTextFieldCell *stateCell;
 
-
 @property (nonatomic, strong) BZGPhoneTextFieldCell *phoneCell;
 @property (nonatomic, strong) BZGTextFieldCell *passwordCell;
-
 
 @property (nonatomic, strong) BZGMonthYearTextFieldCell *monthYearCell;
 @property (nonatomic, strong) BZGDateTextFieldCell *dateCell;
 
+@property (nonatomic, strong) BZGSwitchCell *switchCell;
 
 @property (nonatomic, strong) BZGMailgunEmailValidator *emailValidator;
 

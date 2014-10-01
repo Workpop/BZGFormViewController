@@ -46,6 +46,8 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
 //    [self configurePasswordCell];
     
     
+    [self configureSwitchCell];
+    
     
     [self configureAddressCell];
     [self configureCityCell];
@@ -58,7 +60,7 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
 
 
     //basic info
-    [self addFormCells:@[self.firstName, self.lastName, self.emailCell/*, self.monthYearCell*/] atSection:SignupViewControllerSectionPrimaryInfo];
+    [self addFormCells:@[self.firstName, self.switchCell, self.lastName, self.emailCell/*, self.monthYearCell*/] atSection:SignupViewControllerSectionPrimaryInfo];
     
     //address
     [self addFormCells:@[self.addressCell, self.cityCell, self.stateCell, self.zipcodeCell] atSection:SignupViewControllerSectionAddress];
@@ -86,6 +88,18 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleSingleLine];
     
     [self.firstName becomeFirstResponder];
+}
+
+-(void)configureSwitchCell
+{
+    self.switchCell = [[BZGSwitchCell alloc] init];
+    self.switchCell.label.text = @"I currently work here";
+    self.switchCell.label.accessibilityHint = @"This is a test hint of what we're doing. This goes here.";
+    
+    [[self.switchCell.switchField rac_signalForControlEvents:UIControlEventValueChanged] subscribeNext:^(UISwitch *switchField) {
+        NSLog(@"%i", switchField.on);
+    }];
+
 }
 
 - (void)configureFirstNameCell
@@ -171,6 +185,11 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
     
     self.zipcodeCell.textField.keyboardType = UIKeyboardTypeNumberPad;
     self.zipcodeCell.shouldChangeTextBlock = ^BOOL(BZGTextFieldCell *cell, NSString *newText) {
+        
+
+        
+        
+        
         if (newText.length < 1) {
             cell.validationState = BZGValidationStateInvalid;
             [cell.infoCell setText:@"First Name must be at least 1 character."];
