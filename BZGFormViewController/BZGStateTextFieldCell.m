@@ -38,7 +38,7 @@
 
 -(void)statePicker:(BZGStatePicker *)picker didSelectStateWithName:(NSString *)name
 {
-    self.textField.text = name;
+    [self.textField setText:name];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidChangeNotification object:self.textField];
     [self.textField sendActionsForControlEvents:UIControlEventEditingChanged];

@@ -270,6 +270,17 @@
     }
 }
 
+-(void)setText:(NSString *)text
+{
+    self.textField.text = text;
+    
+    [self.textField.delegate textField:self.textField
+         shouldChangeCharactersInRange:NSMakeRange(0, self.textField.text.length)
+                     replacementString:self.textField.text];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidChangeNotification object:self.textField];
+}
+
 - (void)textFieldTextDidEndEditing:(NSNotification *)notification
 {
     UITextField *textField = (UITextField *)notification.object;

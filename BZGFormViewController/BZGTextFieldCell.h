@@ -51,6 +51,9 @@
 /// Use float field instead of label/textfield
 - (id)initWithFloatField;
 
+/// Set the textField text
+-(void)setText:(NSString *)text;
+
 /**
  * Returns the parent BZGTextFieldCell for the given text field. If no cell is found, returns nil.
  *
