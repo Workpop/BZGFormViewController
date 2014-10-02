@@ -14,4 +14,6 @@
 
 - (BOOL)shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string;
 
+-(void)setText:(NSString *)text;
+
 @end

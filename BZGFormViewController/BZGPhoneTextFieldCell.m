@@ -60,6 +60,23 @@
     return;
 }
 
+-(void)setText:(NSString *)string
+{
+    NSCharacterSet *digitSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
+    // Set number
+    if (string.length > 0 &&
+        [string rangeOfCharacterFromSet:digitSet].length != 0 &&
+        NSMakeRange(0, string.length).location == self.textField.text.length) {
+        self.textField.text = [self.phoneFormatter inputDigit:string];
+    }
+    
+    //validate
+    [self shouldChangeCharactersInRange:NSMakeRange(0, string.length)
+                     replacementString:string];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidChangeNotification object:self.textField];
+}
+
 - (BOOL)shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     NSCharacterSet *digitSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];

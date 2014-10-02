@@ -12,6 +12,10 @@
 #import "BZGTextFieldCell.h"
 #import "BZGTextViewCell.h"
 
+#import "BZGDateTextFieldCell.h"
+#import "BZGStateTextFieldCell.h"
+#import "BZGMonthYearTextFieldCell.h"
+
 #import "BZGKeyboardControl.h"
 #import "Constants.h"
 
@@ -312,8 +316,6 @@
 
 -(void)textViewDidEndEditing:(UITextView *)textView
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:UITextViewTextDidEndEditingNotification object:textView];
-    
     BZGTextViewCell *cell = [BZGTextViewCell parentCellForTextField:textView];
     if (!cell) {
         return;
@@ -369,10 +371,7 @@
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
-{
-    [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidEndEditingNotification object:textField];
-    [textField sendActionsForControlEvents:UIControlEventEditingDidEnd];
-    
+{    
     BZGTextFieldCell *cell = [BZGTextFieldCell parentCellForTextField:textField];
     if (!cell) {
         return;
