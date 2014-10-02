@@ -124,36 +124,7 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
     ((JVFloatLabeledTextView*)self.textViewCell.textField).placeholder = @"Summary";
     self.textViewCell.textField.accessibilityHint = @"This is a test hint of what we're doing. This goes here.";
     self.textViewCell.textField.keyboardType = UIKeyboardTypeASCIICapable;
-    
-    /*
-    @weakify(self);
 
-    [[self.textViewCell.textField rac_textSignal] subscribeNext:^(UITextView * textView) {
-        @strongify(self);
-        
-        //resize the tableview if required
-        [self.tableView beginUpdates];
-        [self.tableView endUpdates];
-        
-        //scroll to show cursor
-        CGRect cursorRect = [self.textViewCell.textField caretRectForPosition:self.textViewCell.textField.selectedTextRange.end];
-        CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:self.textViewCell.textField];
-
-        [self.tableView scrollRectToVisible:tableViewrect animated:YES];
-    }];
-    
-    
-    
-    self.textViewCell.shouldChangeTextBlock = ^BOOL(BZGTextViewCell *cell, NSString *newText) {
-        @strongify(self);
-        
-        //resize the tableview if required
-        [self.tableView beginUpdates];
-        [self.tableView endUpdates];
-        
-        return YES;
-    };
-    */
 }
 
 

@@ -310,6 +310,19 @@
     return shouldChange;
 }
 
+-(void)textViewDidEndEditing:(UITextView *)textView
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:UITextViewTextDidEndEditingNotification object:textView];
+    
+    BZGTextViewCell *cell = [BZGTextViewCell parentCellForTextField:textView];
+    if (!cell) {
+        return;
+    }
+    if (cell.didEndEditingBlock) {
+        cell.didEndEditingBlock(cell, textView.text);
+    }
+}
+
 
 #pragma mark - UITextFieldDelegate
 
