@@ -44,10 +44,7 @@
     unsigned unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit | NSCalendarUnitDay;
     NSDateComponents* components = [calendar components:unitFlags fromDate:newDate];
     NSString *dateString = [NSString stringWithFormat:@"%02ld/%li", (long)[components month], (long)[components year]];
-    [self.textField setText:dateString];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidChangeNotification object:self.textField];
-    [self.textField sendActionsForControlEvents:UIControlEventEditingChanged];
+    [self setText:dateString];
 }
 
 @end

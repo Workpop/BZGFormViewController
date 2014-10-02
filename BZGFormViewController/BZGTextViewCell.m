@@ -215,7 +215,7 @@
 -(void)setText:(NSString *)text
 {
     self.textField.text = text;
-    
+
     [self.textField.delegate textViewDidChange:self.textField];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidChangeNotification object:self.textField];
