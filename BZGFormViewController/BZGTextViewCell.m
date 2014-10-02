@@ -216,9 +216,7 @@
 {
     self.textField.text = text;
     
-    [self.textField.delegate textView:self.textField
-              shouldChangeTextInRange:NSMakeRange(0, self.textField.text.length)
-                      replacementText:self.textField.text];
+    [self.textField.delegate textViewDidChange:self.textField];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidChangeNotification object:self.textField];
 }
