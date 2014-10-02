@@ -10,6 +10,8 @@
 #import "BZGInfoCell.h"
 #import "BZGPhoneTextFieldCell.h"
 #import "BZGTextFieldCell.h"
+#import "BZGTextViewCell.h"
+
 #import "BZGKeyboardControl.h"
 #import "Constants.h"
 
@@ -175,7 +177,7 @@
     return [self firstFormCellWithValidationState:BZGValidationStateWarning];
 }
 
-- (BZGTextFieldCell *)nextFormCell:(BZGTextFieldCell *)cell
+- (BZGFormCell *)nextFormCell:(BZGFormCell *)cell
 {
     NSIndexPath *cellIndexPath = [self indexPathOfCell:cell];
     if (cellIndexPath == nil) { return nil; }
@@ -186,15 +188,15 @@
         NSInteger startRow = (s == cellIndexPath.section) ? cellIndexPath.row + 1 : 0;
         for (NSInteger r = startRow; r < [formCellsInSection count]; ++r) {
             UITableViewCell *cell = formCellsInSection[r];
-            if ([cell isKindOfClass:[BZGTextFieldCell class]]) {
-                return (BZGTextFieldCell *)cell;
+            if ([cell isKindOfClass:[BZGFormCell class]]) {
+                return (BZGFormCell *)cell;
             }
         }
     }
     return nil;
 }
 
-- (BZGTextFieldCell *)previousFormCell:(BZGTextFieldCell *)cell
+- (BZGFormCell *)previousFormCell:(BZGFormCell *)cell
 {
     NSIndexPath *cellIndexPath = [self indexPathOfCell:cell];
     if (cellIndexPath == nil) { return nil; }
@@ -205,8 +207,8 @@
         NSInteger startRow = (s == cellIndexPath.section) ? cellIndexPath.row - 1 : [formCellsInSection count] - 1;
         for (NSInteger r = startRow; r >= 0; r--) {
             UITableViewCell *cell = formCellsInSection[r];
-            if ([cell isKindOfClass:[BZGTextFieldCell class]]) {
-                return (BZGTextFieldCell *)cell;
+            if ([cell isKindOfClass:[BZGFormCell class]]) {
+                return (BZGFormCell *)cell;
             }
         }
     }
@@ -248,7 +250,69 @@
     return 0;
 }
 
+#pragma mark - UITextViewDelegate
+
+-(BOOL)textViewShouldBeginEditing:(UITextView *)textView
+{
+    BZGTextViewCell *cell = (BZGTextViewCell*)[BZGTextViewCell parentCellForTextField:textView];
+    if (!cell) {
+        return NO;
+    }
+    
+    if (self.showsKeyboardControl) {
+        [self accesorizeTextView:textView];
+    }
+    
+    return YES;
+}
+
+-(void)textViewDidBeginEditing:(UITextView *)textView
+{
+    BZGTextViewCell *cell = (BZGTextViewCell*)[BZGTextViewCell parentCellForTextField:textView];
+    if (!cell) {
+        return;
+    }
+    
+    if (cell.didBeginEditingBlock) {
+        cell.didBeginEditingBlock(cell, textView.text);
+    }
+    
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+    [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+}
+
+-(void)textViewDidChange:(UITextView *)textView
+{
+    //resize the tableview if required
+    [self.tableView beginUpdates];
+    [self.tableView endUpdates];
+    
+    //scroll to show cursor
+    CGRect cursorRect = [textView caretRectForPosition:textView.selectedTextRange.end];
+    CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:textView];
+    
+    [self.tableView scrollRectToVisible:tableViewrect animated:YES];
+}
+
+-(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+    BOOL shouldChange = YES;
+    BZGTextViewCell *cell = (BZGTextViewCell*)[BZGTextViewCell parentCellForTextField:textView];
+    if (!cell) {
+        return YES;
+    }
+    
+    NSString *newText = [textView.text stringByReplacingCharactersInRange:range withString:text];
+    if (cell.shouldChangeTextBlock) {
+        shouldChange = cell.shouldChangeTextBlock(cell, newText);
+    }
+
+    return shouldChange;
+}
+
+
 #pragma mark - UITextFieldDelegate
+
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
@@ -319,7 +383,7 @@
         shouldReturn = cell.shouldReturnBlock(cell, textField.text);
     }
 
-    BZGTextFieldCell *nextCell = [self nextFormCell:cell];
+    BZGFormCell *nextCell = [self nextFormCell:cell];
     if (!nextCell) {
         [cell resignFirstResponder];
     }
@@ -386,6 +450,15 @@
     textField.inputAccessoryView = self.keyboardControl;
 }
 
+- (void)accesorizeTextView:(UITextView *)textField
+{
+    BZGTextViewCell *cell = [BZGTextViewCell parentCellForTextField:textField];
+    self.keyboardControl.previousCell = [self previousFormCell:cell];
+    self.keyboardControl.currentCell = cell;
+    self.keyboardControl.nextCell = [self nextFormCell:cell];
+    textField.inputAccessoryView = self.keyboardControl;
+}
+
 - (BZGKeyboardControl *)keyboardControl
 {
     if (!_keyboardControl) {
@@ -402,17 +475,17 @@
 
 - (void)navigateToPreviousCell: (id)sender
 {
-    BZGTextFieldCell *previousCell = self.keyboardControl.previousCell;
+    BZGFormCell *previousCell = self.keyboardControl.previousCell;
     [self navigateToDestinationCell:previousCell];
 }
 
 - (void)navigateToNextCell
 {
-    BZGTextFieldCell *nextCell = self.keyboardControl.nextCell;
+    BZGFormCell *nextCell = self.keyboardControl.nextCell;
     [self navigateToDestinationCell:nextCell];
 }
 
-- (void)navigateToDestinationCell:(BZGTextFieldCell *)destinationCell
+- (void)navigateToDestinationCell:(BZGFormCell *)destinationCell
 {
     if ([[self.tableView visibleCells] containsObject:destinationCell]) {
         [destinationCell becomeFirstResponder];
@@ -478,6 +551,10 @@
         if ([cell isKindOfClass:[BZGTextFieldCell class]]) {
             ((BZGTextFieldCell *)cell).textField.delegate = self;
         }
+        else if ([cell isKindOfClass:[BZGTextViewCell class]]) {
+            ((BZGTextViewCell *)cell).textField.delegate = self;
+        }
+        
     } else if (![cell isKindOfClass:[BZGInfoCell class]]) {
         [NSException raise:NSInternalInconsistencyException
                     format:@"BZGFormViewController only accepts cells that subclass BZGFormCell or BZGInfoCell"];

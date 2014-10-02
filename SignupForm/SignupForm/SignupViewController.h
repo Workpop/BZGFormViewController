@@ -10,6 +10,7 @@
 #import "BZGMonthYearTextFieldCell.h"
 #import "BZGDateTextFieldCell.h"
 #import "BZGSwitchCell.h"
+#import "BZGTextViewCell.h"
 
 @class BZGMailgunEmailValidator;
 
@@ -29,6 +30,10 @@
 
 @property (nonatomic, strong) BZGMonthYearTextFieldCell *monthYearCell;
 @property (nonatomic, strong) BZGDateTextFieldCell *dateCell;
+
+
+@property (nonatomic, strong) BZGTextViewCell *textViewCell;
+
 
 @property (nonatomic, strong) BZGSwitchCell *switchCell;
 

@@ -8,9 +8,9 @@
 #import "BZGFormCell.h"
 #import "NSError+BZGFormViewController.h"
 
-@class BZGInfoCell, BZGTextFieldCell, BZGPhoneTextFieldCell;
+@class BZGInfoCell, BZGTextFieldCell, BZGTextViewCell, BZGPhoneTextFieldCell;
 
-@interface BZGFormViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, BZGFormCellDelegate>
+@interface BZGFormViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UITextViewDelegate, BZGFormCellDelegate>
 
 /// The table view managed by the controller object.
 @property (nonatomic, strong) UITableView *tableView;
@@ -55,7 +55,7 @@
  * @param cell The starting form field cell.
  * @return The next form field cell or nil if no cell is found.
  */
-- (BZGTextFieldCell *)nextFormCell:(BZGTextFieldCell *)cell;
+- (BZGFormCell *)nextFormCell:(BZGFormCell *)cell;
 
 /**
  * Returns the previous form cell.
@@ -63,7 +63,7 @@
  * @param cell The starting form field cell.
  * @return The previous form field cell or nil if no cell is found.
  */
-- (BZGTextFieldCell *)previousFormCell:(BZGTextFieldCell *)cell;    
+- (BZGFormCell *)previousFormCell:(BZGFormCell *)cell;    
 
 
 /**
@@ -71,7 +71,7 @@
  *
  * @param destinationCell The destination cell.
  */
-- (void)navigateToDestinationCell:(BZGTextFieldCell *)destinationCell;
+- (void)navigateToDestinationCell:(BZGFormCell *)destinationCell;
 
 /**
  * Returns the first invalid form field cell.

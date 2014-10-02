@@ -6,6 +6,7 @@
 
 #import "BZGKeyboardControl.h"
 #import "BZGTextFieldCell.h"
+#import "BZGTextViewCell.h"
 
 const CGFloat BZGKeyboardControlButtonSpacing = 22;
 
@@ -55,21 +56,27 @@ const CGFloat BZGKeyboardControlButtonSpacing = 22;
 }
 
 
-- (void)setPreviousCell:(BZGTextFieldCell *)previousCell {
+- (void)setPreviousCell:(BZGFormCell *)previousCell {
     _previousCell = previousCell;
     self.previousButton.enabled = !!previousCell;
 }
 
 
-- (void)setNextCell:(BZGTextFieldCell *)nextCell {
+- (void)setNextCell:(BZGFormCell *)nextCell {
     _nextCell = nextCell;
     self.nextButton.enabled = !!nextCell;
 }
 
--(void)setCurrentCell:(BZGTextFieldCell *)currentCell
+-(void)setCurrentCell:(BZGFormCell *)currentCell
 {
     _currentCell = currentCell;
-    self.textLabel.text = currentCell.textField.accessibilityHint;
+    
+    if ([currentCell isKindOfClass:[BZGTextFieldCell class]]) {
+        self.textLabel.text = ((BZGTextFieldCell*)currentCell).textField.accessibilityHint;
+    }
+    else if ([currentCell isKindOfClass:[BZGTextViewCell class]]) {
+        self.textLabel.text = ((BZGTextViewCell*)currentCell).textField.accessibilityHint;
+    }
 }
 
 @end

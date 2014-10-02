@@ -14,6 +14,8 @@
 		8CE100451965E4DD00287E0B /* NSError+BZGFormViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8CE100441965E4DD00287E0B /* NSError+BZGFormViewController.m */; };
 		E82BB82C19DC85DB00A1533B /* BZGSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E82BB82B19DC85DB00A1533B /* BZGSwitchCell.m */; };
 		E82BB82D19DC85DB00A1533B /* BZGSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E82BB82B19DC85DB00A1533B /* BZGSwitchCell.m */; };
+		E82BB83019DCC8E300A1533B /* BZGTextViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E82BB82F19DCC8E300A1533B /* BZGTextViewCell.m */; };
+		E82BB83119DCC8E300A1533B /* BZGTextViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E82BB82F19DCC8E300A1533B /* BZGTextViewCell.m */; };
 		E895A0D719DA161100485190 /* BZGStatePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = E895A0D519DA161100485190 /* BZGStatePicker.m */; };
 		E895A0DF19DA1C7900485190 /* BZGMonthYearPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = E895A0DE19DA1C7900485190 /* BZGMonthYearPicker.m */; };
 		E895A0E019DA1C7900485190 /* BZGMonthYearPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = E895A0DE19DA1C7900485190 /* BZGMonthYearPicker.m */; };
@@ -71,6 +73,8 @@
 		90F90CF32A864DEC854302D2 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E82BB82A19DC85DB00A1533B /* BZGSwitchCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BZGSwitchCell.h; path = ../../BZGFormViewController/BZGSwitchCell.h; sourceTree = "<group>"; };
 		E82BB82B19DC85DB00A1533B /* BZGSwitchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BZGSwitchCell.m; path = ../../BZGFormViewController/BZGSwitchCell.m; sourceTree = "<group>"; };
+		E82BB82E19DCC8E300A1533B /* BZGTextViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BZGTextViewCell.h; path = ../../BZGFormViewController/BZGTextViewCell.h; sourceTree = "<group>"; };
+		E82BB82F19DCC8E300A1533B /* BZGTextViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BZGTextViewCell.m; path = ../../BZGFormViewController/BZGTextViewCell.m; sourceTree = "<group>"; };
 		E895A0D419DA161100485190 /* BZGStatePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BZGStatePicker.h; path = ../../BZGFormViewController/BZGStatePicker.h; sourceTree = "<group>"; };
 		E895A0D519DA161100485190 /* BZGStatePicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BZGStatePicker.m; path = ../../BZGFormViewController/BZGStatePicker.m; sourceTree = "<group>"; };
 		E895A0DD19DA1C7900485190 /* BZGMonthYearPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BZGMonthYearPicker.h; path = ../../BZGFormViewController/BZGMonthYearPicker.h; sourceTree = "<group>"; };
@@ -147,6 +151,8 @@
 		EB59ED66180B2DB900DAA992 /* BZGFormViewController */ = {
 			isa = PBXGroup;
 			children = (
+				E82BB82E19DCC8E300A1533B /* BZGTextViewCell.h */,
+				E82BB82F19DCC8E300A1533B /* BZGTextViewCell.m */,
 				E82BB82A19DC85DB00A1533B /* BZGSwitchCell.h */,
 				E82BB82B19DC85DB00A1533B /* BZGSwitchCell.m */,
 				EB18C91818DE628500F23064 /* BZGFormCell.h */,
@@ -427,6 +433,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB18C91A18DE628500F23064 /* BZGFormCell.m in Sources */,
+				E82BB83019DCC8E300A1533B /* BZGTextViewCell.m in Sources */,
 				EB59ED6C180B2F0800DAA992 /* BZGFormViewController.m in Sources */,
 				E895A0DF19DA1C7900485190 /* BZGMonthYearPicker.m in Sources */,
 				E895A0E719DA2F0B00485190 /* BZGDateTextFieldCell.m in Sources */,
@@ -456,6 +463,7 @@
 				E895A0F219DB29CD00485190 /* BZGStateTextFieldCell.m in Sources */,
 				E895A0E819DA2F0B00485190 /* BZGDateTextFieldCell.m in Sources */,
 				EB18C91C18DE62BC00F23064 /* BZGFormCellSpecs.m in Sources */,
+				E82BB83119DCC8E300A1533B /* BZGTextViewCell.m in Sources */,
 				EB59ED71180B377900DAA992 /* BZGInfoCellSpecs.m in Sources */,
 				E895A0E419DA1D0A00485190 /* BZGMonthYearTextFieldCell.m in Sources */,
 				EB9A0BED190B18CF0085B5A8 /* BZGPhoneTextFieldCellSpec.m in Sources */,

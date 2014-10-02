@@ -18,6 +18,7 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
     SignupViewControllerSectionPrimaryInfo,
     SignupViewControllerSectionAddress,
     SignupViewControllerSectionSecondaryInfo,
+    SignupViewControllerSectionTextView,
     SignupViewControllerSectionSignUpButton,
     SignupViewControllerSectionCount
 };
@@ -57,18 +58,23 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
     
     [self configureMonthYearPicker];
     [self configureDateCell];
+    
+    [self configureTextViewCell];
+    
 
 
+    
+    //textview
+    [self addFormCells:@[self.textViewCell] atSection:SignupViewControllerSectionTextView];
+
+    
     //basic info
     [self addFormCells:@[self.firstName, self.switchCell, self.lastName, self.emailCell/*, self.monthYearCell*/] atSection:SignupViewControllerSectionPrimaryInfo];
     
     //address
     [self addFormCells:@[self.addressCell, self.cityCell, self.stateCell, self.zipcodeCell] atSection:SignupViewControllerSectionAddress];
 
-    
     [self addFormCells:@[self.phoneCell, self.dateCell] atSection:SignupViewControllerSectionSecondaryInfo];
-    
-    
     
     self.emailValidator = [BZGMailgunEmailValidator validatorWithPublicKey:MAILGUN_PUBLIC_KEY];
     self.showsKeyboardControl = YES;
@@ -81,7 +87,6 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
    // [[BZGTextFieldCell appearance] setValidAccessoryView:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark"]]];
    
     [[BZGTextFieldCell appearance] setAccessoryImage:[UIImage imageNamed:@"checkmark"]];
-    
 
 
     
@@ -101,6 +106,56 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
     }];
 
 }
+
+
+- (BOOL)rectVisible: (CGRect)rect {
+    CGRect visibleRect;
+    visibleRect.origin = self.tableView.contentOffset;
+    visibleRect.origin.y += self.tableView.contentInset.top;
+    visibleRect.size = self.tableView.bounds.size;
+    visibleRect.size.height -= self.tableView.contentInset.top + self.tableView.contentInset.bottom;
+    
+    return CGRectContainsRect(visibleRect, rect);
+}
+
+- (void)configureTextViewCell
+{
+    self.textViewCell = [[BZGTextViewCell alloc] initWithFloatField];
+    ((JVFloatLabeledTextView*)self.textViewCell.textField).placeholder = @"Summary";
+    self.textViewCell.textField.accessibilityHint = @"This is a test hint of what we're doing. This goes here.";
+    self.textViewCell.textField.keyboardType = UIKeyboardTypeASCIICapable;
+    
+    /*
+    @weakify(self);
+
+    [[self.textViewCell.textField rac_textSignal] subscribeNext:^(UITextView * textView) {
+        @strongify(self);
+        
+        //resize the tableview if required
+        [self.tableView beginUpdates];
+        [self.tableView endUpdates];
+        
+        //scroll to show cursor
+        CGRect cursorRect = [self.textViewCell.textField caretRectForPosition:self.textViewCell.textField.selectedTextRange.end];
+        CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:self.textViewCell.textField];
+
+        [self.tableView scrollRectToVisible:tableViewrect animated:YES];
+    }];
+    
+    
+    
+    self.textViewCell.shouldChangeTextBlock = ^BOOL(BZGTextViewCell *cell, NSString *newText) {
+        @strongify(self);
+        
+        //resize the tableview if required
+        [self.tableView beginUpdates];
+        [self.tableView endUpdates];
+        
+        return YES;
+    };
+    */
+}
+
 
 - (void)configureFirstNameCell
 {
@@ -185,10 +240,6 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
     
     self.zipcodeCell.textField.keyboardType = UIKeyboardTypeNumberPad;
     self.zipcodeCell.shouldChangeTextBlock = ^BOOL(BZGTextFieldCell *cell, NSString *newText) {
-        
-
-        
-        
         
         if (newText.length < 1) {
             cell.validationState = BZGValidationStateInvalid;
@@ -369,6 +420,10 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
     if (indexPath.section == SignupViewControllerSectionSignUpButton) {
         return 44;
     }
+    else if(indexPath.section == SignupViewControllerSectionTextView)
+    {
+        return [self.textViewCell cellHeight];
+    }
     else {
         return [super tableView:tableView heightForRowAtIndexPath:indexPath];
     }
@@ -401,7 +456,7 @@ typedef NS_ENUM(NSInteger, SignupViewControllerSection) {
         return 30;
     }
     else {
-        return CGFLOAT_MIN;
+        return 30;
     }
 }
 
