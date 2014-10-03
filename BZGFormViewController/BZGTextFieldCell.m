@@ -311,4 +311,9 @@
     return [self.textField resignFirstResponder];
 }
 
+-(BOOL)canBecomeFirstResponder
+{
+    return YES;
+}
+
 @end

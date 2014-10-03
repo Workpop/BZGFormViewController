@@ -488,13 +488,59 @@
 - (void)navigateToPreviousCell: (id)sender
 {
     BZGFormCell *previousCell = self.keyboardControl.previousCell;
-    [self navigateToDestinationCell:previousCell];
+    
+    //if next cell can become first responder
+    if ([previousCell canBecomeFirstResponder]) {
+        [self navigateToDestinationCell:previousCell];
+    }
+    //else find the next cell that can become first responder
+    else{
+        //get row for previousCell cell
+        NSIndexPath * indexPath = [self indexPathOfCell:previousCell];
+        NSInteger rowNumber = 0;
+        for (NSInteger i = 0; i < indexPath.section; i++) {
+            rowNumber += [self tableView:self.tableView numberOfRowsInSection:i];
+        }
+        rowNumber += indexPath.row;
+        
+        //find the cell that can become first responder and go to that
+        for (NSInteger i = rowNumber; i < self.allFormCellsFlattened.count; i--) {
+            BZGFormCell * cell = [self.allFormCellsFlattened objectAtIndex:i];
+            if ([cell canBecomeFirstResponder]) {
+                [self navigateToDestinationCell:cell];
+                break;
+            }
+        }
+    }
 }
 
 - (void)navigateToNextCell
 {
     BZGFormCell *nextCell = self.keyboardControl.nextCell;
-    [self navigateToDestinationCell:nextCell];
+    
+    //if next cell can become first responder
+    if ([nextCell canBecomeFirstResponder]) {
+        [self navigateToDestinationCell:nextCell];
+    }
+    //else find the next cell that can become first responder
+    else{
+        //get row for next cell
+        NSIndexPath * indexPath = [self indexPathOfCell:nextCell];
+        NSInteger rowNumber = 0;
+        for (NSInteger i = 0; i < indexPath.section; i++) {
+            rowNumber += [self tableView:self.tableView numberOfRowsInSection:i];
+        }
+        rowNumber += indexPath.row;
+        
+        //find the cell that can become first responder and go to that
+        for (NSInteger i = rowNumber; i < self.allFormCellsFlattened.count; i++) {
+            BZGFormCell * cell = [self.allFormCellsFlattened objectAtIndex:i];
+            if ([cell canBecomeFirstResponder]) {
+                [self navigateToDestinationCell:cell];
+                break;
+            }
+        }
+    }
 }
 
 - (void)navigateToDestinationCell:(BZGFormCell *)destinationCell
