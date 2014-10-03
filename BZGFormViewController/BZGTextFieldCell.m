@@ -236,10 +236,22 @@
     }
 }
 
+
 - (void)setAccessoryViewImage:(UIImage *)image {
+    
     self.accessoryView = [[UIImageView alloc] initWithImage:image];
     self.accessoryView.frame = CGRectMake(0, 0, 24, 24);
 }
+
+-(void)setAccessoryImage:(UIImage *)accessoryImage
+{
+    _accessoryImage = accessoryImage;
+    
+    if (self.validationState == BZGValidationStateValid) {
+        [self setAccessoryViewImage:_accessoryImage];
+    }
+}
+
 
 #pragma mark - UITextField notification selectors
 // I'm using these notifications to flush the validation state signal.
@@ -277,7 +289,7 @@
     [self.textField.delegate textField:self.textField
          shouldChangeCharactersInRange:NSMakeRange(0, self.textField.text.length)
                      replacementString:self.textField.text];
-    
+
     [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidChangeNotification object:self.textField];
 }
 
