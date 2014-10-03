@@ -73,7 +73,9 @@
     textViewFrame.origin.y = self.textLabel.frame.origin.y + self.textLabel.frame.size.height;
     textViewFrame.size.width = self.contentView.bounds.size.width - 15 - 15;
     CGSize textViewSize = [self.textField sizeThatFits:CGSizeMake(self.textField.frame.size.width, FLT_MAX)];
-    textViewFrame.size.height = ceilf(textViewSize.height);
+    CGFloat height = ceilf(textViewSize.height);
+    height =  height < BZG_TEXTVIEW_MIN_HEIGHT ? BZG_TEXTVIEW_MIN_HEIGHT: height;
+    textViewFrame.size.height =  height;
     if (![self.textLabel.text length])
     {
         textViewFrame.origin.y = self.textLabel.frame.origin.y;
@@ -239,11 +241,11 @@
     return [self.textField resignFirstResponder];
 }
 
-- (CGFloat)cellHeight;
+- (CGFloat)cellHeight
 {
     CGSize textViewSize = [self.textField sizeThatFits:CGSizeMake(self.textField.frame.size.width, FLT_MAX)];
     CGFloat height = ceilf(textViewSize.height); /*FXFormFieldPaddingTop + FXFormFieldPaddingBottom*/;
-    return height;
+    return height < BZG_TEXTVIEW_MIN_HEIGHT ? BZG_TEXTVIEW_MIN_HEIGHT: height;
 }
 
 -(BOOL)canBecomeFirstResponder

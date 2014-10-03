@@ -19,7 +19,7 @@ const CGFloat BZGKeyboardControlButtonSpacing = 22;
         //add label in center for displaying hints/tips
         self.textLabel = [[TOMSMorphingLabel alloc] initWithFrame:CGRectMake(0 , 0, self.frame.size.width * .65, self.frame.size.height)];
         self.textLabel.backgroundColor = [UIColor clearColor];
-        self.textLabel.textColor = [UIColor lightGrayColor];
+        self.textLabel.textColor = [UIColor darkGrayColor];
         self.textLabel.textAlignment = NSTextAlignmentCenter;
         self.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
         self.textLabel.numberOfLines = 0;
