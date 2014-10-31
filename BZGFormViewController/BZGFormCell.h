@@ -29,7 +29,7 @@ typedef NS_ENUM(NSInteger, BZGValidationState) {
 @property (strong, nonatomic) BZGInfoCell *infoCell;
 
 /// The cell's delegate
-@property (strong, nonatomic) id<BZGFormCellDelegate> delegate;
+@property (weak, nonatomic) id<BZGFormCellDelegate> delegate;
 
 @end
 
