@@ -15,4 +15,6 @@
 @property (strong, nonatomic) NSString *invalidText;
 @property (strong, nonatomic) BZGPicker *picker;
 
+-(void)setOptions:(NSArray*)options;
+
 @end
