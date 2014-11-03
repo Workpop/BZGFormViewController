@@ -36,6 +36,11 @@
     self.datePicker._delegate = self;
     
     self.textField.inputView = self.datePicker;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(textFieldChanged:)
+                                                 name:UITextFieldTextDidBeginEditingNotification
+                                               object:self.textField];
 }
 
 -(void)pickerView:(UIPickerView *)pickerView didChangeDate:(NSDate *)newDate
@@ -46,5 +51,34 @@
     NSString *dateString = [NSString stringWithFormat:@"%02ld/%li", (long)[components month], (long)[components year]];
     [self setText:dateString];
 }
+
+//This selects the right picker option
+- (void)textFieldChanged:(NSNotification *)notification
+{
+    UITextField *textField = (UITextField *)notification.object;
+    if ([textField isEqual:self.textField]) {
+        
+        //insert programType
+        if (self.textField.text.length > 0){
+            
+            
+          //  NSCalendar *sysCalendar = [NSCalendar currentCalendar];
+            NSDateFormatter *df = [[NSDateFormatter alloc] init];
+            [df setDateFormat:@"MM-yyyy"];
+            NSDate *myDate = [df dateFromString:self.textField.text];
+            
+            /*
+            unsigned int unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+            NSDateComponents *breakdownInfo = [sysCalendar components:unitFlags fromDate:myDate];
+            */
+            
+            [self.datePicker setDate:myDate];
+            
+        }
+        
+    }
+}
+
+
 
 @end
