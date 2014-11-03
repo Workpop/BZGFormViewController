@@ -29,10 +29,6 @@
 {
     self.datePicker = [[BZGMonthYearPicker alloc] init];
     self.datePicker.date = [NSDate dateWithTimeIntervalSinceNow:-(622080000)]; //default to 20 years ago
-    
-    //self.datePicker.maximumDate = [NSDate date];
-    //self.datePicker.minimumDate = [NSDate dateWithTimeIntervalSince1970:0];
-    
     self.datePicker._delegate = self;
     
     self.textField.inputView = self.datePicker;
@@ -60,22 +56,11 @@
         
         //insert programType
         if (self.textField.text.length > 0){
-            
-            
-          //  NSCalendar *sysCalendar = [NSCalendar currentCalendar];
             NSDateFormatter *df = [[NSDateFormatter alloc] init];
             [df setDateFormat:@"MM-yyyy"];
-            NSDate *myDate = [df dateFromString:self.textField.text];
-            
-            /*
-            unsigned int unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
-            NSDateComponents *breakdownInfo = [sysCalendar components:unitFlags fromDate:myDate];
-            */
-            
-            [self.datePicker setDate:myDate];
-            
+            NSDate *date = [df dateFromString:self.textField.text];
+            [self.datePicker setDate:date];
         }
-        
     }
 }
 
