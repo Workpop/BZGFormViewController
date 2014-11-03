@@ -68,6 +68,13 @@
     }
 }
 
+- (void)setSelectedStateNameFromStateCode:(NSString *)stateCode animated:(BOOL)animated
+{
+    NSUInteger index = [[[self class] stateCodes] indexOfObject:stateCode];
+    NSString * stateName = [[[self class] stateNames] objectAtIndex:index];
+    [self setSelectedStateName:stateName animated:animated];
+}
+
 - (void)setSelectedstateName:(NSString *)stateName
 {
     [self setSelectedStateName:stateName animated:NO];

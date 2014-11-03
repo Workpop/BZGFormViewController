@@ -25,4 +25,7 @@
 
 - (void)setSelectedStateName:(NSString *)stateName animated:(BOOL)animated;
 
+- (void)setSelectedStateNameFromStateCode:(NSString *)stateCode animated:(BOOL)animated;
+
+
 @end

@@ -34,6 +34,11 @@
     self.picker = [[BZGPicker alloc] initWithFrame:CGRectMake(0, 0, 0, 250)];
     self.picker.pickerDelegate = self;
     self.textField.inputView = self.picker;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(textFieldChanged:)
+                                                 name:UITextFieldTextDidBeginEditingNotification
+                                               object:self.textField];
 }
 
 -(void)picker:(BZGPicker *)picker didSelectOption:(NSString *)option
@@ -45,6 +50,20 @@
 {
     self.picker.options = options;
     [self.picker reloadAllComponents];
+}
+
+//This selects the right picker option
+- (void)textFieldChanged:(NSNotification *)notification
+{
+    UITextField *textField = (UITextField *)notification.object;
+    if ([textField isEqual:self.textField]) {
+        
+        //insert programType
+        if (self.textField.text.length > 0){
+            [self.picker setSelectedOption:self.textField.text animated:NO];
+        }
+        
+    }
 }
 
 @end
