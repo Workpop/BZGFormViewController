@@ -36,10 +36,12 @@
 @end
 
 @implementation BZGMonthYearPicker
+{
+    NSInteger minYear;
+    NSInteger maxYear;
+}
 
 const NSInteger bigRowCount = 1;
-NSInteger minYear;
-NSInteger maxYear;
 const CGFloat rowHeight = 44.f;
 const NSInteger numberOfComponents = 2;
 

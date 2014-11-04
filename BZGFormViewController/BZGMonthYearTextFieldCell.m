@@ -57,7 +57,7 @@
         //insert programType
         if (self.textField.text.length > 0){
             NSDateFormatter *df = [[NSDateFormatter alloc] init];
-            [df setDateFormat:@"MM-yyyy"];
+            [df setDateFormat:@"MM/yyyy"];
             NSDate *date = [df dateFromString:self.textField.text];
             [self.datePicker setDate:date];
         }
