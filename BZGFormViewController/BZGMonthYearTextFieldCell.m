@@ -53,8 +53,6 @@
 {
     UITextField *textField = (UITextField *)notification.object;
     if ([textField isEqual:self.textField]) {
-        
-        //insert programType
         if (self.textField.text.length > 0){
             NSDateFormatter *df = [[NSDateFormatter alloc] init];
             [df setDateFormat:@"MM/yyyy"];
