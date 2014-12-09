@@ -80,6 +80,7 @@
 - (BOOL)shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     NSCharacterSet *digitSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
+    
     // Entered one number
     if (string.length == 1 &&
         [string rangeOfCharacterFromSet:digitSet].length != 0 &&
@@ -87,9 +88,10 @@
         self.textField.text = [self.phoneFormatter inputDigit:string];
     }
     // Backspace
-    else if (string.length == 0) {
+    else if (string.length == 0 && self.textField.text.length > 0) {
         self.textField.text = [self.phoneFormatter removeLastDigit];
     }
+    
     // Validate text
     NSError *error = nil;
     NBPhoneNumber *phoneNumber = [self.phoneUtil parse:self.textField.text
@@ -118,7 +120,7 @@
         self.validationState = BZGValidationStateInvalid;
         self.validationError = [NSError bzg_errorWithDescription:self.invalidText];
     }
-
+    
     return NO;
 }
 
