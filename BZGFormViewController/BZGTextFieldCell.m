@@ -108,7 +108,7 @@
     }
     
     self.textField.autocorrectionType = UITextAutocorrectionTypeNo;
-    self.textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    self.textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
     self.textFieldNormalColor = BZG_TEXTFIELD_NORMAL_COLOR;
     self.textFieldInvalidColor = BZG_TEXTFIELD_INVALID_COLOR;
     self.textField.font = BZG_TEXTFIELD_FONT;
