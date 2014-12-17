@@ -107,6 +107,7 @@
         self.textField = [[UITextField alloc] initWithFrame:textFieldFrame];
     }
     
+    self.textField.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     self.textField.autocorrectionType = UITextAutocorrectionTypeNo;
     self.textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
     self.textFieldNormalColor = BZG_TEXTFIELD_NORMAL_COLOR;
