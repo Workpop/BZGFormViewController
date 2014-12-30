@@ -70,31 +70,63 @@
         self.textField.text = [self.phoneFormatter inputDigit:string];
     }
     
-    //validate
-    [self shouldChangeCharactersInRange:NSMakeRange(0, string.length)
-                     replacementString:string];
-    
+    // validate
+    [self validatePhoneNumber:self.textField.text];
+
     [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidChangeNotification object:self.textField];
 }
 
 - (BOOL)shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    NSCharacterSet *digitSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
+    NSUInteger length = [self getLength:self.textField.text];
     
-    // Entered one number
-    if (string.length == 1 &&
-        [string rangeOfCharacterFromSet:digitSet].length != 0 &&
-        range.location == self.textField.text.length) {
-        self.textField.text = [self.phoneFormatter inputDigit:string];
-    }
-    // Backspace
-    else if (string.length == 0 && self.textField.text.length > 0) {
-        self.textField.text = [self.phoneFormatter removeLastDigit];
+    if(length == 10)
+    {
+        if(range.length == 0)
+        {
+            if (string.length == 0) {
+                self.validationState = BZGValidationStateInvalid;
+                self.validationError = [NSError bzg_errorWithDescription:self.invalidText];
+            }
+            else{
+                [self validatePhoneNumber:self.textField.text];
+            }
+            return NO;
+        }
     }
     
+    if(length == 3)
+    {
+        NSString *num = [self formatNumber:self.textField.text];
+        self.textField.text = [NSString stringWithFormat:@"(%@) ",num];
+        if(range.length > 0)
+            self.textField.text = [NSString stringWithFormat:@"%@",[num substringToIndex:3]];
+    }
+    else if(length == 6)
+    {
+        NSString *num = [self formatNumber:self.textField.text];
+        self.textField.text = [NSString stringWithFormat:@"(%@) %@-",[num  substringToIndex:3],[num substringFromIndex:3]];
+        if(range.length > 0)
+            self.textField.text = [NSString stringWithFormat:@"(%@) %@",[num substringToIndex:3],[num substringFromIndex:3]];
+    }
+    
+    if (string.length == 0) {
+        self.validationState = BZGValidationStateInvalid;
+        self.validationError = [NSError bzg_errorWithDescription:self.invalidText];
+    }
+    else{
+        [self validatePhoneNumber:[self.textField.text stringByAppendingString:string]];
+    }
+    
+    return YES;
+}
+
+
+- (void)validatePhoneNumber:(NSString*)string
+{
     // Validate text
     NSError *error = nil;
-    NBPhoneNumber *phoneNumber = [self.phoneUtil parse:self.textField.text
+    NBPhoneNumber *phoneNumber = [self.phoneUtil parse:string
                                          defaultRegion:self.regionCode
                                                  error:&error];
     if (!error) {
@@ -102,7 +134,7 @@
         if ([self.regionCode isEqualToString:@"US"]) {
             // Don't allow 7-digit local format
             NSCharacterSet *nonDigitCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@"1234567890"] invertedSet];
-            NSString *strippedPhoneString = [[self.textField.text componentsSeparatedByCharactersInSet:nonDigitCharacterSet] componentsJoinedByString:@""];
+            NSString *strippedPhoneString = [[string componentsSeparatedByCharactersInSet:nonDigitCharacterSet] componentsJoinedByString:@""];
             isPossibleNumber = [self.phoneUtil isPossibleNumber:phoneNumber error:&error] && strippedPhoneString.length >= 10;
         }
         else {
@@ -120,8 +152,36 @@
         self.validationState = BZGValidationStateInvalid;
         self.validationError = [NSError bzg_errorWithDescription:self.invalidText];
     }
+}
+
+
+-(NSString*)formatNumber:(NSString*)mobileNumber
+{
+    mobileNumber = [mobileNumber stringByReplacingOccurrencesOfString:@"(" withString:@""];
+    mobileNumber = [mobileNumber stringByReplacingOccurrencesOfString:@")" withString:@""];
+    mobileNumber = [mobileNumber stringByReplacingOccurrencesOfString:@" " withString:@""];
+    mobileNumber = [mobileNumber stringByReplacingOccurrencesOfString:@"-" withString:@""];
+    mobileNumber = [mobileNumber stringByReplacingOccurrencesOfString:@"+" withString:@""];
     
-    return NO;
+    NSUInteger length = [mobileNumber length];
+    if(length > 10)
+    {
+        mobileNumber = [mobileNumber substringFromIndex: length-10];
+    }
+    
+    return mobileNumber;
+}
+
+
+-(NSUInteger)getLength:(NSString*)mobileNumber
+{
+    mobileNumber = [mobileNumber stringByReplacingOccurrencesOfString:@"(" withString:@""];
+    mobileNumber = [mobileNumber stringByReplacingOccurrencesOfString:@")" withString:@""];
+    mobileNumber = [mobileNumber stringByReplacingOccurrencesOfString:@" " withString:@""];
+    mobileNumber = [mobileNumber stringByReplacingOccurrencesOfString:@"-" withString:@""];
+    mobileNumber = [mobileNumber stringByReplacingOccurrencesOfString:@"+" withString:@""];
+    NSUInteger length = [mobileNumber length];
+    return length;
 }
 
 @end
