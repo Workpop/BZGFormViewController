@@ -305,7 +305,7 @@
 - (void)validate
 {
     // Validation will be triggered when the text is set to the current textField text
-    [self.textField setText:self.textField.text];
+    [self setText:self.textField.text];
 }
 
 - (BOOL)becomeFirstResponder
