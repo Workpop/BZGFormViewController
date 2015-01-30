@@ -9,6 +9,8 @@
 #import "BZGTextViewCell.h"
 
 const CGFloat BZGKeyboardControlButtonSpacing = 22;
+NSString * const kNext = @"Next";
+NSString * const kPrev = @"Prev";
 
 @implementation BZGKeyboardControl
 
@@ -25,8 +27,8 @@ const CGFloat BZGKeyboardControlButtonSpacing = 22;
         self.textLabel.numberOfLines = 0;
         self.textLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         
-        self.previousButton = [[UIBarButtonItem alloc] initWithTitle:@"Prev" style:UIBarButtonItemStylePlain target:nil action:nil];
-        self.nextButton = [[UIBarButtonItem alloc] initWithTitle:@"Next" style:UIBarButtonItemStylePlain target:nil action:nil];
+        self.previousButton = [[UIBarButtonItem alloc] initWithTitle:kPrev style:UIBarButtonItemStylePlain target:nil action:nil];
+        self.nextButton = [[UIBarButtonItem alloc] initWithTitle:kNext style:UIBarButtonItemStylePlain target:nil action:nil];
 
         self.previousButton.enabled     = NO;
         self.nextButton.enabled         = NO;
@@ -58,13 +60,17 @@ const CGFloat BZGKeyboardControlButtonSpacing = 22;
 
 - (void)setPreviousCell:(BZGFormCell *)previousCell {
     _previousCell = previousCell;
-    self.previousButton.enabled = !!previousCell;
+    BOOL hasPrevCell = !!previousCell;
+    self.previousButton.enabled = hasPrevCell;
+    self.previousButton.title = hasPrevCell ? kPrev : @"";
 }
 
 
 - (void)setNextCell:(BZGFormCell *)nextCell {
     _nextCell = nextCell;
-    self.nextButton.enabled = !!nextCell;
+    BOOL hasNextCell = !!nextCell;
+    self.nextButton.enabled = hasNextCell;
+    self.nextButton.title = hasNextCell ? kNext : @"";
 }
 
 -(void)setCurrentCell:(BZGFormCell *)currentCell
