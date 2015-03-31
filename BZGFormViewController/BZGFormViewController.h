@@ -102,6 +102,18 @@
 - (NSArray *)formCellsInSection:(NSInteger)section;
 
 /**
+ * Proxy to UITableView beginUpdates on this BZGFormViewControllers tableView. Also handles
+ * some internal state changes. Should be used before adding/removing cells to the tableView.
+ */
+- (void)beginUpdates;
+
+/**
+ * Proxy to UITableView endUpdates on this BZGFormViewControllers tableView. Also handles
+ * some internal state changes. Should be used before adding/removing cells to the tableView.
+ */
+- (void)endUpdates;
+
+/**
  * Appends the form cell at the end of the section
  *
  * @param formCell A BZGFormCell

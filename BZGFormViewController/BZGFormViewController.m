@@ -27,6 +27,7 @@
 @property (nonatomic, copy) void (^didEndScrollingBlock)();
 @property (nonatomic, strong) NSMutableArray *formCellsBySection;
 @property (nonatomic, strong) NSArray *allFormCellsFlattened;
+@property (nonatomic, weak) BZGFormCell *currentlyEditingCell;
 
 @end
 
@@ -277,6 +278,9 @@
         return;
     }
     
+    // store the cell we are currently editing
+    self.currentlyEditingCell = cell;
+    
     if (cell.didBeginEditingBlock) {
         cell.didBeginEditingBlock(cell, textView.text);
     }
@@ -320,6 +324,9 @@
     if (!cell) {
         return;
     }
+    
+    self.currentlyEditingCell = nil;
+    
     if (cell.didEndEditingBlock) {
         cell.didEndEditingBlock(cell, textView.text);
     }
@@ -335,6 +342,10 @@
     if (!cell) {
         return;
     }
+    
+    // store currently editing cell
+    self.currentlyEditingCell = cell;
+    
     if (cell.didBeginEditingBlock) {
         cell.didBeginEditingBlock(cell, textField.text);
     }
@@ -376,6 +387,9 @@
     if (!cell) {
         return;
     }
+    
+    self.currentlyEditingCell = nil;
+    
     if (cell.didEndEditingBlock) {
         cell.didEndEditingBlock(cell, textField.text);
     }
@@ -405,6 +419,28 @@
 
     [self updateInfoCellBelowFormCell:cell];
     return shouldReturn;
+}
+
+#pragma mark - Updating Cells
+
+- (void)beginUpdates
+{
+    [self.tableView beginUpdates];
+}
+
+- (void)endUpdates
+{
+    [self.tableView endUpdates];
+    
+    if ([self.currentlyEditingCell isKindOfClass:BZGTextViewCell.class]) {
+        BZGTextViewCell *textViewCell = (BZGTextViewCell *)self.currentlyEditingCell;
+        [self accesorizeTextView:textViewCell.textField];
+    }
+    
+    if ([self.currentlyEditingCell isKindOfClass:BZGTextFieldCell.class]) {
+        BZGTextFieldCell *textFieldCell = (BZGTextFieldCell *)self.currentlyEditingCell;
+        [self accesorizeTextField:textFieldCell.textField];
+    }
 }
 
 #pragma mark - BZGFormCellDelegate
