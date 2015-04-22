@@ -37,7 +37,7 @@
 {
     [super setDataSource:self];
     [super setDelegate:self];
-
+    
     [self setShowsSelectionIndicator:YES];
 }
 
@@ -62,8 +62,7 @@
 - (void)setSelectedStateName:(NSString *)stateName animated:(BOOL)animated
 {
     NSInteger index = [[[self class] stateNames] indexOfObject:stateName];
-    if (index != NSNotFound)
-    {
+    if (index != NSNotFound) {
         [self selectRow:index inComponent:0 animated:animated];
     }
 }
@@ -71,8 +70,10 @@
 - (void)setSelectedStateNameFromStateCode:(NSString *)stateCode animated:(BOOL)animated
 {
     NSUInteger index = [[[self class] stateCodes] indexOfObject:stateCode];
-    NSString * stateName = [[[self class] stateNames] objectAtIndex:index];
-    [self setSelectedStateName:stateName animated:animated];
+    if (index != NSNotFound) {
+        NSString * stateName = [[[self class] stateNames] objectAtIndex:index];
+        [self setSelectedStateName:stateName animated:animated];
+    }
 }
 
 - (void)setSelectedstateName:(NSString *)stateName
@@ -110,8 +111,10 @@
 {
     if ([self.stateDelegate respondsToSelector:@selector(statePicker:didSelectStateWithName:)]) {
         NSUInteger index = [[[self class] stateNames] indexOfObject:self.selectedStateName];
-        NSString * stateCode = [[[self class] stateCodes] objectAtIndex:index];
-        [self.stateDelegate statePicker:self didSelectStateWithName:stateCode];
+        if (index != NSNotFound) {
+            NSString * stateCode = [[[self class] stateCodes] objectAtIndex:index];
+            [self.stateDelegate statePicker:self didSelectStateWithName:stateCode];
+        }
     }
 }
 
