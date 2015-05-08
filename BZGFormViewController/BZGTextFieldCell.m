@@ -43,7 +43,7 @@
     self.showsCheckmarkWhenValid = YES;
     self.showsValidationWhileEditing = NO;
     self.infoCell = [[BZGInfoCell alloc] init];
-
+    
     [self configureActivityIndicatorView];
     
     if (!_isFloatField) {
@@ -88,7 +88,7 @@
         textFieldY = 12;
     }
     self.textField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-
+    
     if (self.isFloatField) {
         CGFloat textFieldX = self.separatorInset.left;
         CGRect textFieldFrame = CGRectMake(textFieldX,
@@ -156,7 +156,7 @@
 - (void)configureBindings
 {
     @weakify(self);
-
+    
     RAC(self.textField, textColor) =
     [RACObserve(self, validationState) map:^UIColor *(NSNumber *validationState) {
         @strongify(self);
@@ -177,7 +177,7 @@
                 break;
         }
     }];
-
+    
     RAC(self.activityIndicatorView, hidden) =
     [RACObserve(self, validationState) map:^NSNumber *(NSNumber *validationState) {
         @strongify(self);
@@ -189,14 +189,14 @@
             return @YES;
         }
     }];
-
+    
     RAC(self, accessoryType) =
     [RACObserve(self, validationState) map:^NSNumber *(NSNumber *validationState) {
         @strongify(self);
         if (validationState.integerValue == BZGValidationStateValid &&
             (!self.textField.editing || self.showsValidationWhileEditing) &&
             self.showsCheckmarkWhenValid) {
-
+            
             if (self.accessoryImage) {
                 [self setAccessoryViewImage:self.accessoryImage];
                 return @(UITableViewCellAccessoryNone);
@@ -204,7 +204,7 @@
             
             return @(UITableViewCellAccessoryCheckmark);
         } else {
-
+            
             if (self.accessoryImage) {
                 self.accessoryView = nil;
             }
@@ -285,12 +285,17 @@
 
 -(void)setText:(NSString *)text
 {
+    // Make sure text is a NSString
+    if (text != nil && ![text isKindOfClass:[NSString class]]) {
+        return;
+    }
+    
     self.textField.text = text;
     
     [self.textField.delegate textField:self.textField
          shouldChangeCharactersInRange:NSMakeRange(0, self.textField.text.length)
                      replacementString:self.textField.text];
-
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidChangeNotification object:self.textField];
 }
 

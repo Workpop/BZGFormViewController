@@ -56,7 +56,6 @@
         if (self.textField.text.length > 0){
             [self.statePicker setSelectedStateNameFromStateCode:self.textField.text animated:NO];
         }
-        
     }
 }
 
