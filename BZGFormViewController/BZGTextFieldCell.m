@@ -267,17 +267,23 @@
         // If it seems like the text field has been cleared,
         // invoke the text change delegate method again to ensure proper validation.
         if (textField.secureTextEntry && textField.text.length <= 1) {
-            [self.textField.delegate textField:self.textField
-                 shouldChangeCharactersInRange:NSMakeRange(0, textField.text.length)
-                             replacementString:textField.text];
+            
+            if ([self.textField.delegate respondsToSelector:@selector(textField:shouldChangeCharactersInRange:replacementString:)]) {
+                [self.textField.delegate textField:self.textField
+                     shouldChangeCharactersInRange:NSMakeRange(0, textField.text.length)
+                                 replacementString:textField.text];
+            }
         }
         
         // PickerViews require forwarding the event to shouldchangeCharactersInRange
         if ([textField.inputView isKindOfClass:[UIPickerView class]] ||
             [textField.inputView isKindOfClass:[UIDatePicker class]]) {
-            [self.textField.delegate textField:self.textField
-                 shouldChangeCharactersInRange:NSMakeRange(0, textField.text.length)
-                             replacementString:textField.text];
+            
+            if ([self.textField.delegate respondsToSelector:@selector(textField:shouldChangeCharactersInRange:replacementString:)]) {
+                [self.textField.delegate textField:self.textField
+                     shouldChangeCharactersInRange:NSMakeRange(0, textField.text.length)
+                                 replacementString:textField.text];
+            }
         }
     }
 }
@@ -291,9 +297,11 @@
     
     self.textField.text = text;
     
-    [self.textField.delegate textField:self.textField
-         shouldChangeCharactersInRange:NSMakeRange(0, self.textField.text.length)
-                     replacementString:self.textField.text];
+    if ([self.textField.delegate respondsToSelector:@selector(textField:shouldChangeCharactersInRange:replacementString:)]) {
+        [self.textField.delegate textField:self.textField
+             shouldChangeCharactersInRange:NSMakeRange(0, self.textField.text.length)
+                         replacementString:self.textField.text];
+    }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidChangeNotification object:self.textField];
 }
