@@ -72,6 +72,8 @@
     if (self.textField) {
         CGRect rect = self.textField.frame;
         rect.size.height = self.bounds.size.height;
+        rect.origin.x = self.separatorInset.left;
+        rect.size.width = self.contentView.bounds.size.width - self.separatorInset.left - self.separatorInset.right;
         self.textField.frame = rect;
     }
 }
@@ -119,10 +121,7 @@
 
 - (void)configureLabel
 {
-    CGFloat labelX = 10;
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] < 7.0) {
-        labelX = 15;
-    }
+    CGFloat labelX = self.separatorInset.left;
     CGRect labelFrame = CGRectMake(labelX,
                                    0,
                                    self.textField.frame.origin.x - labelX,

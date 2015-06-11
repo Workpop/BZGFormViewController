@@ -69,9 +69,9 @@
     [super layoutSubviews];
     
     CGRect textViewFrame = self.textField.frame;
-    textViewFrame.origin.x = 15;
+    textViewFrame.origin.x = self.separatorInset.left;
     textViewFrame.origin.y = self.textLabel.frame.origin.y + self.textLabel.frame.size.height;
-    textViewFrame.size.width = self.contentView.bounds.size.width - 15 - 15;
+    textViewFrame.size.width = self.contentView.bounds.size.width - self.separatorInset.left - self.separatorInset.right;
     CGSize textViewSize = [self.textField sizeThatFits:CGSizeMake(self.textField.frame.size.width, FLT_MAX)];
     CGFloat height = ceilf(textViewSize.height);
     height =  height < BZG_TEXTVIEW_MIN_HEIGHT ? BZG_TEXTVIEW_MIN_HEIGHT: height;
@@ -131,10 +131,7 @@
 
 - (void)configureLabel
 {
-    CGFloat labelX = 10;
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] < 7.0) {
-        labelX = 15;
-    }
+    CGFloat labelX = self.separatorInset.left;
     CGRect labelFrame = CGRectMake(labelX,
                                    0,
                                    self.textField.frame.origin.x - labelX,
