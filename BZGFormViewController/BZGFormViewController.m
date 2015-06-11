@@ -146,6 +146,8 @@
         } else {
             [self removeInfoCellBelowFormCell:cell];
         }
+    
+    [self fixSeparator];
 }
 
 - (void)setShowsValidationCell:(BOOL)showsValidationCell
@@ -295,6 +297,8 @@
     [self.tableView beginUpdates];
     [self.tableView endUpdates];
     
+    [self fixSeparator];
+    
     //scroll to show cursor
     CGRect cursorRect = [textView caretRectForPosition:textView.selectedTextRange.end];
     CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:textView];
@@ -441,6 +445,15 @@
         BZGTextFieldCell *textFieldCell = (BZGTextFieldCell *)self.currentlyEditingCell;
         [self accesorizeTextField:textFieldCell.textField];
     }
+    
+    [self fixSeparator];
+}
+
+- (void)fixSeparator
+{
+    UITableViewCellSeparatorStyle style = self.tableView.separatorStyle;
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.tableView.separatorStyle = style;
 }
 
 #pragma mark - BZGFormCellDelegate
