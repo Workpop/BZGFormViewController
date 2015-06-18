@@ -19,7 +19,7 @@
         self.imageView.hidden = YES;
 
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        self.backgroundColor = BZG_BACKGROUND_COLOR;
+        self.backgroundColor = self.contentView.backgroundColor = BZG_BACKGROUND_COLOR;
         
         _validationState = BZGValidationStateNone;
     }

@@ -96,6 +96,7 @@
 
     UITableViewCell *cellBelow = formCellsInSection[cellIndexPath.row + 1];
     if ([cellBelow isKindOfClass:[BZGInfoCell class]]) {
+        [self styleInfoCell:cell];
         return (BZGInfoCell *)cellBelow;
     }
 
@@ -114,9 +115,19 @@
     // otherwise, add the cell's info cell to the table view
     NSIndexPath *infoCellIndexPath = [NSIndexPath indexPathForRow:cellIndexPath.row + 1
                                                         inSection:cellIndexPath.section];
+    [self styleInfoCell:cell];
     [self insertFormCells:[@[cell.infoCell] mutableCopy] atIndexPath:infoCellIndexPath];
     [self.tableView insertRowsAtIndexPaths:@[infoCellIndexPath]
                           withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (void)styleInfoCell:(BZGTextFieldCell*)cell
+{
+    cell.infoCell.separatorInset = UIEdgeInsetsMake(0, CGRectGetWidth(self.tableView.bounds)/2.0, 0, CGRectGetWidth(self.tableView.bounds)/2.0);
+    cell.infoCell.backgroundColor = cell.infoCell.contentView.backgroundColor = [UIColor whiteColor];
+    if (cell.validationState == BZGValidationStateInvalid) {
+        cell.infoCell.infoLabel.textColor = BZG_RED_COLOR;
+    }
 }
 
 - (void)removeInfoCellBelowFormCell:(BZGTextFieldCell *)cell
@@ -132,7 +143,9 @@
     NSIndexPath *infoCellIndexPath = [NSIndexPath indexPathForRow:cellIndexPath.row + 1
                                                         inSection:cellIndexPath.section];
     [self removeFormCellAtIndexPath:infoCellIndexPath];
-    [self.tableView deleteRowsAtIndexPaths:@[infoCellIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView deleteRowsAtIndexPaths:@[infoCellIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+    
+    [self styleInfoCell:cell];
 }
 
 - (void)updateInfoCellBelowFormCell:(BZGTextFieldCell *)cell
@@ -252,6 +265,9 @@
     
     if (formCells) {
         UITableViewCell *cell = [formCells objectAtIndex:indexPath.row];
+        if ([cell isKindOfClass:[BZGInfoCell class]]) {
+            return 20;
+        }
         return cell.frame.size.height;
     }
     return 0;

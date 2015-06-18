@@ -56,13 +56,13 @@
     self.imageView.hidden = YES;
 
     self.selectionStyle = UITableViewCellSelectionStyleNone;
-    self.backgroundColor = BZG_INFO_BACKGROUND_COLOR;
+    self.backgroundColor = BZG_BACKGROUND_COLOR;
     
     self.infoLabel = [[UILabel alloc] initWithFrame:self.bounds];
     self.infoLabel.font = BZG_INFO_LABEL_FONT;
     self.infoLabel.adjustsFontSizeToFitWidth = NO;
     self.infoLabel.numberOfLines = 0;
-    self.infoLabel.textAlignment = NSTextAlignmentCenter;
+    self.infoLabel.textAlignment = NSTextAlignmentRight;
     self.infoLabel.backgroundColor = [UIColor clearColor];
     self.infoLabel.text = @"";
     self.infoLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -80,9 +80,10 @@
 
 - (void)updateSize
 {
-    CGFloat verticalPadding = 10;
+    CGFloat horizontalPadding = 24;
+    CGFloat verticalPadding = 2;
     CGSize currentSize = self.infoLabel.frame.size;
-    CGFloat currentHeight = currentSize.height;
+    CGFloat currentHeight = 20;
     CGFloat heightThatFits = [self.infoLabel sizeThatFits:currentSize].height;
     CGFloat adjustedHeightThatFits = heightThatFits + verticalPadding*2;
     CGFloat newHeight = currentHeight;
@@ -91,9 +92,9 @@
         newHeight = adjustedHeightThatFits;
         yPadding = 0;
     }
-    [self.infoLabel setFrame:CGRectMake(0,
+    [self.infoLabel setFrame:CGRectMake(horizontalPadding,
                                         yPadding,
-                                        self.frame.size.width,
+                                        self.frame.size.width - horizontalPadding*2,
                                         newHeight)];
     [self addSubview:self.infoLabel];
     [self setFrame:CGRectMake(self.frame.origin.x,

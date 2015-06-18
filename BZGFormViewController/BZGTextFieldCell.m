@@ -238,9 +238,8 @@
 
 
 - (void)setAccessoryViewImage:(UIImage *)image {
-    
     self.accessoryView = [[UIImageView alloc] initWithImage:image];
-    self.accessoryView.frame = CGRectMake(0, 0, 24, 24);
+    [self.accessoryView setContentMode:UIViewContentModeCenter];
 }
 
 -(void)setAccessoryImage:(UIImage *)accessoryImage
