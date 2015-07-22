@@ -14,8 +14,9 @@ Pod::Spec.new do |s|
   s.dependency 'libPhoneNumber-iOS', '~>0.7.6'
   s.dependency 'JVFloatLabeledTextField', '~>0.0.9'
   s.dependency 'TOMSMorphingLabel', '~> 0.2.3'
-  s.dependency 'ZSSRichTextEditor', :git => 'https://github.com/Workpop/ZSSRichTextEditor'
   s.requires_arc = true
   s.platform = :ios, '7.0'
   s.source_files = 'BZGFormViewController/*.{h,m}'
+  s.resources = "**/ZSS*.png", "**/ZSSRichTextEditor.js", "**/editor.html"
+  s.frameworks = "CoreGraphics", "CoreText"
 end
