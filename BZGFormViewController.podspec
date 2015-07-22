@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.dependency 'TOMSMorphingLabel', '~> 0.2.3'
   s.requires_arc = true
   s.platform = :ios, '7.0'
-  s.source_files = "BZGFormViewController/*.{h,m}", "ZSSRichTextEditor/*.{h,m}"
+  s.source_files = "BZGFormViewController/*.{h,m}", "BZGFormViewController/ZSSRichTextEditor/*.{h,m}"
   s.resources = "**/ZSS*.png", "**/ZSSRichTextEditor.js", "**/editor.html"
   s.frameworks = "CoreGraphics", "CoreText"
 end
