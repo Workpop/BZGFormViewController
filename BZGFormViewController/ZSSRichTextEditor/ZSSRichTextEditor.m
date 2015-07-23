@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 #import "ZSSRichTextEditor.h"
 #import "ZSSBarButtonItem.h"
-
+#import "UIResponder+ZSSFirstResponder.h"
 
 @interface UIWebView (HackishAccessoryHiding)
 @property (nonatomic, assign) BOOL hidesInputAccessoryView;
@@ -1166,7 +1166,9 @@ static Class hackishFixClass = Nil;
     // Correct Curve
     UIViewAnimationOptions animationOptions = curve << 16;
     
-    if ([notification.name isEqualToString:UIKeyboardWillShowNotification]) {
+    BOOL isInFirstResponderChain = [UIResponder zss_isInResponderChain:self.view];
+    
+    if (isInFirstResponderChain && [notification.name isEqualToString:UIKeyboardWillShowNotification]) {
         
         self.toolbarHolder.alpha = 0;
 
@@ -1191,6 +1193,9 @@ static Class hackishFixClass = Nil;
     } else {
         
         [UIView animateWithDuration:duration delay:0 options:animationOptions animations:^{
+            
+            self.toolbarHolder.alpha = isInFirstResponderChain ? 1.0f : 0.0f;
+            
             CGRect frame = self.toolbarHolder.frame;
             frame.origin.y = CGRectGetHeight([UIScreen mainScreen].bounds);
             self.toolbarHolder.frame = frame;

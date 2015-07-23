@@ -12,27 +12,17 @@
 #import "Constants.h"
 
 @interface BZGRichTextViewCell () <UITextViewDelegate>
-/// Whether to use a float textfield or label and textfield
-@property (assign, nonatomic) BOOL isFloatField;
+
+@property (nonatomic, strong) UIView *holder;
+
 @end
 
 @implementation BZGRichTextViewCell
-
-- (id)initWithFloatField
-{
-    self = [super init];
-    if (self) {
-        self.isFloatField = YES;
-        [self setup];
-    }
-    return self;
-}
 
 - (id)init
 {
     self = [super init];
     if (self) {
-        self.isFloatField = NO;
         [self setup];
     }
     return self;
@@ -40,19 +30,18 @@
 
 -(void)setup
 {
-    self.showsCheckmarkWhenValid = YES;
-    self.showsValidationWhileEditing = NO;
-    self.infoCell = [[BZGInfoCell alloc] init];
-
-    [self configureActivityIndicatorView];
+    self.holder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, BZG_TEXTVIEW_MIN_HEIGHT)];
     
-    if (!_isFloatField) {
-        [self configureLabel];
-    }
-    [self configureTextField];
-    
+    self.richText = [[ZSSRichTextEditor alloc] initWithView:self.holder];
+    self.richText.shouldShowKeyboard = NO;
+   
+    [self configureLabel];
     [self configureTap];
-    [self configureBindings];
+    
+    
+    [self.contentView addSubview:self.holder];
+    
+    
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(textFieldTextDidEndEditing:)
@@ -68,27 +57,56 @@
 {
     [super layoutSubviews];
     
-    CGRect textViewFrame = self.textField.frame;
-    textViewFrame.origin.x = self.separatorInset.left;
-    textViewFrame.origin.y = self.textLabel.frame.origin.y + self.textLabel.frame.size.height;
-    textViewFrame.size.width = self.contentView.bounds.size.width - self.separatorInset.left - self.separatorInset.right;
-    CGSize textViewSize = [self.textField sizeThatFits:CGSizeMake(self.textField.frame.size.width, FLT_MAX)];
-    CGFloat height = ceilf(textViewSize.height);
-    height =  height < BZG_TEXTVIEW_MIN_HEIGHT ? BZG_TEXTVIEW_MIN_HEIGHT: height;
-    textViewFrame.size.height =  height;
-    if (![self.textLabel.text length])
-    {
-        textViewFrame.origin.y = self.textLabel.frame.origin.y;
-    }
-    self.textField.frame = textViewFrame;
     
-    textViewFrame.origin.x += 5;
-    textViewFrame.size.width -= 5;
-    self.detailTextLabel.frame = textViewFrame;
+        CGRect textViewFrame = self.holder.frame;
+        textViewFrame.origin.x = self.separatorInset.left;
+        textViewFrame.origin.y = self.textLabel.frame.origin.y + self.textLabel.frame.size.height;
+        textViewFrame.size.width = self.contentView.bounds.size.width - self.separatorInset.left - self.separatorInset.right;
     
-    CGRect contentViewFrame = self.contentView.frame;
-    contentViewFrame.size.height = self.textField.frame.origin.y + self.textField.frame.size.height + 15;
-    self.contentView.frame = contentViewFrame;
+    //CGSize textViewSize = [self.textField sizeThatFits:CGSizeMake(self.textField.frame.size.width, FLT_MAX)];
+    
+    //    CGFloat height = ceilf(textViewSize.height);
+    //    height =  height < BZG_TEXTVIEW_MIN_HEIGHT ? BZG_TEXTVIEW_MIN_HEIGHT: height;
+   //     textViewFrame.size.height =  height;
+   /*     if (![self.textLabel.text length])
+        {
+            textViewFrame.origin.y = self.textLabel.frame.origin.y;
+        }
+  */
+        self.holder.frame = textViewFrame;
+    
+        textViewFrame.origin.x += 5;
+        textViewFrame.size.width -= 5;
+        self.detailTextLabel.frame = textViewFrame;
+    
+        CGRect contentViewFrame = self.contentView.frame;
+        contentViewFrame.size.height = self.holder.frame.origin.y + self.holder.frame.size.height + 15;
+        self.contentView.frame = contentViewFrame;
+    
+    
+    
+    
+//    CGRect textViewFrame = self.textField.frame;
+//    textViewFrame.origin.x = self.separatorInset.left;
+//    textViewFrame.origin.y = self.textLabel.frame.origin.y + self.textLabel.frame.size.height;
+//    textViewFrame.size.width = self.contentView.bounds.size.width - self.separatorInset.left - self.separatorInset.right;
+//    CGSize textViewSize = [self.textField sizeThatFits:CGSizeMake(self.textField.frame.size.width, FLT_MAX)];
+//    CGFloat height = ceilf(textViewSize.height);
+//    height =  height < BZG_TEXTVIEW_MIN_HEIGHT ? BZG_TEXTVIEW_MIN_HEIGHT: height;
+//    textViewFrame.size.height =  height;
+//    if (![self.textLabel.text length])
+//    {
+//        textViewFrame.origin.y = self.textLabel.frame.origin.y;
+//    }
+//    self.textField.frame = textViewFrame;
+//    
+//    textViewFrame.origin.x += 5;
+//    textViewFrame.size.width -= 5;
+//    self.detailTextLabel.frame = textViewFrame;
+//    
+//    CGRect contentViewFrame = self.contentView.frame;
+//    contentViewFrame.size.height = self.textField.frame.origin.y + self.textField.frame.size.height + 15;
+//    self.contentView.frame = contentViewFrame;
 }
 
 - (void)dealloc
@@ -98,6 +116,7 @@
 
 - (void)configureTextField
 {
+    /*
     CGFloat textFieldY = 0;
     if (self.isFloatField) {
         CGFloat textFieldX = self.separatorInset.left;
@@ -127,6 +146,7 @@
     self.textField.delegate = self;
 
     [self addSubview:self.textField];
+     */
 }
 
 - (void)configureLabel
@@ -134,7 +154,7 @@
     CGFloat labelX = self.separatorInset.left;
     CGRect labelFrame = CGRectMake(labelX,
                                    0,
-                                   self.textField.frame.origin.x - labelX,
+                                   self.bounds.size.width - labelX,
                                    self.bounds.size.height);
     self.label = [[UILabel alloc] initWithFrame:labelFrame];
     self.label.font = BZG_TEXTFIELD_LABEL_FONT;
@@ -143,108 +163,64 @@
     [self addSubview:self.label];
 }
 
-- (void)configureActivityIndicatorView
-{
-    CGFloat activityIndicatorWidth = self.bounds.size.height*0.7;
-    CGRect activityIndicatorFrame = CGRectMake(self.bounds.size.width - activityIndicatorWidth,
-                                               0,
-                                               activityIndicatorWidth,
-                                               self.bounds.size.height);
-    self.activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    [self.activityIndicatorView setFrame:activityIndicatorFrame];
-    self.activityIndicatorView.hidesWhenStopped = NO;
-    self.activityIndicatorView.hidden = YES;
-    [self addSubview:self.activityIndicatorView];
-}
-
 - (void)configureTap {
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(becomeFirstResponder)];
     [self.contentView addGestureRecognizer:tap];
 }
 
-- (void)configureBindings
-{
-   
-
-
-
-}
-
-+ (BZGTextViewCell *)parentCellForTextField:(UITextView *)textField
++ (BZGRichTextViewCell *)parentCellForTextField:(UITextView *)textField
 {
     UIView *view = textField;
     while ((view = view.superview)) {
         if ([view isKindOfClass:[BZGFormCell class]]) break;
     }
-    return (BZGTextViewCell *)view;
-}
-
-- (void)setShowsCheckmarkWhenValid:(BOOL)showsCheckmarkWhenValid
-{
-    _showsCheckmarkWhenValid = showsCheckmarkWhenValid;
-    // Force RACObserve to trigger
-    self.validationState = self.validationState;
-}
-
--(void)setFloatingLabelYPadding:(CGFloat)floatingLabelYPadding
-{
-    if ([self.textField isKindOfClass:[JVFloatLabeledTextView class]]) {
-        ((JVFloatLabeledTextView*)self.textField).floatingLabelYPadding = floatingLabelYPadding;
-    }
-}
-
-- (void)setAccessoryViewImage:(UIImage *)image {
-    self.accessoryView = [[UIImageView alloc] initWithImage:image];
-    self.accessoryView.frame = CGRectMake(0, 0, 24, 24);
+    return (BZGRichTextViewCell *)view;
 }
 
 #pragma mark - UITextField notification selectors
-// I'm using these notifications to flush the validation state signal.
-// It works, but seems hacky. Is there a better way?
-
-- (void)textFieldTextDidChange:(NSNotification *)notification
-{
-    UITextField *textField = (UITextField *)notification.object;
-    if ([textField isEqual:self.textField]) {
-        self.validationState = self.validationState;
-
-    }
-}
 
 -(void)setText:(NSString *)text
 {
+    /*
     self.textField.text = text;
 
     if ([self.textField.delegate respondsToSelector:@selector(textViewDidChange:)]) {
         [self.textField.delegate textViewDidChange:self.textField];
     }
+     */
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidChangeNotification object:self.textField];
+    [self.richText setHTML:text];
+    
+//    [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidChangeNotification object:self.textField];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:UITextFieldTextDidChangeNotification object:self.richText];
 }
 
 - (void)textFieldTextDidEndEditing:(NSNotification *)notification
 {
-    UITextField *textField = (UITextField *)notification.object;
-    if ([textField isEqual:self.textField]) {
-        self.validationState = self.validationState;
-    }
+//    UITextField *textField = (UITextField *)notification.object;
+//    if ([textField isEqual:self.textField]) {
+//        self.validationState = self.validationState;
+//    }
 }
 
 - (BOOL)becomeFirstResponder
 {
-    return [self.textField becomeFirstResponder];
+    [self.richText focusTextEditor];
 }
 
 - (BOOL)resignFirstResponder
 {
-    return [self.textField resignFirstResponder];
+    [self.richText blurTextEditor];
 }
 
 - (CGFloat)cellHeight
 {
-    CGSize textViewSize = [self.textField sizeThatFits:CGSizeMake(self.textField.frame.size.width, FLT_MAX)];
-    CGFloat height = ceilf(textViewSize.height); /*FXFormFieldPaddingTop + FXFormFieldPaddingBottom*/;
-    return height < BZG_TEXTVIEW_MIN_HEIGHT ? BZG_TEXTVIEW_MIN_HEIGHT: height;
+//    CGSize textViewSize = [self.textField sizeThatFits:CGSizeMake(self.textField.frame.size.width, FLT_MAX)];
+//    CGFloat height = ceilf(textViewSize.height);
+//    return height < BZG_TEXTVIEW_MIN_HEIGHT ? BZG_TEXTVIEW_MIN_HEIGHT: height;
+    
+    return BZG_TEXTVIEW_MIN_HEIGHT;
 }
 
 -(BOOL)canBecomeFirstResponder
