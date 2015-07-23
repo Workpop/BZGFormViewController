@@ -8,7 +8,7 @@
 #import "BZGFormCell.h"
 #import "NSError+BZGFormViewController.h"
 
-@class BZGInfoCell, BZGTextFieldCell, BZGTextViewCell, BZGPhoneTextFieldCell;
+@class BZGInfoCell, BZGTextFieldCell, BZGTextViewCell, BZGPhoneTextFieldCell, BZGRichTextViewCell;
 
 @interface BZGFormViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UITextViewDelegate, BZGFormCellDelegate>
 

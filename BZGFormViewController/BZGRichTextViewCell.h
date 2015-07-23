@@ -10,6 +10,18 @@
 
 #import "ZSSRichTextEditor.h"
 
+@protocol BZGRichTextCellDelegate <NSObject>
+
+/**
+ * Tells the delegate that the form cell changed its validation state.
+ */
+- (void)formCell:(BZGFormCell *)formCell didChangeValidationState:(BZGValidationState)validationState;
+
+- (void)richTextViewDidChange:(BZGFormCell *)richTextViewCell;
+
+@end
+
+
 @interface BZGRichTextViewCell : BZGFormCell
 
 @property (strong, nonatomic) UILabel *label;
@@ -42,5 +54,8 @@
  * @param textField A UITextField instance that may or may not belong to this BZGTextFieldCell instance.
  */
 + (BZGRichTextViewCell *)parentCellForTextField:(UITextView *)textField;
+
+/// The cell's delegate
+@property (weak, nonatomic) id<BZGRichTextCellDelegate> richTextDelegate;
 
 @end

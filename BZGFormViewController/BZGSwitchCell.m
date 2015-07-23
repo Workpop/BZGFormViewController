@@ -32,7 +32,6 @@
 
 -(void)layoutSubviews
 {
-    
     [super layoutSubviews];
     
     if (self.switchField) {

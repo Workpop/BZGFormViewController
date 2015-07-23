@@ -46,6 +46,14 @@ static NSString * const ZSSRichTextEditorToolbarParagraph = @"com.zedsaid.toolba
 static NSString * const ZSSRichTextEditorToolbarAll = @"com.zedsaid.toolbaritem.all";
 static NSString * const ZSSRichTextEditorToolbarNone = @"com.zedsaid.toolbaritem.none";
 
+
+@protocol ZSSRichTextEditorDelegate <NSObject>
+
+- (void)richTextHeightDidChange:(NSUInteger)height;
+
+@end
+
+
 @class ZSSBarButtonItem;
 
 /**
@@ -53,6 +61,11 @@ static NSString * const ZSSRichTextEditorToolbarNone = @"com.zedsaid.toolbaritem
  */
 //@interface ZSSRichTextEditor : UIViewController <UIWebViewDelegate, HRColorPickerViewControllerDelegate, UITextViewDelegate>
 @interface ZSSRichTextEditor : NSObject <UIWebViewDelegate, UITextViewDelegate>
+
+
+@property (weak, nonatomic) id<ZSSRichTextEditorDelegate> delegate;
+
+@property NSUInteger contentHeight;
 
 
 /**

@@ -11,7 +11,7 @@
 #import "BZGPhoneTextFieldCell.h"
 #import "BZGTextFieldCell.h"
 #import "BZGTextViewCell.h"
-
+#import "BZGRichTextViewCell.h"
 #import "BZGDateTextFieldCell.h"
 #import "BZGStateTextFieldCell.h"
 #import "BZGMonthYearTextFieldCell.h"
@@ -19,7 +19,7 @@
 #import "BZGKeyboardControl.h"
 #import "Constants.h"
 
-@interface BZGFormViewController ()
+@interface BZGFormViewController () <BZGRichTextCellDelegate>
 
 @property (nonatomic, assign) UITableViewStyle style;
 @property (nonatomic, assign) BOOL isValid;
@@ -320,6 +320,22 @@
     CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:textView];
     
     [self.tableView scrollRectToVisible:tableViewrect animated:YES];
+}
+
+- (void)richTextViewDidChange:(BZGRichTextViewCell *)richTextViewCell
+{
+    //resize the tableview if required
+    [self.tableView beginUpdates];
+    [self.tableView endUpdates];
+    
+    [self fixSeparator];
+    
+    /*
+    CGRect cursorRect = [richTextViewCell caretRectForPosition:richTextView.selectedTextRange.end];
+    CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:richTextViewCell];
+    
+    [self.tableView scrollRectToVisible:tableViewrect animated:YES];
+     */
 }
 
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
@@ -676,6 +692,9 @@
         }
         else if ([cell isKindOfClass:[BZGTextViewCell class]]) {
             ((BZGTextViewCell *)cell).textField.delegate = self;
+        }
+        else if ([cell isKindOfClass:[BZGRichTextViewCell class]]) {
+            ((BZGRichTextViewCell *)cell).richTextDelegate = self;
         }
         
     } else if (![cell isKindOfClass:[BZGInfoCell class]]) {

@@ -62,7 +62,6 @@
         if (self.textField.text.length > 0){
             [self.picker setSelectedOption:self.textField.text animated:NO];
         }
-        
     }
 }
 

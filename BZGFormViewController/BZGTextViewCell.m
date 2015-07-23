@@ -62,6 +62,8 @@
                                              selector:@selector(textFieldTextDidChange:)
                                                  name:UITextViewTextDidChangeNotification
                                                object:nil];
+    
+    self.contentView.backgroundColor = [UIColor clearColor];
 }
 
 -(void)layoutSubviews
@@ -207,7 +209,6 @@
     UITextField *textField = (UITextField *)notification.object;
     if ([textField isEqual:self.textField]) {
         self.validationState = self.validationState;
-
     }
 }
 
@@ -242,8 +243,12 @@
 
 - (CGFloat)cellHeight
 {
+//    CGRect contentViewFrame = self.contentView.frame;
+//    contentViewFrame.size.height = self.textField.frame.origin.y + self.textField.frame.size.height + 15;
+//    self.contentView.frame = contentViewFrame;
+    
     CGSize textViewSize = [self.textField sizeThatFits:CGSizeMake(self.textField.frame.size.width, FLT_MAX)];
-    CGFloat height = ceilf(textViewSize.height); /*FXFormFieldPaddingTop + FXFormFieldPaddingBottom*/;
+    CGFloat height = ceilf(textViewSize.height) + self.textField.frame.origin.y + 15; /*FXFormFieldPaddingTop + FXFormFieldPaddingBottom*/;
     return height < BZG_TEXTVIEW_MIN_HEIGHT ? BZG_TEXTVIEW_MIN_HEIGHT: height;
 }
 

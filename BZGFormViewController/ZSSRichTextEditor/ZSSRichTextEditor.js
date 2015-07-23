@@ -28,79 +28,23 @@ zss_editor.currentEditingLink;
 zss_editor.enabledItems = {};
 
 // Height of content window, will be set by viewController
-zss_editor.contentHeight = 244;
-
-// Sets to true when extra footer gap shows and requires to hide
-zss_editor.updateScrollOffset = false;
+zss_editor.contentHeight = 120;
 
 /**
  * The initializer function that must be called onLoad
  */
 zss_editor.init = function() {
-    /*
-     $('#zss_editor_content').on('touchend', function(e) {
-     zss_editor.enabledEditingItems(e);
-     var clicked = $(e.target);
-     if (!clicked.hasClass('zs_active')) {
-     $('img').removeClass('zs_active');
-     }
-     });*/
-    /*
-     $(document).on('selectionchange',function(e){
-     zss_editor.calculateEditorHeightWithCaretPosition();
-     zss_editor.setScrollPosition();
-     });*/
-    
     $(document).keyup(function() {
-                      zss_editor.calculateEditorHeightWithCaretPosition();
-                      zss_editor.setScrollPosition();
+                      
+                      //zss_editor.calculateEditorHeightWithCaretPosition();
+                      //zss_editor.setScrollPosition();
+                      
+                      var e = document.getElementById('zss_editor_content');
+                      var scrollHeight = e.scrollHeight;
+                      window.location = 'scrollheight://'+scrollHeight;
+                      
                       });
-    /*
-     $(window).on('scroll', function(e) {
-     zss_editor.updateOffset();
-     });*/
-    
-    // Make sure that when we tap anywhere in the document we focus on the editor
-    /*
-     $(window).on('touchmove', function(e) {
-     zss_editor.isDragging = true;
-     zss_editor.updateScrollOffset = true;
-     zss_editor.setScrollPosition();
-     });*/
-    /*
-     $(window).on('touchstart', function(e) {
-     zss_editor.isDragging = false;
-     });*/
-    /*
-     $(window).on('touchend', function(e) {
-     if (!zss_editor.isDragging) {
-     zss_editor.focusEditor();
-     }
-     });*/
-    
 }//end
-
-zss_editor.updateOffset = function() {
-    
-    if (!zss_editor.updateScrollOffset)
-        return;
-    
-    var offsetY = window.document.body.scrollTop;
-    
-    var footer = $('#zss_editor_footer');
-    
-    var maxOffsetY = footer.offset().top - zss_editor.contentHeight;
-    
-    if (maxOffsetY < 0)
-        maxOffsetY = 0;
-    
-    if (offsetY > maxOffsetY)
-    {
-        window.scrollTo(0, maxOffsetY);
-    }
-    
-    zss_editor.setScrollPosition();
-}
 
 // This will show up in the XCode console as we are able to push this into an NSLog.
 zss_editor.debug = function(msg) {
@@ -108,8 +52,8 @@ zss_editor.debug = function(msg) {
 }
 
 zss_editor.setScrollPosition = function() {
-    var position = window.pageYOffset;
-    window.location = 'scroll://'+position;
+ //   var position = window.pageYOffset;
+ //   window.location = 'scroll://'+position;
 }
 
 zss_editor.setPlaceholder = function(placeholder) {
@@ -136,12 +80,8 @@ zss_editor.setPlaceholder = function(placeholder) {
     
 }
 
-zss_editor.setFooterHeight = function(footerHeight) {
-    var footer = $('#zss_editor_footer');
-    footer.height(footerHeight + 'px');
-}
-
 zss_editor.getCaretYPosition = function() {
+    
     var sel = window.getSelection();
     // Next line is comented to prevent deselecting selection. It looks like work but if there are any issues will appear then uconmment it as well as code above.
     //sel.collapseToStart();
@@ -150,12 +90,17 @@ zss_editor.getCaretYPosition = function() {
     range.insertNode(span);
     var topPosition = span.offsetTop;
     span.parentNode.removeChild(span);
+    
+    zss_editor.debug(topPosition);
+    
     return topPosition;
 }
 
 zss_editor.calculateEditorHeightWithCaretPosition = function() {
-    
+    /*
     var padding = 50;
+//    var padding = 0;
+
     var c = zss_editor.getCaretYPosition();
     var e = document.getElementById('zss_editor_content');
     
@@ -169,10 +114,11 @@ zss_editor.calculateEditorHeightWithCaretPosition = function() {
     if (c < offsetY) {
         newPos = c;
     } else if (c > (offsetY + height - padding)) {
-        var newPos = c - height + padding - 18;
+        newPos = c - height + padding - 18;
     }
-    
-    window.scrollTo(0, newPos);
+
+//    window.scrollTo(0, newPos);
+    */
 }
 
 zss_editor.backuprange = function(){

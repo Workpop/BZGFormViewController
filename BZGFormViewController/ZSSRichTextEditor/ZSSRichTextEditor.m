@@ -82,6 +82,7 @@ static Class hackishFixClass = Nil;
 @property (nonatomic, strong) UIWebView *editorView;
 @property (nonatomic, strong) UITextView *sourceView;
 @property (nonatomic) CGRect editorViewFrame;
+@property (nonatomic) CGRect keyboardEnd;
 @property (nonatomic) BOOL resourcesLoaded;
 @property (nonatomic, strong) NSArray *editorItemsEnabled;
 @property (nonatomic, strong) UIAlertView *alertView;
@@ -94,6 +95,7 @@ static Class hackishFixClass = Nil;
 @property (nonatomic, strong) NSMutableArray *customZSSBarButtonItems;
 @property (nonatomic, strong) NSString *internalHTML;
 @property (nonatomic) BOOL editorLoaded;
+
 - (NSString *)removeQuotesFromHTML:(NSString *)html;
 - (NSString *)tidyHTML:(NSString *)html;
 - (void)enableToolbarItems:(BOOL)enable;
@@ -115,8 +117,11 @@ static Class hackishFixClass = Nil;
         
         self.view = view;
         
+        // set initial height
+        self.contentHeight = CGRectGetHeight(self.view.frame);
+        
         self.editorLoaded = NO;
-        self.shouldShowKeyboard = YES;
+        self.shouldShowKeyboard = NO;
         self.formatHTML = YES;
         
         self.enabledToolbarItems = [[NSArray alloc] init];
@@ -143,8 +148,7 @@ static Class hackishFixClass = Nil;
         self.editorView.dataDetectorTypes = UIDataDetectorTypeNone;
        
         self.editorView.scrollView.bounces = NO;
-        
-//        self.editorView.scrollView.bounces = YES;
+        self.editorView.scrollView.scrollEnabled = NO;
 
         
         self.editorView.backgroundColor = [UIColor whiteColor];
@@ -164,6 +168,7 @@ static Class hackishFixClass = Nil;
         // Background Toolbar
         UIToolbar *backgroundToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.toolbar.frame), 44)];
         backgroundToolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        backgroundToolbar.backgroundColor = [UIColor whiteColor];
         
         // Parent holding view
         self.toolbarHolder = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetHeight([UIScreen mainScreen].bounds), CGRectGetWidth(self.toolbar.frame), 44)];
@@ -249,11 +254,13 @@ static Class hackishFixClass = Nil;
     [self.editorView stringByEvaluatingJavaScriptFromString:js];
 }
 
+/*
 - (void)setContentHeight:(float)contentHeight {
     
     NSString *js = [NSString stringWithFormat:@"zss_editor.contentHeight = %f;", contentHeight];
     [self.editorView stringByEvaluatingJavaScriptFromString:js];
 }
+ */
 
 
 - (NSArray *)itemsForToolbar {
@@ -1051,12 +1058,17 @@ static Class hackishFixClass = Nil;
         NSLog(@"%@", debug);
         
     } else if ([urlString rangeOfString:@"scroll://"].location != NSNotFound) {
-        
         NSInteger position = [[urlString stringByReplacingOccurrencesOfString:@"scroll://" withString:@""] integerValue];
         [self editorDidScrollWithPosition:position];
+    }
+    else if ([urlString rangeOfString:@"scrollheight://"].location != NSNotFound) {
+        self.contentHeight = [[urlString stringByReplacingOccurrencesOfString:@"scrollheight://" withString:@""] integerValue] + 18;
+        
+        if ([self.delegate respondsToSelector:@selector(richTextHeightDidChange:)]) {
+            [self.delegate richTextHeightDidChange:self.contentHeight];
+        }
         
     }
-    
     return YES;
     
 }//end
@@ -1085,54 +1097,6 @@ static Class hackishFixClass = Nil;
     
 }
 
-
-#pragma mark - AlertView
-
-- (BOOL)alertViewShouldEnableFirstOtherButton:(UIAlertView *)alertView {
-    
-    if (alertView.tag == 1) {
-        UITextField *textField = [alertView textFieldAtIndex:0];
-        UITextField *textField2 = [alertView textFieldAtIndex:1];
-        if ([textField.text length] == 0 || [textField2.text length] == 0) {
-            return NO;
-        }
-    } else if (alertView.tag == 2) {
-        UITextField *textField = [alertView textFieldAtIndex:0];
-        if ([textField.text length] == 0) {
-            return NO;
-        }
-    }
-    
-    return YES;
-}
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    
-    if (alertView.tag == 1) {
-        if (buttonIndex == 1) {
-            UITextField *imageURL = [alertView textFieldAtIndex:0];
-            UITextField *alt = [alertView textFieldAtIndex:1];
-            if (!self.selectedImageURL) {
-                [self insertImage:imageURL.text alt:alt.text];
-            } else {
-                [self updateImage:imageURL.text alt:alt.text];
-            }
-        }
-    } else if (alertView.tag == 2) {
-        if (buttonIndex == 1) {
-            UITextField *linkURL = [alertView textFieldAtIndex:0];
-            UITextField *title = [alertView textFieldAtIndex:1];
-            if (!self.selectedLinkURL) {
-                [self insertLink:linkURL.text title:title.text];
-            } else {
-                [self updateLink:linkURL.text title:title.text];
-            }
-        }
-    }
-    
-}
-
-
 #pragma mark - Asset Picker
 
 - (void)showInsertURLAlternatePicker {
@@ -1153,12 +1117,12 @@ static Class hackishFixClass = Nil;
     NSDictionary *info = notification.userInfo;
     CGFloat duration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
     int curve = [[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
-    CGRect keyboardEnd = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    self.keyboardEnd = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     
     // Toolbar Sizes
     CGFloat sizeOfToolbar = CGRectGetHeight(self.toolbarHolder.frame);
     
-    CGRect keyboardEndInView = [self.view convertRect:keyboardEnd fromView:nil];
+    CGRect keyboardEndInView = [self.view convertRect:self.keyboardEnd fromView:nil];
     
     CGFloat keyboardTopYInView = keyboardEndInView.origin.y;
     keyboardTopYInView = MAX(0, keyboardTopYInView);
@@ -1178,15 +1142,15 @@ static Class hackishFixClass = Nil;
 
             // Toolbar
             CGRect frame = self.toolbarHolder.frame;
-            frame.origin.y = keyboardEnd.origin.y - sizeOfToolbar;
+            frame.origin.y = self.keyboardEnd.origin.y - sizeOfToolbar;
             self.toolbarHolder.frame = frame;
             
             self.editorView.scrollView.contentInset = UIEdgeInsetsZero;
             self.editorView.scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
             
             // Provide editor with keyboard height and editor view height
-            [self setFooterHeight:(self.view.frame.size.height - keyboardTopYInView - 8)];
-            [self setContentHeight: self.editorViewFrame.size.height];
+//           [self setFooterHeight:(self.view.frame.size.height - keyboardTopYInView - 8)];
+//           [self setContentHeight: self.view.frame.size.height];
 
         } completion:nil];
         
@@ -1203,7 +1167,6 @@ static Class hackishFixClass = Nil;
         
     }//end
 }
-
 
 #pragma mark - Utilities
 
