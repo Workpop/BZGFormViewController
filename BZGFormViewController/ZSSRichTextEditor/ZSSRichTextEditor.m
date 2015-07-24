@@ -148,6 +148,9 @@ static Class hackishFixClass = Nil;
         self.editorView.scrollView.bounces = NO;
         self.editorView.scrollView.scrollEnabled = NO;
         self.editorView.backgroundColor = [UIColor whiteColor];
+        
+        self.editorView.scrollView.delegate = self;
+        
         [self.view addSubview:self.editorView];
         
         // Scrolling View
@@ -1039,11 +1042,14 @@ static Class hackishFixClass = Nil;
         self.internalHTML = @"";
     }
     [self updateHTML];
+    
+/*
     if (self.shouldShowKeyboard) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self focusTextEditor];
         });
     }
+*/
 }
 
 #pragma mark - Asset Picker
@@ -1084,6 +1090,9 @@ static Class hackishFixClass = Nil;
     if (isInFirstResponderChain && [notification.name isEqualToString:UIKeyboardWillShowNotification]) {
         
         self.toolbarHolder.alpha = 0;
+        
+        // make sure the content size is still the right size
+        [self.editorView.scrollView setContentSize:CGSizeMake(self.editorView.scrollView.frame.size.width, self.contentHeight)];
 
         [UIView animateWithDuration:duration delay:0 options:animationOptions animations:^{
             
@@ -1095,18 +1104,28 @@ static Class hackishFixClass = Nil;
             self.toolbarHolder.frame = frame;
             
             self.editorView.scrollView.contentInset = UIEdgeInsetsZero;
-            self.editorView.scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
-            [self.editorView.scrollView scrollRectToVisible:CGRectZero animated:NO];
-            
-        } completion:^(BOOL finished) {
+    //        self.editorView.scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
             
             // make sure the content size is still the right size
-            [self.editorView.scrollView setContentSize:CGSizeMake(self.editorView.scrollView.frame.size.width, self.contentHeight)];
+      //      [self.editorView.scrollView setContentSize:CGSizeMake(self.editorView.scrollView.frame.size.width, self.contentHeight)];
             
             // send this to update frame
             if ([self.delegate respondsToSelector:@selector(richTextEditorViewDidChange:)]) {
                 [self.delegate richTextEditorViewDidChange:self];
             }
+            
+        } completion:^(BOOL finished) {
+            
+            // make sure the content size is still the right size
+   //         [self.editorView.scrollView setContentSize:CGSizeMake(self.editorView.scrollView.frame.size.width, self.contentHeight)];
+            
+//            // make sure the content size is still the right size
+//            [self.editorView.scrollView setContentSize:CGSizeMake(self.editorView.scrollView.frame.size.width, self.contentHeight)];
+//            
+//            // send this to update frame
+//            if ([self.delegate respondsToSelector:@selector(richTextEditorViewDidChange:)]) {
+//                [self.delegate richTextEditorViewDidChange:self];
+//            }
         }];
         
     } else {
@@ -1184,6 +1203,13 @@ static Class hackishFixClass = Nil;
             item.enabled = enable;
         }
     }
+}
+
+#pragma mark - <UIScrollViewDelegate>
+
+// UIScrollViewDelegate method
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    scrollView.bounds = self.editorView.bounds;
 }
 
 
