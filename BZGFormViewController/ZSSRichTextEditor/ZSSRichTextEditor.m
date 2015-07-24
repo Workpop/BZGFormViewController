@@ -135,7 +135,6 @@ static Class hackishFixClass = Nil;
         self.sourceView.font = [UIFont fontWithName:@"Courier" size:13.0];
         self.sourceView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         self.sourceView.autoresizesSubviews = YES;
-        self.sourceView.delegate = self;
         [self.view addSubview:self.sourceView];
         
         // Editor View
@@ -143,14 +142,11 @@ static Class hackishFixClass = Nil;
         self.editorView.delegate = self;
         self.editorView.hidesInputAccessoryView = YES;
         self.editorView.keyboardDisplayRequiresUserAction = NO;
-        self.editorView.scalesPageToFit = YES;
+        self.editorView.scalesPageToFit = NO;
         self.editorView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
         self.editorView.dataDetectorTypes = UIDataDetectorTypeNone;
-       
         self.editorView.scrollView.bounces = NO;
         self.editorView.scrollView.scrollEnabled = NO;
-
-        
         self.editorView.backgroundColor = [UIColor whiteColor];
         [self.view addSubview:self.editorView];
         
@@ -218,7 +214,6 @@ static Class hackishFixClass = Nil;
     
     _enabledToolbarItems = enabledToolbarItems;
     [self buildToolbar];
-    
 }
 
 
@@ -231,7 +226,6 @@ static Class hackishFixClass = Nil;
         item.tintColor = [self barButtonItemDefaultColor];
     }
     self.keyboardItem.tintColor = toolbarItemTintColor;
-    
 }
 
 
@@ -247,21 +241,6 @@ static Class hackishFixClass = Nil;
     [self.editorView stringByEvaluatingJavaScriptFromString:js];
     
 }
-
-- (void)setFooterHeight:(float)footerHeight {
-    
-    NSString *js = [NSString stringWithFormat:@"zss_editor.setFooterHeight(\"%f\");", footerHeight];
-    [self.editorView stringByEvaluatingJavaScriptFromString:js];
-}
-
-/*
-- (void)setContentHeight:(float)contentHeight {
-    
-    NSString *js = [NSString stringWithFormat:@"zss_editor.contentHeight = %f;", contentHeight];
-    [self.editorView stringByEvaluatingJavaScriptFromString:js];
-}
- */
-
 
 - (NSArray *)itemsForToolbar {
     
@@ -1016,25 +995,6 @@ static Class hackishFixClass = Nil;
     
 }
 
-
-#pragma mark - UITextView Delegate
-
-- (void)textViewDidChange:(UITextView *)textView {
-    CGRect line = [textView caretRectForPosition:textView.selectedTextRange.start];
-    CGFloat overflow = line.origin.y + line.size.height - ( textView.contentOffset.y + textView.bounds.size.height - textView.contentInset.bottom - textView.contentInset.top );
-    if ( overflow > 0 ) {
-        // We are at the bottom of the visible text and introduced a line feed, scroll down (iOS 7 does not do it)
-        // Scroll caret to visible area
-        CGPoint offset = textView.contentOffset;
-        offset.y += overflow + 7; // leave 7 pixels margin
-        // Cannot animate with setContentOffset:animated: or caret will not appear
-        [UIView animateWithDuration:.2 animations:^{
-            [textView setContentOffset:offset];
-        }];
-    }
-}
-
-
 #pragma mark - UIWebView Delegate
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
@@ -1063,6 +1023,7 @@ static Class hackishFixClass = Nil;
         if ([self.delegate respondsToSelector:@selector(richTextEditorViewDidChange:)]) {
             [self.delegate richTextEditorViewDidChange:self];
         }
+        
     } else if ([urlString rangeOfString:@"caratposition://"].location != NSNotFound) {
         self.carrotPositionY = [[urlString stringByReplacingOccurrencesOfString:@"caratposition://" withString:@""] integerValue] + 44 + 18; // add height of bar and carrot
     }
@@ -1073,7 +1034,7 @@ static Class hackishFixClass = Nil;
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
     self.editorLoaded = YES;
-    //[self setPlaceholderText];
+    [self setPlaceholderText];
     if (!self.internalHTML) {
         self.internalHTML = @"";
     }
@@ -1135,12 +1096,18 @@ static Class hackishFixClass = Nil;
             
             self.editorView.scrollView.contentInset = UIEdgeInsetsZero;
             self.editorView.scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
+            [self.editorView.scrollView scrollRectToVisible:CGRectZero animated:NO];
             
-            // Provide editor with keyboard height and editor view height
-//           [self setFooterHeight:(self.view.frame.size.height - keyboardTopYInView - 8)];
-//           [self setContentHeight: self.view.frame.size.height];
-
-        } completion:nil];
+        } completion:^(BOOL finished) {
+            
+            // make sure the content size is still the right size
+            [self.editorView.scrollView setContentSize:CGSizeMake(self.editorView.scrollView.frame.size.width, self.contentHeight)];
+            
+            // send this to update frame
+            if ([self.delegate respondsToSelector:@selector(richTextEditorViewDidChange:)]) {
+                [self.delegate richTextEditorViewDidChange:self];
+            }
+        }];
         
     } else {
         

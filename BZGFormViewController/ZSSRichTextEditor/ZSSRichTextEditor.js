@@ -31,6 +31,19 @@ zss_editor.enabledItems = {};
  * The initializer function that must be called onLoad
  */
 zss_editor.init = function() {
+    
+     $('#zss_editor_content').on('click', function(e) {
+            var c = zss_editor.getCaretYPosition();
+            window.location = 'caratposition://'+c;
+            window.scrollTo(0, 0);
+                                 
+                                 setTimeout(function () {
+                                            var e = document.getElementById('zss_editor_content');
+                                            var scrollHeight = e.scrollHeight;
+                                            window.location = 'scrollheight://'+scrollHeight;
+                                            }, 10);
+    });
+    
     $(document).keyup(function() {
                       var c = zss_editor.getCaretYPosition();
                       window.location = 'caratposition://'+c;
@@ -531,31 +544,4 @@ zss_editor.enabledEditingItems = function(e) {
             console.log("callback://");
         }
     }
-    
 }
-
-zss_editor.focusWysiwyg = function() {
-    
-    var editor = $('#zss_editor_content');
-    editor.focus();
-}
-
-/*
- zss_editor.focusEditor = function() {
- 
- // the following was taken from http://stackoverflow.com/questions/1125292/how-to-move-cursor-to-end-of-contenteditable-entity/3866442#3866442
- // and ensures we move the cursor to the end of the editor
- var editor = $('#zss_editor_content');
- var range = document.createRange();
- range.selectNodeContents(editor.get(0));
- range.collapse(false);
- var selection = window.getSelection();
- selection.removeAllRanges();
- selection.addRange(range);
- editor.focus();
- }
- */
-/*
- zss_editor.blurEditor = function() {
- $('#zss_editor_content').blur();
- }*/
