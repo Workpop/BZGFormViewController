@@ -1090,10 +1090,7 @@ static Class hackishFixClass = Nil;
     if (isInFirstResponderChain && [notification.name isEqualToString:UIKeyboardWillShowNotification]) {
         
         self.toolbarHolder.alpha = 0;
-        
-        // make sure the content size is still the right size
-        [self.editorView.scrollView setContentSize:CGSizeMake(self.editorView.scrollView.frame.size.width, self.contentHeight)];
-
+            
         [UIView animateWithDuration:duration delay:0 options:animationOptions animations:^{
             
             self.toolbarHolder.alpha = 1;
@@ -1104,29 +1101,8 @@ static Class hackishFixClass = Nil;
             self.toolbarHolder.frame = frame;
             
             self.editorView.scrollView.contentInset = UIEdgeInsetsZero;
-    //        self.editorView.scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
-            
-            // make sure the content size is still the right size
-      //      [self.editorView.scrollView setContentSize:CGSizeMake(self.editorView.scrollView.frame.size.width, self.contentHeight)];
-            
-            // send this to update frame
-            if ([self.delegate respondsToSelector:@selector(richTextEditorViewDidChange:)]) {
-                [self.delegate richTextEditorViewDidChange:self];
-            }
-            
-        } completion:^(BOOL finished) {
-            
-            // make sure the content size is still the right size
-   //         [self.editorView.scrollView setContentSize:CGSizeMake(self.editorView.scrollView.frame.size.width, self.contentHeight)];
-            
-//            // make sure the content size is still the right size
-//            [self.editorView.scrollView setContentSize:CGSizeMake(self.editorView.scrollView.frame.size.width, self.contentHeight)];
-//            
-//            // send this to update frame
-//            if ([self.delegate respondsToSelector:@selector(richTextEditorViewDidChange:)]) {
-//                [self.delegate richTextEditorViewDidChange:self];
-//            }
-        }];
+            self.editorView.scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
+        } completion:nil];
         
     } else {
         
@@ -1206,8 +1182,7 @@ static Class hackishFixClass = Nil;
 }
 
 #pragma mark - <UIScrollViewDelegate>
-
-// UIScrollViewDelegate method
+// Make sure the editorView doesn't scroll
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     scrollView.bounds = self.editorView.bounds;
 }
