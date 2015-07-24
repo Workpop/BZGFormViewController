@@ -27,33 +27,25 @@ zss_editor.currentEditingLink;
 // The objects that are enabled
 zss_editor.enabledItems = {};
 
-// Height of content window, will be set by viewController
-zss_editor.contentHeight = 120;
-
 /**
  * The initializer function that must be called onLoad
  */
 zss_editor.init = function() {
     $(document).keyup(function() {
+                      var c = zss_editor.getCaretYPosition();
+                      window.location = 'caratposition://'+c;
                       
-                      //zss_editor.calculateEditorHeightWithCaretPosition();
-                      //zss_editor.setScrollPosition();
-                      
-                      var e = document.getElementById('zss_editor_content');
-                      var scrollHeight = e.scrollHeight;
-                      window.location = 'scrollheight://'+scrollHeight;
-                      
+                      setTimeout(function () {
+                                 var e = document.getElementById('zss_editor_content');
+                                 var scrollHeight = e.scrollHeight;
+                                 window.location = 'scrollheight://'+scrollHeight;
+                        }, 10);
                       });
 }//end
 
 // This will show up in the XCode console as we are able to push this into an NSLog.
 zss_editor.debug = function(msg) {
     window.location = 'debug://'+msg;
-}
-
-zss_editor.setScrollPosition = function() {
- //   var position = window.pageYOffset;
- //   window.location = 'scroll://'+position;
 }
 
 zss_editor.setPlaceholder = function(placeholder) {
@@ -91,34 +83,7 @@ zss_editor.getCaretYPosition = function() {
     var topPosition = span.offsetTop;
     span.parentNode.removeChild(span);
     
-    zss_editor.debug(topPosition);
-    
     return topPosition;
-}
-
-zss_editor.calculateEditorHeightWithCaretPosition = function() {
-    /*
-    var padding = 50;
-//    var padding = 0;
-
-    var c = zss_editor.getCaretYPosition();
-    var e = document.getElementById('zss_editor_content');
-    
-    var editor = $('#zss_editor_content');
-    
-    var offsetY = window.document.body.scrollTop;
-    var height = zss_editor.contentHeight;
-    
-    var newPos = window.pageYOffset;
-    
-    if (c < offsetY) {
-        newPos = c;
-    } else if (c > (offsetY + height - padding)) {
-        newPos = c - height + padding - 18;
-    }
-
-//    window.scrollTo(0, newPos);
-    */
 }
 
 zss_editor.backuprange = function(){

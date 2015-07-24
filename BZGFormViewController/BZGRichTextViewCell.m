@@ -85,7 +85,7 @@
     self.richText = [[ZSSRichTextEditor alloc] initWithView:self.holder];
     self.richText.enabledToolbarItems = @[ZSSRichTextEditorToolbarBold, ZSSRichTextEditorToolbarItalic, ZSSRichTextEditorToolbarUnorderedList, ZSSRichTextEditorToolbarOrderedList, ZSSRichTextEditorToolbarQuickLink];
     self.richText.shouldShowKeyboard = NO;
-    self.richText.delegate = self;
+//    self.richText.delegate = self;
     
     self.contentView.backgroundColor = [UIColor clearColor];
 }
@@ -125,17 +125,6 @@
 {
     CGFloat height = ceilf(self.richText.contentHeight);
     return self.richText.contentHeight < BZG_TEXTVIEW_MIN_HEIGHT ? BZG_TEXTVIEW_MIN_HEIGHT: self.richText.contentHeight;
-}
-
-- (void) richTextHeightDidChange:(NSUInteger)height
-{
-    if (self.shouldChangeTextBlock) {
-        self.shouldChangeTextBlock(self, [self.richText getText]);
-    }
-    
-    if ([self.richTextDelegate respondsToSelector:@selector(richTextViewDidChange:)]) {
-        [self.richTextDelegate richTextViewDidChange:self];
-    }
 }
 
 -(BOOL)canBecomeFirstResponder

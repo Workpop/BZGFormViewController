@@ -19,7 +19,7 @@
 #import "BZGKeyboardControl.h"
 #import "Constants.h"
 
-@interface BZGFormViewController () <BZGRichTextCellDelegate>
+@interface BZGFormViewController () <ZSSRichTextEditorDelegate>
 
 @property (nonatomic, assign) UITableViewStyle style;
 @property (nonatomic, assign) BOOL isValid;
@@ -322,7 +322,8 @@
     [self.tableView scrollRectToVisible:tableViewrect animated:YES];
 }
 
-- (void)richTextViewDidChange:(BZGRichTextViewCell *)richTextViewCell
+
+- (void)richTextEditorViewDidChange:(ZSSRichTextEditor *)richTextEditor
 {
     //resize the tableview if required
     [self.tableView beginUpdates];
@@ -330,12 +331,9 @@
     
     [self fixSeparator];
     
-    /*
-    CGRect cursorRect = [richTextViewCell caretRectForPosition:richTextView.selectedTextRange.end];
-    CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:richTextViewCell];
-    
+    CGRect cursorRect = CGRectMake(0, richTextEditor.carrotPositionY, 2, 20.521666666666668);
+    CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:richTextEditor.view];
     [self.tableView scrollRectToVisible:tableViewrect animated:YES];
-     */
 }
 
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
@@ -694,7 +692,7 @@
             ((BZGTextViewCell *)cell).textField.delegate = self;
         }
         else if ([cell isKindOfClass:[BZGRichTextViewCell class]]) {
-            ((BZGRichTextViewCell *)cell).richTextDelegate = self;
+            ((BZGRichTextViewCell *)cell).richText.delegate = self;
         }
         
     } else if (![cell isKindOfClass:[BZGInfoCell class]]) {

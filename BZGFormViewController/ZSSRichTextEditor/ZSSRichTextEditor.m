@@ -1057,17 +1057,14 @@ static Class hackishFixClass = Nil;
         debug = [debug stringByReplacingPercentEscapesUsingEncoding:NSStringEncodingConversionAllowLossy];
         NSLog(@"%@", debug);
         
-    } else if ([urlString rangeOfString:@"scroll://"].location != NSNotFound) {
-        NSInteger position = [[urlString stringByReplacingOccurrencesOfString:@"scroll://" withString:@""] integerValue];
-        [self editorDidScrollWithPosition:position];
-    }
-    else if ([urlString rangeOfString:@"scrollheight://"].location != NSNotFound) {
-        self.contentHeight = [[urlString stringByReplacingOccurrencesOfString:@"scrollheight://" withString:@""] integerValue] + 18;
+    } else if ([urlString rangeOfString:@"scrollheight://"].location != NSNotFound) {
+        self.contentHeight = [[urlString stringByReplacingOccurrencesOfString:@"scrollheight://" withString:@""] integerValue] + 18; // add height of carat
         
-        if ([self.delegate respondsToSelector:@selector(richTextHeightDidChange:)]) {
-            [self.delegate richTextHeightDidChange:self.contentHeight];
+        if ([self.delegate respondsToSelector:@selector(richTextEditorViewDidChange:)]) {
+            [self.delegate richTextEditorViewDidChange:self];
         }
-        
+    } else if ([urlString rangeOfString:@"caratposition://"].location != NSNotFound) {
+        self.carrotPositionY = [[urlString stringByReplacingOccurrencesOfString:@"caratposition://" withString:@""] integerValue] + 44 + 18; // add height of bar and carrot
     }
     return YES;
     
@@ -1086,15 +1083,6 @@ static Class hackishFixClass = Nil;
             [self focusTextEditor];
         });
     }
-}
-
-
-#pragma mark - Callbacks
-
-// Blank implementation
-- (void)editorDidScrollWithPosition:(NSInteger)position {
-    
-    
 }
 
 #pragma mark - Asset Picker
