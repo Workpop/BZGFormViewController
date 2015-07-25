@@ -545,3 +545,9 @@ zss_editor.enabledEditingItems = function(e) {
         }
     }
 }
+
+
+zss_editor.focusWysiwyg = function() {
+    var editor = $('#zss_editor_content');
+    editor.focus();
+}

@@ -28,6 +28,8 @@
 @property (nonatomic, strong) NSMutableArray *formCellsBySection;
 @property (nonatomic, strong) NSArray *allFormCellsFlattened;
 @property (nonatomic, weak) BZGFormCell *currentlyEditingCell;
+@property CGSize keyboardSize;
+
 
 @end
 
@@ -334,6 +336,9 @@
     CGRect cursorRect = CGRectMake(0, richTextEditor.carrotPositionY, 2, 20.521666666666668);
     CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:richTextEditor.view];
     [self.tableView scrollRectToVisible:tableViewrect animated:YES];
+    
+    // accessorize
+    [self accesorizeRichTextView:richTextEditor.view];
 }
 
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
@@ -505,13 +510,13 @@
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
-    CGSize keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
+    self.keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
 
     UIEdgeInsets contentInsets;
     if (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation])) {
-        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (keyboardSize.height), 0.0);
+        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (self.keyboardSize.height), 0.0);
     } else {
-        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (keyboardSize.width), 0.0);
+        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (self.keyboardSize.width), 0.0);
     }
 
     self.tableView.contentInset = contentInsets;
@@ -548,6 +553,95 @@
     self.keyboardControl.currentCell = cell;
     self.keyboardControl.nextCell = [self nextFormCell:cell];
     textField.inputAccessoryView = self.keyboardControl;
+}
+
+- (void)accesorizeRichTextView:(UIView *)view
+{
+    BZGRichTextViewCell *cell = [BZGRichTextViewCell parentCellForRichTextView:view];
+    
+    self.keyboardControl.previousCell = [self previousFormCell:cell];
+    self.keyboardControl.currentCell = cell;
+    self.keyboardControl.nextCell = [self nextFormCell:cell];
+    
+    [self removeKeyboardTopBar];
+}
+
+- (void)removeKeyboardTopBar{
+    // Locate non-UIWindow.
+    
+    UIWindow *keyboardWindow = nil;
+    UIView* toolBarContainer = nil;
+    UIView* currentToolBar = nil;
+    NSArray* windows = [[UIApplication sharedApplication] windows];
+    for (UIWindow *possibleWindow in windows) {
+        if (![[possibleWindow class] isEqual:[UIWindow class]]) {
+            keyboardWindow = possibleWindow;
+            break;
+        }
+    }
+    CGRect frm = keyboardWindow.frame;
+    CGRect toolbarFrame = CGRectMake(0.0f, frm.size.height, frm.size.width, 44.0f);
+    // Locate UIWebFormView.
+    for (UIView *possibleFormView in [keyboardWindow subviews])
+    {
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] > 8.0) {
+            if([[possibleFormView description] hasPrefix:@"<UIInputSetContainerView"])
+            {
+                for(int i = 0 ; i < [possibleFormView.subviews count] ; i++)
+                {
+                    UIView* hostkeyboard = [possibleFormView.subviews objectAtIndex:i];
+                    if([[hostkeyboard description] hasPrefix:@"<UIInputSetHostView"])
+                    {
+                        for (id temp in hostkeyboard.subviews)
+                        {
+                            if ([[temp description] hasPrefix:@"<UIWebFormAccessory"])
+                            {
+                                currentToolBar = (UIView*)temp;
+                           //     currentToolBar.hidden = true;
+                                toolbarFrame = currentToolBar.frame;
+                                toolBarContainer = hostkeyboard;
+                            }
+                        }
+                    }
+                }
+            }
+        }else{
+            if ([[possibleFormView description] rangeOfString:@"UIPeripheralHostView"].location != NSNotFound) {
+                for (UIView *subviewWhichIsPossibleFormView in [possibleFormView subviews]) {
+                    if ([[subviewWhichIsPossibleFormView description] rangeOfString:@"UIWebFormAccessory"].location != NSNotFound) {
+                        [subviewWhichIsPossibleFormView removeFromSuperview];
+                    }
+                }
+            }
+        }
+    }
+
+    if(toolBarContainer){
+        BZGKeyboardControl * kb = [[BZGKeyboardControl alloc] initWithFrame:toolbarFrame];
+        kb.previousCell = self.keyboardControl.previousCell;
+        kb.currentCell = self.keyboardControl.currentCell;
+        kb.nextCell = self.keyboardControl.nextCell;
+        kb.previousButton.target = self;
+        kb.previousButton.action = @selector(navigateToPreviousCell:);
+        kb.nextButton.target = self;
+        kb.nextButton.action = @selector(navigateToNextCell);
+        kb.doneButton.target = self;
+        kb.doneButton.action = @selector(doneButtonPressed);
+        [toolBarContainer addSubview:kb];
+    }
+    keyboardWindow = nil;
+    
+    // add more insets for richtext bar
+    NSInteger barHeight = 44;
+    UIEdgeInsets contentInsets;
+    if (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation])) {
+        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (self.keyboardSize.height) + barHeight, 0.0);
+    } else {
+        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (self.keyboardSize.width) + barHeight, 0.0);
+    }
+    
+    self.tableView.contentInset = contentInsets;
+    self.tableView.scrollIndicatorInsets = contentInsets;
 }
 
 - (BZGKeyboardControl *)keyboardControl

@@ -64,6 +64,7 @@ static NSString * const ZSSRichTextEditorToolbarNone = @"com.zedsaid.toolbaritem
 @property NSUInteger contentHeight;
 @property NSInteger carrotPositionY;
 @property (nonatomic, assign, readonly) UIView *view;
+@property (nonatomic, strong) UIWebView *editorView;
 
 
 /**

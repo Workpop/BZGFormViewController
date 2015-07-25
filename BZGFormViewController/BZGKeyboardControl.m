@@ -30,8 +30,8 @@ NSString * const kPrev = @"Prev";
         self.previousButton = [[UIBarButtonItem alloc] initWithTitle:kPrev style:UIBarButtonItemStylePlain target:nil action:nil];
         self.nextButton = [[UIBarButtonItem alloc] initWithTitle:kNext style:UIBarButtonItemStylePlain target:nil action:nil];
 
-        self.previousButton.enabled     = NO;
-        self.nextButton.enabled         = NO;
+//        self.previousButton.enabled     = NO;
+//        self.nextButton.enabled         = NO;
 
         UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:self.frame];
         toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;

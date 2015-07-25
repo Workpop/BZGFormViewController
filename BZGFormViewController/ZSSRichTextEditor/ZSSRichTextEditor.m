@@ -79,7 +79,6 @@ static Class hackishFixClass = Nil;
 @property (nonatomic, strong) UIToolbar *toolbar;
 @property (nonatomic, strong) UIView *toolbarHolder;
 @property (nonatomic, strong) NSString *htmlString;
-@property (nonatomic, strong) UIWebView *editorView;
 @property (nonatomic, strong) UITextView *sourceView;
 @property (nonatomic) CGRect editorViewFrame;
 @property (nonatomic) CGRect keyboardEnd;
@@ -140,7 +139,7 @@ static Class hackishFixClass = Nil;
         // Editor View
         self.editorView = [[UIWebView alloc] initWithFrame:frame];
         self.editorView.delegate = self;
-        self.editorView.hidesInputAccessoryView = YES;
+//        self.editorView.hidesInputAccessoryView = YES;
         self.editorView.keyboardDisplayRequiresUserAction = NO;
         self.editorView.scalesPageToFit = NO;
         self.editorView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
@@ -526,8 +525,13 @@ static Class hackishFixClass = Nil;
 
 - (void)focusTextEditor {
     self.editorView.keyboardDisplayRequiresUserAction = NO;
-    NSString *js = [NSString stringWithFormat:@"zss_editor.focusEditor();"];
+    NSString *js = [NSString stringWithFormat:@"zss_editor.focusWysiwyg();"];
     [self.editorView stringByEvaluatingJavaScriptFromString:js];
+    
+    // notify of change
+    if ([self.delegate respondsToSelector:@selector(richTextEditorViewDidChange:)]) {
+        [self.delegate richTextEditorViewDidChange:self];
+    }
 }
 
 - (void)blurTextEditor {

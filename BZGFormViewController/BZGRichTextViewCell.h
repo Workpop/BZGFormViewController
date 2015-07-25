@@ -53,7 +53,10 @@
  *
  * @param textField A UITextField instance that may or may not belong to this BZGTextFieldCell instance.
  */
-+ (BZGRichTextViewCell *)parentCellForTextField:(UITextView *)textField;
+//+ (BZGRichTextViewCell *)parentCellForTextField:(UITextView *)textField;
+
++ (BZGRichTextViewCell *)parentCellForRichTextView:(UIView *)view;
+
 
 /// The cell's delegate
 @property (weak, nonatomic) id<BZGRichTextCellDelegate> richTextDelegate;

@@ -95,9 +95,8 @@
     [self.contentView addGestureRecognizer:tap];
 }
 
-+ (BZGRichTextViewCell *)parentCellForTextField:(UITextView *)textField
++ (BZGRichTextViewCell *)parentCellForRichTextView:(UIView *)view
 {
-    UIView *view = textField;
     while ((view = view.superview)) {
         if ([view isKindOfClass:[BZGFormCell class]]) break;
     }
