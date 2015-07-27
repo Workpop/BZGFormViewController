@@ -24,7 +24,6 @@
 @property (nonatomic, assign) UITableViewStyle style;
 @property (nonatomic, assign) BOOL isValid;
 @property (nonatomic, strong) BZGKeyboardControl *keyboardControl;
-@property (nonatomic, strong) BZGKeyboardControl *richTextKeyboardControl;
 @property (nonatomic, copy) void (^didEndScrollingBlock)();
 @property (nonatomic, strong) NSMutableArray *formCellsBySection;
 @property (nonatomic, strong) NSArray *allFormCellsFlattened;
@@ -325,23 +324,6 @@
     [self.tableView scrollRectToVisible:tableViewrect animated:YES];
 }
 
-
-- (void)richTextEditorViewDidChange:(ZSSRichTextEditor *)richTextEditor
-{
-    //resize the tableview if required
-    [self.tableView beginUpdates];
-    [self.tableView endUpdates];
-    
-    [self fixSeparator];
-    
-    CGRect cursorRect = CGRectMake(0, richTextEditor.carrotPositionY, 2, 20.521666666666668);
-    CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:richTextEditor.view];
-    [self.tableView scrollRectToVisible:tableViewrect animated:YES];
-    
-    // accessorize
-   [self accesorizeRichTextView:richTextEditor.view];
-}
-
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
     BOOL shouldChange = YES;
@@ -354,7 +336,7 @@
     if (cell.shouldChangeTextBlock) {
         shouldChange = cell.shouldChangeTextBlock(cell, newText);
     }
-
+    
     return shouldChange;
 }
 
@@ -372,6 +354,54 @@
     }
 }
 
+#pragma mark - <ZSSRichTextEditorDelegate>
+
+-(BOOL)richTextEditorViewShouldBeginEditing:(ZSSRichTextEditor *)richTextEditor
+{
+    BZGRichTextViewCell *cell = (BZGRichTextViewCell*)[BZGRichTextViewCell parentCellForRichTextView:richTextEditor.view];
+    if (!cell) {
+        return NO;
+    }
+    
+    if (self.showsKeyboardControl) {
+        // accessorize
+        [self accesorizeRichTextView:richTextEditor.view];
+    }
+    
+    return YES;
+}
+
+
+-(void)richTextEditorViewDidBeginEditing:(ZSSRichTextEditor *)richTextEditor
+{
+    BZGRichTextViewCell *cell = (BZGRichTextViewCell*)[BZGRichTextViewCell parentCellForRichTextView:richTextEditor.view];
+    if (!cell) {
+        return;
+    }
+    
+    // store the cell we are currently editing
+    self.currentlyEditingCell = cell;
+    
+    if (cell.didBeginEditingBlock) {
+        cell.didBeginEditingBlock(cell, richTextEditor.getText);
+    }
+    
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+    [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+}
+
+- (void)richTextEditorViewDidChange:(ZSSRichTextEditor *)richTextEditor
+{
+    //resize the tableview if required
+    [self.tableView beginUpdates];
+    [self.tableView endUpdates];
+    
+    [self fixSeparator];
+    
+    CGRect cursorRect = CGRectMake(0, richTextEditor.carrotPositionY, 2, 20);
+    CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:richTextEditor.view];
+    [self.tableView scrollRectToVisible:tableViewrect animated:YES];
+}
 
 #pragma mark - UITextFieldDelegate
 
@@ -475,11 +505,12 @@
     if ([self.currentlyEditingCell isKindOfClass:BZGTextViewCell.class]) {
         BZGTextViewCell *textViewCell = (BZGTextViewCell *)self.currentlyEditingCell;
         [self accesorizeTextView:textViewCell.textField];
-    }
-    
-    if ([self.currentlyEditingCell isKindOfClass:BZGTextFieldCell.class]) {
+    } else if ([self.currentlyEditingCell isKindOfClass:BZGTextFieldCell.class]) {
         BZGTextFieldCell *textFieldCell = (BZGTextFieldCell *)self.currentlyEditingCell;
         [self accesorizeTextField:textFieldCell.textField];
+    } else if ([self.currentlyEditingCell isKindOfClass:BZGRichTextViewCell.class]) {
+        BZGRichTextViewCell *richTextEditorCell = (BZGRichTextViewCell *)self.currentlyEditingCell;
+        [self accesorizeRichTextView:richTextEditorCell.richText.view];
     }
     
     [self fixSeparator];
@@ -558,12 +589,15 @@
 
 - (void)accesorizeRichTextView:(UIView *)view
 {
+    // nil keyboard to create new one since it's not an accessory view on a richTextView
+    self.keyboardControl = nil;
+    
     BZGRichTextViewCell *cell = [BZGRichTextViewCell parentCellForRichTextView:view];
     
     self.keyboardControl.previousCell = [self previousFormCell:cell];
     self.keyboardControl.currentCell = cell;
     self.keyboardControl.nextCell = [self nextFormCell:cell];
-    
+
     [self removeKeyboardTopBar];
 }
 
@@ -616,9 +650,13 @@
             }
         }
     }
-
+    
     if(toolBarContainer){
-        [toolBarContainer addSubview:self.richTextKeyboardControl];
+        if ([toolBarContainer.subviews containsObject:self.keyboardControl]) {
+            [toolBarContainer bringSubviewToFront:self.keyboardControl];
+        } else {
+            [toolBarContainer addSubview:self.keyboardControl];
+        }
     }
     keyboardWindow = nil;
     
@@ -647,20 +685,6 @@
         _keyboardControl.doneButton.action = @selector(doneButtonPressed);
     }
     return _keyboardControl;
-}
-
-- (BZGKeyboardControl *)richTextKeyboardControl
-{
-    if (!_richTextKeyboardControl) {
-        _richTextKeyboardControl = [[BZGKeyboardControl alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), BZG_KEYBOARD_CONTROL_HEIGHT)];
-        _richTextKeyboardControl.previousButton.target = self;
-        _richTextKeyboardControl.previousButton.action = @selector(navigateToPreviousCell:);
-        _richTextKeyboardControl.nextButton.target = self;
-        _richTextKeyboardControl.nextButton.action = @selector(navigateToNextCell);
-        _richTextKeyboardControl.doneButton.target = self;
-        _richTextKeyboardControl.doneButton.action = @selector(doneButtonPressed);
-    }
-    return _richTextKeyboardControl;
 }
 
 - (void)navigateToPreviousCell: (id)sender
@@ -733,11 +757,6 @@
         };
         [self.tableView scrollToRowAtIndexPath:cellIndexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
     }
-    
-//    if ([destinationCell isKindOfClass:[BZGRichTextViewCell class]]) {
-//        // accessorize
-//        [self accesorizeRichTextView:((BZGRichTextViewCell *)destinationCell).richText.view];
-//    }
 }
 
 - (void)doneButtonPressed

@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @protocol ZSSRichTextEditorDelegate <NSObject>
+- (BOOL)richTextEditorViewShouldBeginEditing:(id)richTextEditor;
+- (void)richTextEditorViewDidBeginEditing:(id)richTextEditor;
 - (void)richTextEditorViewDidChange:(id)richTextEditor;
 @end
 

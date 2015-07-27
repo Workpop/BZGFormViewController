@@ -30,6 +30,8 @@
 
 -(void)setup
 {
+    self.contentView.backgroundColor = [UIColor clearColor];
+
     [self configureLabel];
     [self configureTap];
     
@@ -71,13 +73,17 @@
     self.richText = [[ZSSRichTextEditor alloc] initWithView:self.holder];
     self.richText.enabledToolbarItems = @[ZSSRichTextEditorToolbarBold, ZSSRichTextEditorToolbarItalic, ZSSRichTextEditorToolbarUnorderedList, ZSSRichTextEditorToolbarOrderedList];
     [self.richText setPlaceholder:@"This is a test"];
-    
-    self.contentView.backgroundColor = [UIColor clearColor];
 }
 
 - (void)configureTap {
+    
+    self.contentView.userInteractionEnabled = YES;
+    self.holder.userInteractionEnabled = YES;
+    
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(becomeFirstResponder)];
-    [self.contentView addGestureRecognizer:tap];
+    [tap setNumberOfTapsRequired:1];
+    [tap setNumberOfTouchesRequired:1];
+    [self.holder addGestureRecognizer:tap];
 }
 
 + (BZGRichTextViewCell *)parentCellForRichTextView:(UIView *)view
@@ -88,16 +94,6 @@
     return (BZGRichTextViewCell *)view;
 }
 
-#pragma mark - UITextField notification selectors
-
-//- (void)textFieldTextDidChange:(NSNotification *)notification
-//{
-//    if ([self.richText.delegate respondsToSelector:@selector(richTextViewDidChange::)]) {
-//        [self.richText.delegate richTextEditorViewDidChange:self.richText];
-//    }
-//}
-
-#pragma mark - UITextField notification selectors
 
 -(void)setText:(NSString *)text
 {
@@ -107,6 +103,14 @@
 - (BOOL)becomeFirstResponder
 {
     [self.richText focusTextEditor];
+    
+    if ([self.richText.delegate respondsToSelector:@selector(richTextEditorViewShouldBeginEditing:)]) {
+        [self.richText.delegate richTextEditorViewShouldBeginEditing:self.richText];
+    }
+    
+    if([self.richText.delegate respondsToSelector:@selector(richTextEditorViewDidBeginEditing:)]) {
+        [self.richText.delegate richTextEditorViewDidBeginEditing:self.richText];
+    }
 }
 
 - (BOOL)resignFirstResponder

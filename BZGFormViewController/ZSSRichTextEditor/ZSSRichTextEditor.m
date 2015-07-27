@@ -535,11 +535,6 @@ static Class hackishFixClass = Nil;
     self.editorView.keyboardDisplayRequiresUserAction = NO;
     NSString *js = [NSString stringWithFormat:@"zss_editor.focusWysiwyg();"];
     [self.editorView stringByEvaluatingJavaScriptFromString:js];
-    
-    // notify of change
-    if ([self.delegate respondsToSelector:@selector(richTextEditorViewDidChange:)]) {
-        [self.delegate richTextEditorViewDidChange:self];
-    }
 }
 
 - (void)blurTextEditor {
