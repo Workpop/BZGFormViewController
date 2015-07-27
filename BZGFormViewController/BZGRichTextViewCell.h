@@ -24,8 +24,6 @@
 
 @interface BZGRichTextViewCell : BZGFormCell
 
-@property (strong, nonatomic) UILabel *label;
-
 /// The block called when the text field's text begins editing.
 @property (copy, nonatomic) void (^didBeginEditingBlock)(BZGRichTextViewCell *cell, NSString *text);
 

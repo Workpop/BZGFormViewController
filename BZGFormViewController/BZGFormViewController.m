@@ -24,6 +24,7 @@
 @property (nonatomic, assign) UITableViewStyle style;
 @property (nonatomic, assign) BOOL isValid;
 @property (nonatomic, strong) BZGKeyboardControl *keyboardControl;
+@property (nonatomic, strong) BZGKeyboardControl *richTextKeyboardControl;
 @property (nonatomic, copy) void (^didEndScrollingBlock)();
 @property (nonatomic, strong) NSMutableArray *formCellsBySection;
 @property (nonatomic, strong) NSArray *allFormCellsFlattened;
@@ -338,7 +339,7 @@
     [self.tableView scrollRectToVisible:tableViewrect animated:YES];
     
     // accessorize
-    [self accesorizeRichTextView:richTextEditor.view];
+   [self accesorizeRichTextView:richTextEditor.view];
 }
 
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
@@ -617,17 +618,7 @@
     }
 
     if(toolBarContainer){
-        BZGKeyboardControl * kb = [[BZGKeyboardControl alloc] initWithFrame:toolbarFrame];
-        kb.previousCell = self.keyboardControl.previousCell;
-        kb.currentCell = self.keyboardControl.currentCell;
-        kb.nextCell = self.keyboardControl.nextCell;
-        kb.previousButton.target = self;
-        kb.previousButton.action = @selector(navigateToPreviousCell:);
-        kb.nextButton.target = self;
-        kb.nextButton.action = @selector(navigateToNextCell);
-        kb.doneButton.target = self;
-        kb.doneButton.action = @selector(doneButtonPressed);
-        [toolBarContainer addSubview:kb];
+        [toolBarContainer addSubview:self.richTextKeyboardControl];
     }
     keyboardWindow = nil;
     
@@ -656,6 +647,20 @@
         _keyboardControl.doneButton.action = @selector(doneButtonPressed);
     }
     return _keyboardControl;
+}
+
+- (BZGKeyboardControl *)richTextKeyboardControl
+{
+    if (!_richTextKeyboardControl) {
+        _richTextKeyboardControl = [[BZGKeyboardControl alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), BZG_KEYBOARD_CONTROL_HEIGHT)];
+        _richTextKeyboardControl.previousButton.target = self;
+        _richTextKeyboardControl.previousButton.action = @selector(navigateToPreviousCell:);
+        _richTextKeyboardControl.nextButton.target = self;
+        _richTextKeyboardControl.nextButton.action = @selector(navigateToNextCell);
+        _richTextKeyboardControl.doneButton.target = self;
+        _richTextKeyboardControl.doneButton.action = @selector(doneButtonPressed);
+    }
+    return _richTextKeyboardControl;
 }
 
 - (void)navigateToPreviousCell: (id)sender
@@ -728,6 +733,11 @@
         };
         [self.tableView scrollToRowAtIndexPath:cellIndexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
     }
+    
+//    if ([destinationCell isKindOfClass:[BZGRichTextViewCell class]]) {
+//        // accessorize
+//        [self accesorizeRichTextView:((BZGRichTextViewCell *)destinationCell).richText.view];
+//    }
 }
 
 - (void)doneButtonPressed

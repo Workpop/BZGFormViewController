@@ -32,6 +32,15 @@
 {
     [self configureLabel];
     [self configureTap];
+    
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(textFieldTextDidEndEditing:)
+//                                                 name:UITextFieldTextDidEndEditingNotification
+//                                               object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(textFieldTextDidChange:)
+//                                                 name:UITextFieldTextDidChangeNotification
+//                                               object:nil];
 }
 
 -(void)layoutSubviews
@@ -43,19 +52,8 @@
     textViewFrame.size.height = self.contentView.frame.size.height;
     self.holder.frame = textViewFrame;
     
-    //CGSize textViewSize = [self.textField sizeThatFits:CGSizeMake(self.textField.frame.size.width, FLT_MAX)];
-    
-    //    CGFloat height = ceilf(textViewSize.height);
-    //    height =  height < BZG_TEXTVIEW_MIN_HEIGHT ? BZG_TEXTVIEW_MIN_HEIGHT: height;
-    //     textViewFrame.size.height =  height;
-    /*     if (![self.textLabel.text length])
-     {
-     textViewFrame.origin.y = self.textLabel.frame.origin.y;
-     }
-     */
-
     CGRect contentViewFrame = self.contentView.frame;
-    contentViewFrame.size.height = self.holder.frame.origin.y + self.holder.frame.size.height + self.label.frame.size.height;
+    contentViewFrame.size.height = self.holder.frame.origin.y + self.holder.frame.size.height;
     self.contentView.frame = contentViewFrame;
 }
 
@@ -66,26 +64,13 @@
 
 - (void)configureLabel
 {
-    CGFloat labelX = self.separatorInset.left;
-    CGRect labelFrame = CGRectMake(labelX,
-                                   0,
-                                   self.bounds.size.width - labelX,
-                                   self.bounds.size.height);
-    self.label = [[UILabel alloc] initWithFrame:labelFrame];
-    self.label.font = BZG_TEXTFIELD_LABEL_FONT;
-    self.label.textColor = BZG_TEXTFIELD_LABEL_COLOR;
-    self.label.backgroundColor = [UIColor clearColor];
-//    [self addSubview:self.label];
-    
-    
     self.holder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, BZG_TEXTVIEW_MIN_HEIGHT)];
     self.holder.backgroundColor = [UIColor blueColor];
     [self.contentView addSubview:self.holder];
     
     self.richText = [[ZSSRichTextEditor alloc] initWithView:self.holder];
-    self.richText.enabledToolbarItems = @[ZSSRichTextEditorToolbarBold, ZSSRichTextEditorToolbarItalic, ZSSRichTextEditorToolbarUnorderedList, ZSSRichTextEditorToolbarOrderedList, ZSSRichTextEditorToolbarQuickLink];
-    self.richText.shouldShowKeyboard = NO;
-//    self.richText.delegate = self;
+    self.richText.enabledToolbarItems = @[ZSSRichTextEditorToolbarBold, ZSSRichTextEditorToolbarItalic, ZSSRichTextEditorToolbarUnorderedList, ZSSRichTextEditorToolbarOrderedList];
+    [self.richText setPlaceholder:@"This is a test"];
     
     self.contentView.backgroundColor = [UIColor clearColor];
 }
@@ -102,6 +87,15 @@
     }
     return (BZGRichTextViewCell *)view;
 }
+
+#pragma mark - UITextField notification selectors
+
+//- (void)textFieldTextDidChange:(NSNotification *)notification
+//{
+//    if ([self.richText.delegate respondsToSelector:@selector(richTextViewDidChange::)]) {
+//        [self.richText.delegate richTextEditorViewDidChange:self.richText];
+//    }
+//}
 
 #pragma mark - UITextField notification selectors
 

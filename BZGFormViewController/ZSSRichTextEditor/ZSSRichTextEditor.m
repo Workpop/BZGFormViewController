@@ -141,7 +141,7 @@ static Class hackishFixClass = Nil;
         self.editorView.delegate = self;
 //        self.editorView.hidesInputAccessoryView = YES;
         self.editorView.keyboardDisplayRequiresUserAction = NO;
-        self.editorView.scalesPageToFit = NO;
+        self.editorView.scalesPageToFit = YES;
         self.editorView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
         self.editorView.dataDetectorTypes = UIDataDetectorTypeNone;
         self.editorView.scrollView.bounces = NO;
@@ -248,6 +248,10 @@ static Class hackishFixClass = Nil;
     
     NSMutableArray *items = [[NSMutableArray alloc] init];
     
+    // add a flexible space first
+    ZSSBarButtonItem *flexibleBeginSpace = [[ZSSBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    [items addObject:flexibleBeginSpace];
+
     // None
     if(_enabledToolbarItems && [_enabledToolbarItems containsObject:ZSSRichTextEditorToolbarNone])
     {
@@ -471,6 +475,10 @@ static Class hackishFixClass = Nil;
         [items addObject:showSource];
     }
     
+    // add a flexible space first
+    ZSSBarButtonItem *flexibleEndSpace = [[ZSSBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    [items addObject:flexibleEndSpace];
+    
     return [NSArray arrayWithArray:items];
 }
 
@@ -490,7 +498,7 @@ static Class hackishFixClass = Nil;
     
     // get the width before we add custom buttons
     CGFloat toolbarWidth = items.count == 0 ? 0.0f : (CGFloat)(items.count * 39) - 10;
-    
+   
     if(self.customBarButtonItems != nil)
     {
         items = [items arrayByAddingObjectsFromArray:self.customBarButtonItems];
@@ -499,14 +507,14 @@ static Class hackishFixClass = Nil;
             toolbarWidth += buttonItem.customView.frame.size.width + 11.0f;
         }
     }
-    
+
     self.toolbar.items = items;
     for (ZSSBarButtonItem *item in items) {
         item.tintColor = [self barButtonItemDefaultColor];
     }
     
-    self.toolbar.frame = CGRectMake(0, 0, toolbarWidth, 44);
-    self.toolBarScroll.contentSize = CGSizeMake(self.toolbar.frame.size.width, 44);
+    self.toolbar.frame = CGRectMake(0, 0, CGRectGetWidth([UIScreen mainScreen].bounds), 44);
+    self.toolBarScroll.contentSize = CGSizeMake(CGRectGetWidth(self.toolbar.frame), 44);
 }
 
 - (void)startMonitoring
@@ -1150,7 +1158,7 @@ static Class hackishFixClass = Nil;
         return self.toolbarItemTintColor;
     }
     
-    return [UIColor colorWithRed:0.0f/255.0f green:122.0f/255.0f blue:255.0f/255.0f alpha:1.0f];
+    return [UIColor blackColor];
 }
 
 
@@ -1160,7 +1168,7 @@ static Class hackishFixClass = Nil;
         return self.toolbarItemSelectedTintColor;
     }
     
-    return [UIColor blackColor];
+    return [UIColor colorWithRed:0.0f/255.0f green:122.0f/255.0f blue:255.0f/255.0f alpha:1.0f];
 }
 
 
