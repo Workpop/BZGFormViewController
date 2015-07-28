@@ -34,15 +34,6 @@
 
     [self configureLabel];
     [self configureTap];
-    
-//    [[NSNotificationCenter defaultCenter] addObserver:self
-//                                             selector:@selector(textFieldTextDidEndEditing:)
-//                                                 name:UITextFieldTextDidEndEditingNotification
-//                                               object:nil];
-//    [[NSNotificationCenter defaultCenter] addObserver:self
-//                                             selector:@selector(textFieldTextDidChange:)
-//                                                 name:UITextFieldTextDidChangeNotification
-//                                               object:nil];
 }
 
 -(void)layoutSubviews

@@ -1,38 +1,38 @@
-
 var NativeBridge = {
-    callbacksCount : 1,
-    callbacks : {},
+callbacksCount: 1,
+callbacks: {},
     
     // Automatically called by native layer when a result is available
-    resultForCallback : function resultForCallback(callbackId, resultArray) {
-        try {
-            var callback = NativeBridge.callbacks[callbackId];
-            if (!callback) return;
-            
-            callback.apply(null,resultArray);
-        } catch(e) {alert(e)}
-    },
+resultForCallback: function resultForCallback(callbackId, resultArray) {
+    try {
+        var callback = NativeBridge.callbacks[callbackId];
+        if (!callback) return;
+        
+        callback.apply(null, resultArray);
+    } catch (e) {
+        alert(e)
+    }
+},
     
     // Use this in javascript to request native objective-c code
     // functionName : string (I think the name is explicit :p)
     // args : array of arguments
     // callback : function with n-arguments that is going to be called when the native code returned
-    call : function call(functionName, args, callback) {
-        
-        var hasCallback = callback && typeof callback == "function";
-        var callbackId = hasCallback ? NativeBridge.callbacksCount++ : 0;
-        
-        if (hasCallback)
-            NativeBridge.callbacks[callbackId] = callback;
-        
-        var iframe = document.createElement("IFRAME");
-        iframe.setAttribute("src", "js-frame:" + functionName + ":" + callbackId+ ":" + encodeURIComponent(JSON.stringify(args)));
-        document.documentElement.appendChild(iframe);
-        iframe.parentNode.removeChild(iframe);
-        iframe = null;
-    }
+call: function call(functionName, args, callback) {
+    
+    var hasCallback = callback && typeof callback == "function";
+    var callbackId = hasCallback ? NativeBridge.callbacksCount++ : 0;
+    
+    if (hasCallback)
+        NativeBridge.callbacks[callbackId] = callback;
+    
+    var iframe = document.createElement("IFRAME");
+    iframe.setAttribute("src", "js-frame:" + functionName + ":" + callbackId + ":" + encodeURIComponent(JSON.stringify(args)));
+    document.documentElement.appendChild(iframe);
+    iframe.parentNode.removeChild(iframe);
+    iframe = null;
+}
 };
-
 
 
 
@@ -50,9 +50,6 @@ var zss_editor = {};
 
 // If we are using iOS or desktop
 zss_editor.isUsingiOS = true;
-
-// If the user is draging
-zss_editor.isDragging = false;
 
 // The current selection
 zss_editor.currentSelection;
@@ -76,22 +73,34 @@ zss_editor.savedRange;
  */
 zss_editor.init = function() {
     
-     $('#zss_editor_content').on('click', function(e) {
-                                 var c = zss_editor.getCaretYPosition();
-                                 var e = document.getElementById('zss_editor_content');
-                                 var contentHeight = e.scrollHeight;
-                                 NativeBridge.call("editorDidBeginEditing", [contentHeight, c]);
-    });
+    $('#zss_editor_content').on('click', function(e) {
+                                var c = zss_editor.getCaretYPosition();
+                                var e = document.getElementById('zss_editor_content');
+                                var contentHeight = e.scrollHeight;
+                                NativeBridge.call("editorDidBeginEditing", [contentHeight, c]);
+                                });
     
     $(document).keyup(function() {
-                            var c = zss_editor.getCaretYPosition();
-                            var e = document.getElementById('zss_editor_content');
-                            var contentHeight = e.scrollHeight;
-                            NativeBridge.call("contentHeightDidChange", [contentHeight, c]);
                       
-                            zss_editor.saveSelection();
-                      });
-    
+                      // save carret selection
+                      zss_editor.saveSelection();
+                      
+                      // dispatch content height change
+                      zss_editor.dispatchContentHeightChanged();
+                      
+                      // add p tag on enter
+                      if (ev.keyCode == '13') {
+                        var current_selection = $(zss_editor.getSelectedNode());
+                        var t = current_selection.prop("tagName").toLowerCase();
+                        var is_paragraph = (t == 'p');
+                        if (is_paragraph) {
+                            var c = current_selection.html();
+                            current_selection.replaceWith(c);
+                        } else {
+                            document.execCommand('formatBlock', false, '<p>');
+                        }
+                      }
+                    });
     
     document.onselectionchange = function() {
         zss_editor.saveSelection();
@@ -99,13 +108,15 @@ zss_editor.init = function() {
     };
     
     var editor = $('#zss_editor_content');
-    editor.focusout(function(){ NativeBridge.call("editorDidEndEditing", []);});
-
-}//end
+    editor.focusout(function() {
+                    NativeBridge.call("editorDidEndEditing", []);
+                    });
+    
+} //end
 
 // This will show up in the XCode console as we are able to push this into an NSLog.
 zss_editor.debug = function(msg) {
-    window.location = 'debug://'+msg;
+    window.location = 'debug://' + msg;
 }
 
 zss_editor.setPlaceholder = function(placeholder) {
@@ -113,21 +124,21 @@ zss_editor.setPlaceholder = function(placeholder) {
     var editor = $('#zss_editor_content');
     
     //set placeHolder
-    if(editor.text().length == 1){
+    if (editor.text().length == 1) {
         editor.text(placeholder);
-        editor.css("color","gray");
+        editor.css("color", "gray");
     }
     //set focus
-    editor.focus(function(){
-                    if($(this).text() == placeholder){
-                        $(this).text("");
-                        $(this).css("color","black");
-                    }
-                 }).focusout(function(){
-                                if(!$(this).text().length){
-                                    $(this).text(placeholder);
-                                    $(this).css("color","gray");
-                                }
+    editor.focus(function() {
+                 if ($(this).text() == placeholder) {
+                 $(this).text("");
+                 $(this).css("color", "black");
+                 }
+                 }).focusout(function() {
+                             if (!$(this).text().length) {
+                             $(this).text(placeholder);
+                             $(this).css("color", "gray");
+                             }
                              });
 }
 
@@ -137,7 +148,7 @@ zss_editor.getCaretYPosition = function() {
     // Next line is comented to prevent deselecting selection. It looks like work but if there are any issues will appear then uconmment it as well as code above.
     //sel.collapseToStart();
     var range = sel.getRangeAt(0);
-    var span = document.createElement('span');// something happening here preventing selection of elements
+    var span = document.createElement('span'); // something happening here preventing selection of elements
     range.insertNode(span);
     var topPosition = span.offsetTop;
     span.parentNode.removeChild(span);
@@ -145,13 +156,18 @@ zss_editor.getCaretYPosition = function() {
     return topPosition;
 }
 
-zss_editor.backuprange = function(){
+zss_editor.backuprange = function() {
     var selection = window.getSelection();
     var range = selection.getRangeAt(0);
-    zss_editor.currentSelection = {"startContainer": range.startContainer, "startOffset":range.startOffset,"endContainer":range.endContainer, "endOffset":range.endOffset};
+    zss_editor.currentSelection = {
+        "startContainer": range.startContainer,
+        "startOffset": range.startOffset,
+        "endContainer": range.endContainer,
+        "endOffset": range.endOffset
+    };
 }
 
-zss_editor.restorerange = function(){
+zss_editor.restorerange = function() {
     var selection = window.getSelection();
     selection.removeAllRanges();
     var range = document.createRange();
@@ -161,7 +177,7 @@ zss_editor.restorerange = function(){
 }
 
 zss_editor.getSelectedNode = function() {
-    var node,selection;
+    var node, selection;
     if (window.getSelection) {
         selection = getSelection();
         node = selection.anchorNode;
@@ -230,7 +246,7 @@ zss_editor.setHeading = function(heading) {
         var c = current_selection.html();
         current_selection.replaceWith(c);
     } else {
-        document.execCommand('formatBlock', false, '<'+heading+'>');
+        document.execCommand('formatBlock', false, '<' + heading + '>');
     }
     
     zss_editor.enabledEditingItems();
@@ -354,7 +370,7 @@ zss_editor.updateLink = function(url, title) {
     }
     zss_editor.enabledEditingItems();
     
-}//end
+} //end
 
 zss_editor.updateImage = function(url, alt) {
     
@@ -367,7 +383,7 @@ zss_editor.updateImage = function(url, alt) {
     }
     zss_editor.enabledEditingItems();
     
-}//end
+} //end
 
 zss_editor.unlink = function() {
     
@@ -416,7 +432,7 @@ zss_editor.prepareInsert = function() {
 
 zss_editor.insertImage = function(url, alt) {
     zss_editor.restorerange();
-    var html = '<img src="'+url+'" alt="'+alt+'" />';
+    var html = '<img src="' + url + '" alt="' + alt + '" />';
     zss_editor.insertHTML(html);
     zss_editor.enabledEditingItems();
 }
@@ -424,6 +440,9 @@ zss_editor.insertImage = function(url, alt) {
 zss_editor.setHTML = function(html) {
     var editor = $('#zss_editor_content');
     editor.html(html);
+    
+    var e = document.getElementById('zss_editor_content');
+    NativeBridge.call("contentHeightDidChange", [e.scrollHeight, 0]);
 }
 
 zss_editor.insertHTML = function(html) {
@@ -454,10 +473,14 @@ zss_editor.getHTML = function() {
         bq.each(function() {
                 var b = $(this);
                 if (b.css('border').indexOf('none') != -1) {
-                b.css({'border': ''});
+                b.css({
+                      'border': ''
+                      });
                 }
                 if (b.css('padding').indexOf('0px') != -1) {
-                b.css({'padding': ''});
+                b.css({
+                      'padding': ''
+                      });
                 }
                 });
     }
@@ -550,9 +573,9 @@ zss_editor.enabledEditingItems = function(e) {
         if (nodeName == 'a') {
             zss_editor.currentEditingLink = t;
             var title = t.attr('title');
-            items.push('link:'+t.attr('href'));
+            items.push('link:' + t.attr('href'));
             if (t.attr('title') !== undefined) {
-                items.push('link-title:'+t.attr('title'));
+                items.push('link-title:' + t.attr('title'));
             }
             
         } else {
@@ -565,9 +588,9 @@ zss_editor.enabledEditingItems = function(e) {
         // Image
         if (nodeName == 'img') {
             zss_editor.currentEditingImage = t;
-            items.push('image:'+t.attr('src'));
+            items.push('image:' + t.attr('src'));
             if (t.attr('alt') !== undefined) {
-                items.push('image-alt:'+t.attr('alt'));
+                items.push('image-alt:' + t.attr('alt'));
             }
             
         } else {
@@ -578,9 +601,9 @@ zss_editor.enabledEditingItems = function(e) {
     
     if (items.length > 0) {
         if (zss_editor.isUsingiOS) {
-            window.location = "callback://0/"+items.join(',');
+            window.location = "callback://0/" + items.join(',');
         } else {
-            console.log("callback://"+items.join(','));
+            console.log("callback://" + items.join(','));
         }
     } else {
         if (zss_editor.isUsingiOS) {
@@ -597,24 +620,23 @@ zss_editor.focusWysiwyg = function() {
 
 
 zss_editor.saveSelection = function(updateCarret) {
-
-    if(window.getSelection)//non IE Browsers
+    
+    if (window.getSelection) //non IE Browsers
     {
         zss_editor.savedRange = window.getSelection().getRangeAt(0);
-    }
-    else if(document.selection)//IE
+    } else if (document.selection) //IE
     {
         zss_editor.savedRange = document.selection.createRange();
     }
 }
 
 zss_editor.restoreSelection = function() {
-
+    
     var editor = $('#zss_editor_content');
     editor.focus();
     
     if (zss_editor.savedRange != null) {
-        if (window.getSelection)//non IE and there is already a selection
+        if (window.getSelection) //non IE and there is already a selection
         {
             var s = window.getSelection();
             if (s.rangeCount > 0)
@@ -622,4 +644,14 @@ zss_editor.restoreSelection = function() {
             s.addRange(zss_editor.savedRange);
         }
     }
+}
+
+// obj-c dispatching
+
+zss_editor.dispatchContentHeightChanged = function() {
+    
+    var c = zss_editor.getCaretYPosition();
+    var e = document.getElementById('zss_editor_content');
+    var contentHeight = e.scrollHeight;
+    NativeBridge.call("contentHeightDidChange", [contentHeight, c]);
 }

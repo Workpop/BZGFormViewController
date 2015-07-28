@@ -121,7 +121,7 @@ static Class hackishFixClass = Nil;
         
         self.editorLoaded = NO;
         self.shouldShowKeyboard = NO;
-        self.formatHTML = YES;
+        self.formatHTML = NO;
         
         self.enabledToolbarItems = [[NSArray alloc] init];
         
@@ -1188,8 +1188,17 @@ static Class hackishFixClass = Nil;
 
 
 - (NSString *)tidyHTML:(NSString *)html {
-    html = [html stringByReplacingOccurrencesOfString:@"<br>" withString:@"<br />"];
-    html = [html stringByReplacingOccurrencesOfString:@"<hr>" withString:@"<hr />"];
+    
+    // turn <div> into <p>
+    html = [html stringByReplacingOccurrencesOfString:@"<div>" withString:@"<p>"];
+    html = [html stringByReplacingOccurrencesOfString:@"</div>" withString:@"</p>"];
+    
+    // remove br
+    html = [html stringByReplacingOccurrencesOfString:@"<br>" withString:@""];
+    html = [html stringByReplacingOccurrencesOfString:@"<br />" withString:@""];
+    
+    // remove hr
+    html = [html stringByReplacingOccurrencesOfString:@"<hr>" withString:@""];
     if (self.formatHTML) {
         html = [self.editorView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"style_html(\"%@\");", html]];
     }

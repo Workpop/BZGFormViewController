@@ -416,8 +416,6 @@
     if (cell.didEndEditingBlock) {
         cell.didEndEditingBlock(cell, [richTextEditor getHTML]);
     }
-    
-    [self updateInfoCellBelowFormCell:cell];
 }
 
 #pragma mark - UITextFieldDelegate
