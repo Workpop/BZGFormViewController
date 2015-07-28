@@ -1,3 +1,42 @@
+
+var NativeBridge = {
+    callbacksCount : 1,
+    callbacks : {},
+    
+    // Automatically called by native layer when a result is available
+    resultForCallback : function resultForCallback(callbackId, resultArray) {
+        try {
+            var callback = NativeBridge.callbacks[callbackId];
+            if (!callback) return;
+            
+            callback.apply(null,resultArray);
+        } catch(e) {alert(e)}
+    },
+    
+    // Use this in javascript to request native objective-c code
+    // functionName : string (I think the name is explicit :p)
+    // args : array of arguments
+    // callback : function with n-arguments that is going to be called when the native code returned
+    call : function call(functionName, args, callback) {
+        
+        var hasCallback = callback && typeof callback == "function";
+        var callbackId = hasCallback ? NativeBridge.callbacksCount++ : 0;
+        
+        if (hasCallback)
+            NativeBridge.callbacks[callbackId] = callback;
+        
+        var iframe = document.createElement("IFRAME");
+        iframe.setAttribute("src", "js-frame:" + functionName + ":" + callbackId+ ":" + encodeURIComponent(JSON.stringify(args)));
+        document.documentElement.appendChild(iframe);
+        iframe.parentNode.removeChild(iframe);
+        iframe = null;
+    }
+};
+
+
+
+
+
 /*!
  *
  * ZSSRichTextEditor v0.5.2
@@ -27,33 +66,38 @@ zss_editor.currentEditingLink;
 // The objects that are enabled
 zss_editor.enabledItems = {};
 
+zss_editor.range;
+
+zss_editor.savedRange;
+
+
 /**
  * The initializer function that must be called onLoad
  */
 zss_editor.init = function() {
     
      $('#zss_editor_content').on('click', function(e) {
-            var c = zss_editor.getCaretYPosition();
-            window.location = 'caratposition://'+c;
-            window.scrollTo(0, 0);
-                                 
-                                 setTimeout(function () {
-                                            var e = document.getElementById('zss_editor_content');
-                                            var scrollHeight = e.scrollHeight;
-                                            window.location = 'scrollheight://'+scrollHeight;
-                                            }, 10);
+                                 var c = zss_editor.getCaretYPosition();
+                                 var e = document.getElementById('zss_editor_content');
+                                 var contentHeight = e.scrollHeight;
+                                 NativeBridge.call("editorDidBeginEditing", [contentHeight, c]);
     });
     
     $(document).keyup(function() {
-                      var c = zss_editor.getCaretYPosition();
-                      window.location = 'caratposition://'+c;
+                            var c = zss_editor.getCaretYPosition();
+                            var e = document.getElementById('zss_editor_content');
+                            var contentHeight = e.scrollHeight;
+                            NativeBridge.call("contentHeightDidChange", [contentHeight, c]);
                       
-                      setTimeout(function () {
-                                 var e = document.getElementById('zss_editor_content');
-                                 var scrollHeight = e.scrollHeight;
-                                 window.location = 'scrollheight://'+scrollHeight;
-                        }, 10);
+                            zss_editor.saveSelection();
                       });
+    
+    
+    document.onselectionchange = function() {
+        zss_editor.saveSelection();
+        NativeBridge.call("updateCarretPosition", [zss_editor.getCaretYPosition()]);
+    };
+
 }//end
 
 // This will show up in the XCode console as we are able to push this into an NSLog.
@@ -72,17 +116,16 @@ zss_editor.setPlaceholder = function(placeholder) {
     }
     //set focus
     editor.focus(function(){
-                 if($(this).text() == placeholder){
-                 $(this).text("");
-                 $(this).css("color","black");
-                 }
+                    if($(this).text() == placeholder){
+                        $(this).text("");
+                        $(this).css("color","black");
+                    }
                  }).focusout(function(){
-                             if(!$(this).text().length){
-                             $(this).text(placeholder);
-                             $(this).css("color","gray");
-                             }
+                                if(!$(this).text().length){
+                                    $(this).text(placeholder);
+                                    $(this).css("color","gray");
+                                }
                              });
-    
 }
 
 zss_editor.getCaretYPosition = function() {
@@ -532,7 +575,6 @@ zss_editor.enabledEditingItems = function(e) {
     
     if (items.length > 0) {
         if (zss_editor.isUsingiOS) {
-            //window.location = "zss-callback/"+items.join(',');
             window.location = "callback://0/"+items.join(',');
         } else {
             console.log("callback://"+items.join(','));
@@ -546,8 +588,35 @@ zss_editor.enabledEditingItems = function(e) {
     }
 }
 
-
 zss_editor.focusWysiwyg = function() {
+    zss_editor.restoreSelection();
+}
+
+
+zss_editor.saveSelection = function(updateCarret) {
+
+    if(window.getSelection)//non IE Browsers
+    {
+        zss_editor.savedRange = window.getSelection().getRangeAt(0);
+    }
+    else if(document.selection)//IE
+    {
+        zss_editor.savedRange = document.selection.createRange();
+    }
+}
+
+zss_editor.restoreSelection = function() {
+
     var editor = $('#zss_editor_content');
     editor.focus();
+    
+    if (zss_editor.savedRange != null) {
+        if (window.getSelection)//non IE and there is already a selection
+        {
+            var s = window.getSelection();
+            if (s.rangeCount > 0)
+                s.removeAllRanges();
+            s.addRange(zss_editor.savedRange);
+        }
+    }
 }

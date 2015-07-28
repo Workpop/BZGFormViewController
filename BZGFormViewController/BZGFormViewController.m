@@ -386,8 +386,12 @@
         cell.didBeginEditingBlock(cell, richTextEditor.getText);
     }
     
-    NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
-    [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+    // *indexPath = [self.tableView indexPathForCell:cell];
+    //[self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+    
+    CGRect cursorRect = CGRectMake(0, richTextEditor.carrotPositionY, 2, 20);
+    CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:richTextEditor.view];
+    [self.tableView scrollRectToVisible:tableViewrect animated:YES];
 }
 
 - (void)richTextEditorViewDidChange:(ZSSRichTextEditor *)richTextEditor

@@ -1027,19 +1027,71 @@ static Class hackishFixClass = Nil;
         debug = [debug stringByReplacingPercentEscapesUsingEncoding:NSStringEncodingConversionAllowLossy];
         NSLog(@"%@", debug);
         
-    } else if ([urlString rangeOfString:@"scrollheight://"].location != NSNotFound) {
-        self.contentHeight = [[urlString stringByReplacingOccurrencesOfString:@"scrollheight://" withString:@""] integerValue] + 18; // add height of carat
+    }
+    else if ([urlString hasPrefix:@"js-frame:"]) {
+        
+        NSArray *components = [urlString componentsSeparatedByString:@":"];
+        NSString *function = (NSString*)[components objectAtIndex:1];
+        int callbackId = [((NSString*)[components objectAtIndex:2]) intValue];
+        NSString *argsAsString = [[[(NSString*)[components objectAtIndex:3]
+                                   stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+                                   stringByReplacingOccurrencesOfString:@"[" withString:@""] stringByReplacingOccurrencesOfString:@"]" withString:@""];
+        NSArray *args = [argsAsString componentsSeparatedByString:@","];
+       [self handleCall:function callbackId:callbackId args:args];
+    }
+
+    return YES;
+    
+}//end
+
+
+// Implements all you native function in this one, by matching 'functionName' and parsing 'args'
+// Use 'callbackId' with 'returnResult' selector when you get some results to send back to javascript
+- (void)handleCall:(NSString*)functionName callbackId:(int)callbackId args:(NSArray*)args
+{
+    if ([functionName isEqualToString:@"contentHeightDidChange"]) {
+        
+        if ([args count]!=2) {
+            NSLog(@"contentHeightDidChange needs exactly 2 arguments!");
+            return;
+        }
+
+        self.contentHeight = [[args objectAtIndex:0] integerValue] + 28;
+        self.carrotPositionY = [[args objectAtIndex:1] integerValue] + 44 + 18;
         
         if ([self.delegate respondsToSelector:@selector(richTextEditorViewDidChange:)]) {
             [self.delegate richTextEditorViewDidChange:self];
         }
-        
-    } else if ([urlString rangeOfString:@"caratposition://"].location != NSNotFound) {
-        self.carrotPositionY = [[urlString stringByReplacingOccurrencesOfString:@"caratposition://" withString:@""] integerValue] + 44 + 18; // add height of bar and carrot
     }
-    return YES;
-    
-}//end
+    else if ([functionName isEqualToString:@"editorDidBeginEditing"]) {
+        
+        if ([args count]!=2) {
+            NSLog(@"editorDidBeginEditing needs exactly 2 arguments!");
+            return;
+        }
+        
+        self.contentHeight = [[args objectAtIndex:0] integerValue] + 44;
+        self.carrotPositionY = [[args objectAtIndex:1] integerValue] + 44 + 18;
+        
+        if ([self.delegate respondsToSelector:@selector(richTextEditorViewShouldBeginEditing:)]) {
+            [self.delegate richTextEditorViewShouldBeginEditing:self];
+        }
+        
+        if ([self.delegate respondsToSelector:@selector(richTextEditorViewDidBeginEditing:)]) {
+            [self.delegate richTextEditorViewDidBeginEditing:self];
+        }
+    }
+    else if ([functionName isEqualToString:@"updateCarretPosition"]) {
+        
+        if ([args count]!=1) {
+            NSLog(@"updateCarretPosition needs exactly 1 arguments!");
+            return;
+        }
+        
+        self.carrotPositionY = [[args objectAtIndex:0] integerValue] + 44 + 18;
+    }
+}
+
 
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
@@ -1049,14 +1101,6 @@ static Class hackishFixClass = Nil;
         self.internalHTML = @"";
     }
     [self updateHTML];
-    
-/*
-    if (self.shouldShowKeyboard) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self focusTextEditor];
-        });
-    }
-*/
 }
 
 #pragma mark - Asset Picker
