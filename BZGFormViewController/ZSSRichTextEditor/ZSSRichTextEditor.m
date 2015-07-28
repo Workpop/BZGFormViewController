@@ -1089,6 +1089,12 @@ static Class hackishFixClass = Nil;
         }
         
         self.carrotPositionY = [[args objectAtIndex:0] integerValue] + 44 + 18;
+        
+    } else if ([functionName isEqualToString:@"editorDidEndEditing"]) {
+        
+        if ([self.delegate respondsToSelector:@selector(richTextEditorViewDidEndEditing:)]) {
+            [self.delegate richTextEditorViewDidEndEditing:self];
+        }
     }
 }
 

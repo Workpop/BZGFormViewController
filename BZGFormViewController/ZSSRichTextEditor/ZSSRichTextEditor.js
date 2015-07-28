@@ -97,6 +97,9 @@ zss_editor.init = function() {
         zss_editor.saveSelection();
         NativeBridge.call("updateCarretPosition", [zss_editor.getCaretYPosition()]);
     };
+    
+    var editor = $('#zss_editor_content');
+    editor.focusout(function(){ NativeBridge.call("editorDidEndEditing", []);});
 
 }//end
 

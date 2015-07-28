@@ -383,12 +383,9 @@
     self.currentlyEditingCell = cell;
     
     if (cell.didBeginEditingBlock) {
-        cell.didBeginEditingBlock(cell, richTextEditor.getText);
+        cell.didBeginEditingBlock(cell, [richTextEditor getHTML]);
     }
-    
-    // *indexPath = [self.tableView indexPathForCell:cell];
-    //[self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
-    
+
     CGRect cursorRect = CGRectMake(0, richTextEditor.carrotPositionY, 2, 20);
     CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:richTextEditor.view];
     [self.tableView scrollRectToVisible:tableViewrect animated:YES];
@@ -405,6 +402,22 @@
     CGRect cursorRect = CGRectMake(0, richTextEditor.carrotPositionY, 2, 20);
     CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:richTextEditor.view];
     [self.tableView scrollRectToVisible:tableViewrect animated:YES];
+}
+
+- (void)richTextEditorViewDidEndEditing:(ZSSRichTextEditor *)richTextEditor
+{
+    BZGRichTextViewCell *cell = (BZGRichTextViewCell*)[BZGRichTextViewCell parentCellForRichTextView:richTextEditor.view];
+    if (!cell) {
+        return;
+    }
+    
+    self.currentlyEditingCell = nil;
+    
+    if (cell.didEndEditingBlock) {
+        cell.didEndEditingBlock(cell, [richTextEditor getHTML]);
+    }
+    
+    [self updateInfoCellBelowFormCell:cell];
 }
 
 #pragma mark - UITextFieldDelegate
