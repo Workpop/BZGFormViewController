@@ -485,10 +485,40 @@ zss_editor.getHTML = function() {
                 });
     }
     
+    // wrap any unwrapped text elements in p tags
+    var textnodes = zss_editor.getTextNodesIn($("#zss_editor_content")[0]);
+    for(var i=0; i < textnodes.length; i++){
+        if($(textnodes[i]).parent().is("#zss_editor_content")){
+            $(textnodes[i]).wrap("<p>");
+        }
+    }
+    
+    // remove any empty tags
+    $('*').filter(function(){return $(this).text().trim().length==0}).remove();
+
     // Get the contents
     var h = document.getElementById("zss_editor_content").innerHTML;
     
     return h;
+}
+
+zss_editor.getTextNodesIn = function(node, includeWhitespaceNodes) {
+    var textNodes = [], whitespace = /^\s*$/;
+    
+    function getTextNodes(node) {
+        if (node.nodeType == 3) {
+            if (includeWhitespaceNodes || !whitespace.test(node.nodeValue)) {
+                textNodes.push(node);
+            }
+        } else {
+            for (var i = 0, len = node.childNodes.length; i < len; ++i) {
+                getTextNodes(node.childNodes[i]);
+            }
+        }
+    }
+    
+    getTextNodes(node);
+    return textNodes;
 }
 
 zss_editor.getText = function() {

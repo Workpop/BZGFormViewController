@@ -1213,6 +1213,14 @@ static Class hackishFixClass = Nil;
     html = [html stringByReplacingOccurrencesOfString:@"<br>" withString:@""];
     html = [html stringByReplacingOccurrencesOfString:@"<br />" withString:@""];
     
+    // remove p tag around unordered lists
+    html = [html stringByReplacingOccurrencesOfString:@"<p><ul>" withString:@"<ul>"];
+    html = [html stringByReplacingOccurrencesOfString:@"</ul></p>" withString:@"</ul>"];
+    
+    // remove p tag around ordered lists
+    html = [html stringByReplacingOccurrencesOfString:@"<p><ol>" withString:@"<ol>"];
+    html = [html stringByReplacingOccurrencesOfString:@"</ol></p>" withString:@"</ol>"];
+
     // remove hr
     html = [html stringByReplacingOccurrencesOfString:@"<hr>" withString:@""];
     if (self.formatHTML) {
