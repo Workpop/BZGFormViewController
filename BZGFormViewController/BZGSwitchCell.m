@@ -44,6 +44,12 @@
                                            self.bounds.size.height);
         self.switchField.frame = textFieldFrame;
     }
+    
+    // update label frame
+    CGRect labelFrame = self.label.frame;
+    labelFrame.origin.x = self.separatorInset.left;
+    labelFrame.size.width = self.bounds.size.width - self.separatorInset.left - self.separatorInset.right;
+    self.label.frame = labelFrame;
 }
 
 - (void)configureSwitchField
@@ -63,10 +69,9 @@
 
 - (void)configureLabel
 {
-    CGFloat labelX = 15;
-    CGRect labelFrame = CGRectMake(labelX,
+    CGRect labelFrame = CGRectMake(self.separatorInset.left,
                                    0,
-                                   self.switchField.frame.origin.x - labelX,
+                                   self.switchField.frame.origin.x - self.separatorInset.left - self.separatorInset.right,
                                    self.bounds.size.height);
     self.label = [[UILabel alloc] initWithFrame:labelFrame];
     self.label.font = BZG_TEXTFIELD_LABEL_FONT;

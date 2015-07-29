@@ -13,11 +13,21 @@
 
 @interface BZGRichTextViewCell () <UITextViewDelegate, ZSSRichTextEditorDelegate, UIGestureRecognizerDelegate>
 
-@property (nonatomic, strong) UIView *holder;
+@property (nonatomic, strong) UIView *richTextContainer;
 
 @end
 
 @implementation BZGRichTextViewCell
+
+- (instancetype)initWithContentInsets:(UIEdgeInsets)contentInsets
+{
+    self = [super init];
+    if (self) {
+        self.separatorInset = contentInsets;
+        [self setup];
+    }
+    return self;
+}
 
 - (id)init
 {
@@ -41,14 +51,22 @@
 {
     [super layoutSubviews];
     
-    CGRect textViewFrame = self.holder.frame;
-    textViewFrame.size.width = self.contentView.bounds.size.width - self.separatorInset.left - self.separatorInset.left;
-    textViewFrame.size.height = self.contentView.frame.size.height - CGRectGetHeight(self.label.frame);
-    self.holder.frame = textViewFrame;
+    // update rich text richTextContainer
+    CGRect richTextContainerFrame = self.richTextContainer.frame;
+    richTextContainerFrame.size.width = self.contentView.bounds.size.width - self.separatorInset.left - self.separatorInset.right;
+    richTextContainerFrame.size.height = self.contentView.frame.size.height - CGRectGetHeight(self.label.frame);
+    self.richTextContainer.frame = richTextContainerFrame;
     
+    // update contentViewFrame
     CGRect contentViewFrame = self.contentView.frame;
-    contentViewFrame.size.height = self.holder.frame.origin.y + self.holder.frame.size.height;
+    contentViewFrame.size.height = self.richTextContainer.frame.origin.y + self.richTextContainer.frame.size.height;
     self.contentView.frame = contentViewFrame;
+    
+    // update label frame
+    CGRect labelFrame = self.label.frame;
+    labelFrame.origin.x = self.separatorInset.left;
+    labelFrame.size.width = self.bounds.size.width - self.separatorInset.left - self.separatorInset.right;
+    self.label.frame = labelFrame;
 }
 
 - (void)dealloc
@@ -72,18 +90,18 @@
 
 - (void)configureRichText
 {
-    self.holder = [[UIView alloc] initWithFrame:CGRectMake(self.separatorInset.left, CGRectGetHeight(self.label.frame), self.contentView.bounds.size.width - self.separatorInset.left - self.separatorInset.left, BZG_TEXTVIEW_MIN_HEIGHT)];
-    self.holder.backgroundColor = [UIColor whiteColor];
-    [self.contentView addSubview:self.holder];
+    self.richTextContainer = [[UIView alloc] initWithFrame:CGRectMake(self.separatorInset.left, CGRectGetHeight(self.label.frame), self.contentView.bounds.size.width - self.separatorInset.left - self.separatorInset.right, BZG_TEXTVIEW_MIN_HEIGHT)];
+    self.richTextContainer.backgroundColor = [UIColor clearColor];
+    [self.contentView addSubview:self.richTextContainer];
     
-    self.richText = [[ZSSRichTextEditor alloc] initWithView:self.holder];
+    self.richText = [[ZSSRichTextEditor alloc] initWithView:self.richTextContainer];
     self.richText.enabledToolbarItems = @[ZSSRichTextEditorToolbarBold, ZSSRichTextEditorToolbarItalic, ZSSRichTextEditorToolbarUnorderedList, ZSSRichTextEditorToolbarOrderedList];
 }
 
 - (void)configureTap {
     
     self.contentView.userInteractionEnabled = YES;
-    self.holder.userInteractionEnabled = YES;
+    self.richTextContainer.userInteractionEnabled = YES;
     self.richText.editorView.userInteractionEnabled = YES;
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(becomeFirstResponder)];
@@ -147,7 +165,7 @@
 
 - (CGFloat)cellHeight
 {
-    CGFloat height = ceilf(self.richText.contentHeight) + CGRectGetHeight(self.label.frame);
+    CGFloat height = ceilf(self.richText.contentHeight) + CGRectGetHeight(self.label.frame) + 20;// 20 for padding;
     return height < BZG_TEXTVIEW_MIN_HEIGHT ? BZG_TEXTVIEW_MIN_HEIGHT: height;
 }
 

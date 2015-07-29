@@ -11,6 +11,8 @@
 
 @interface BZGRichTextViewCell : BZGFormCell
 
+- (instancetype)initWithContentInsets:(UIEdgeInsets)contentInsets;
+
 @property (strong, nonatomic) ZSSRichTextEditor *richText;
 @property (strong, nonatomic) UILabel *label;
 

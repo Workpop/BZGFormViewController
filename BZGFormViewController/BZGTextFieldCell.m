@@ -124,7 +124,7 @@
     CGFloat labelX = self.separatorInset.left;
     CGRect labelFrame = CGRectMake(labelX,
                                    0,
-                                   self.textField.frame.origin.x - labelX,
+                                   self.textField.frame.origin.x - labelX - self.separatorInset.right,
                                    self.bounds.size.height);
     self.label = [[UILabel alloc] initWithFrame:labelFrame];
     self.label.font = BZG_TEXTFIELD_LABEL_FONT;

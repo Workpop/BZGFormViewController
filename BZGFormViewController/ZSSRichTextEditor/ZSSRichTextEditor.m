@@ -142,11 +142,12 @@ static Class hackishFixClass = Nil;
 //        self.editorView.hidesInputAccessoryView = YES;
         self.editorView.keyboardDisplayRequiresUserAction = NO;
         self.editorView.scalesPageToFit = YES;
-        self.editorView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+        self.editorView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleLeftMargin;
         self.editorView.dataDetectorTypes = UIDataDetectorTypeNone;
         self.editorView.scrollView.bounces = NO;
         self.editorView.scrollView.scrollEnabled = NO;
-        self.editorView.backgroundColor = [UIColor whiteColor];
+        self.editorView.backgroundColor = [UIColor clearColor];
+        self.editorView.opaque = NO;
         
         self.editorView.scrollView.delegate = self;
         
@@ -1059,8 +1060,8 @@ static Class hackishFixClass = Nil;
             return;
         }
 
-        self.contentHeight = [[args objectAtIndex:0] integerValue] + 28;
-        self.carrotPositionY = [[args objectAtIndex:1] integerValue] + 44 + 18;
+        self.contentHeight = [[args objectAtIndex:0] integerValue];
+        self.carrotPositionY = [[args objectAtIndex:1] integerValue];
         
         if ([self.delegate respondsToSelector:@selector(richTextEditorViewDidChange:)]) {
             [self.delegate richTextEditorViewDidChange:self];
@@ -1073,8 +1074,8 @@ static Class hackishFixClass = Nil;
             return;
         }
         
-        self.contentHeight = [[args objectAtIndex:0] integerValue] + 44;
-        self.carrotPositionY = [[args objectAtIndex:1] integerValue] + 44 + 18;
+        self.contentHeight = [[args objectAtIndex:0] integerValue];
+        self.carrotPositionY = [[args objectAtIndex:1] integerValue];
         
         if ([self.delegate respondsToSelector:@selector(richTextEditorViewShouldBeginEditing:)]) {
             [self.delegate richTextEditorViewShouldBeginEditing:self];
@@ -1091,7 +1092,7 @@ static Class hackishFixClass = Nil;
             return;
         }
         
-        self.carrotPositionY = [[args objectAtIndex:0] integerValue] + 44 + 18;
+        self.carrotPositionY = [[args objectAtIndex:0] integerValue];
         
     } else if ([functionName isEqualToString:@"updateContentHeight"]) {
         
@@ -1100,7 +1101,7 @@ static Class hackishFixClass = Nil;
             return;
         }
         
-        self.contentHeight = [[args objectAtIndex:0] integerValue] + 44;
+        self.contentHeight = [[args objectAtIndex:0] integerValue];
         
         if ([self.delegate respondsToSelector:@selector(richTextEditorViewHeightDidChange:)]) {
             [self.delegate richTextEditorViewHeightDidChange:self];
