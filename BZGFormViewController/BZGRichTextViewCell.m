@@ -73,12 +73,11 @@
 - (void)configureRichText
 {
     self.holder = [[UIView alloc] initWithFrame:CGRectMake(self.separatorInset.left, CGRectGetHeight(self.label.frame), self.contentView.bounds.size.width - self.separatorInset.left - self.separatorInset.left, BZG_TEXTVIEW_MIN_HEIGHT)];
-    self.holder.backgroundColor = [UIColor clearColor];
+    self.holder.backgroundColor = [UIColor whiteColor];
     [self.contentView addSubview:self.holder];
     
     self.richText = [[ZSSRichTextEditor alloc] initWithView:self.holder];
     self.richText.enabledToolbarItems = @[ZSSRichTextEditorToolbarBold, ZSSRichTextEditorToolbarItalic, ZSSRichTextEditorToolbarUnorderedList, ZSSRichTextEditorToolbarOrderedList];
-    self.richText.editorView.backgroundColor = [UIColor blueColor];
 }
 
 - (void)configureTap {
