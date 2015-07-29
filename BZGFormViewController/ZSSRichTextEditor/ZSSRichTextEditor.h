@@ -13,6 +13,7 @@
 - (void)richTextEditorViewDidBeginEditing:(id)richTextEditor;
 - (void)richTextEditorViewDidChange:(id)richTextEditor;
 - (void)richTextEditorViewDidEndEditing:(id)richTextEditor;
+- (void)richTextEditorViewHeightDidChange:(id)richTextEditor;
 @end
 
 /**

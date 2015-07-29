@@ -312,8 +312,8 @@
 -(void)textViewDidChange:(UITextView *)textView
 {
     //resize the tableview if required
-    [self.tableView beginUpdates];
-    [self.tableView endUpdates];
+    [self beginUpdates];
+    [self endUpdates];
     
     [self fixSeparator];
     
@@ -416,6 +416,13 @@
     if (cell.didEndEditingBlock) {
         cell.didEndEditingBlock(cell, [richTextEditor getHTML]);
     }
+}
+
+- (void)richTextEditorViewHeightDidChange:(id)richTextEditor
+{
+    // refresh table to get new height
+    [self beginUpdates];
+    [self endUpdates];
 }
 
 #pragma mark - UITextFieldDelegate
@@ -569,6 +576,7 @@
     self.tableView.contentInset = contentInsets;
     self.tableView.scrollIndicatorInsets = contentInsets;
     
+    // ensure keyboardControl is the front most view if it's a subview
     if (self.keyboardControl.superview) {
         [self.keyboardControl.superview bringSubviewToFront:self.keyboardControl];
     }

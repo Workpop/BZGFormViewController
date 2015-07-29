@@ -442,7 +442,7 @@ zss_editor.setHTML = function(html) {
     editor.html(html);
     
     var e = document.getElementById('zss_editor_content');
-    NativeBridge.call("contentHeightDidChange", [e.scrollHeight, 0]);
+    NativeBridge.call("updateContentHeight", [e.scrollHeight]);
 }
 
 zss_editor.insertHTML = function(html) {

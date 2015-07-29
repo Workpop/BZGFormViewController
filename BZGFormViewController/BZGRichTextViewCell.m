@@ -64,8 +64,8 @@
                                    self.bounds.size.width - labelX - self.separatorInset.right,
                                    30);
     self.label = [[UILabel alloc] initWithFrame:labelFrame];
-    self.label.font = BZG_STANDARD_FONT;
-    self.label.textColor = BZG_BLACK_COLOR;
+    self.label.font = BZG_TEXTFIELD_LABEL_FONT;
+    self.label.textColor = BZG_TEXTFIELD_LABEL_COLOR;
     self.label.backgroundColor = [UIColor clearColor];
     [self addSubview:self.label];
 }
