@@ -73,14 +73,16 @@ zss_editor.savedRange;
  */
 zss_editor.init = function() {
     
-    $('#zss_editor_content').on('click', function(e) {
+    var editor = $('#zss_editor_content');
+    
+    editor.on('click', function(e) {
                                 var c = zss_editor.getCaretYPosition();
                                 var e = document.getElementById('zss_editor_content');
                                 var contentHeight = e.scrollHeight;
                                 NativeBridge.call("editorDidBeginEditing", [contentHeight, c]);
                                 });
     
-    $(document).keyup(function() {
+    editor.keyup(function() {
                       
                       // save carret selection
                       zss_editor.saveSelection();
@@ -102,17 +104,82 @@ zss_editor.init = function() {
                       }
                     });
     
-    document.onselectionchange = function() {
+    editor.onselectionchange = function() {
         zss_editor.saveSelection();
         NativeBridge.call("updateCarretPosition", [zss_editor.getCaretYPosition()]);
     };
     
-    var editor = $('#zss_editor_content');
     editor.focusout(function() {
                     NativeBridge.call("editorDidEndEditing", []);
                     });
     
+    // when user pastes
+    editor.bind('paste', function(e) {
+                    handlepaste(this, e);
+                });
+
 } //end
+
+
+
+zss_editor.strip_tags = function(str, allowed_tags)
+{
+    
+    var key = '', allowed = false;
+    var matches = [];    var allowed_array = [];
+    var allowed_tag = '';
+    var i = 0;
+    var k = '';
+    var html = '';
+    var replacer = function (search, replace, str) {
+        return str.split(search).join(replace);
+    };
+    // Build allowes tags associative array
+    if (allowed_tags) {
+        allowed_array = allowed_tags.match(/([a-zA-Z0-9]+)/gi);
+    }
+    str += '';
+    
+    // Match tags
+    matches = str.match(/(<\/?[\S][^>]*>)/gi);
+    // Go through all HTML tags
+    for (key in matches) {
+        if (isNaN(key)) {
+            // IE7 Hack
+            continue;
+        }
+        
+        // Save HTML tag
+        html = matches[key].toString();
+        // Is tag not in allowed list? Remove from str!
+        allowed = false;
+        
+        // Go through all allowed tags
+        for (k in allowed_array) {            // Init
+            allowed_tag = allowed_array[k];
+            i = -1;
+            
+            if (i != 0) { i = html.toLowerCase().indexOf('<'+allowed_tag+'>');}
+            if (i != 0) { i = html.toLowerCase().indexOf('<'+allowed_tag+' ');}
+            if (i != 0) { i = html.toLowerCase().indexOf('</'+allowed_tag)   ;}
+            
+            // Determine
+            if (i == 0) {                allowed = true;
+                break;
+            }
+        }
+        if (!allowed) {
+            str = replacer(html, "", str); // Custom replace. No regexing
+        }
+    }
+    return str;
+}
+
+
+
+
+
+
 
 // This will show up in the XCode console as we are able to push this into an NSLog.
 zss_editor.debug = function(msg) {
@@ -684,4 +751,60 @@ zss_editor.dispatchContentHeightChanged = function() {
     var e = document.getElementById('zss_editor_content');
     var contentHeight = e.scrollHeight;
     NativeBridge.call("contentHeightDidChange", [contentHeight, c]);
+}
+
+// pasting
+
+function handlepaste (elem, e) {
+    var savedcontent = elem.innerHTML;
+    if (e && e.clipboardData && e.clipboardData.getData) {// Webkit - get data from clipboard, put into editdiv, cleanup, then cancel event
+        if (/text\/html/.test(e.clipboardData.types)) {
+            elem.innerHTML = e.clipboardData.getData('text/html');
+        }
+        else if (/text\/plain/.test(e.clipboardData.types)) {
+            elem.innerHTML = e.clipboardData.getData('text/plain');
+        }
+        else {
+            elem.innerHTML = "";
+        }
+        waitforpastedata(elem, savedcontent);
+        if (e.preventDefault) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+        return false;
+    }
+    else {// Everything else - empty editdiv and allow browser to paste content into it, then cleanup
+        elem.innerHTML = "";
+        waitforpastedata(elem, savedcontent);
+        return true;
+    }
+}
+
+function waitforpastedata (elem, savedcontent) {
+    if (elem.childNodes && elem.childNodes.length > 0) {
+        processpaste(elem, savedcontent);
+    }
+    else {
+        that = {
+        e: elem,
+        s: savedcontent
+        }
+        that.callself = function () {
+            waitforpastedata(that.e, that.s)
+        }
+        setTimeout(that.callself,20);
+    }
+}
+
+function processpaste (elem, savedcontent) {
+    
+    // santize pasteddata
+    pasteddata = zss_editor.strip_tags(elem.innerHTML,"<b><ul><ol><li><strong><i><em><br>");
+    
+    // set final
+    elem.innerHTML = savedcontent + pasteddata;
+    
+    // height changed after adding text
+    zss_editor.dispatchContentHeightChanged();
 }
