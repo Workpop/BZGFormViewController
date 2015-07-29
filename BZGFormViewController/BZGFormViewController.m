@@ -568,6 +568,10 @@
 
     self.tableView.contentInset = contentInsets;
     self.tableView.scrollIndicatorInsets = contentInsets;
+    
+    if (self.keyboardControl.superview) {
+        [self.keyboardControl.superview bringSubviewToFront:self.keyboardControl];
+    }
 }
 
 
@@ -647,7 +651,7 @@
                             if ([[temp description] hasPrefix:@"<UIWebFormAccessory"])
                             {
                                 currentToolBar = (UIView*)temp;
-                           //     currentToolBar.hidden = true;
+                                currentToolBar.hidden = true;
                                 toolbarFrame = currentToolBar.frame;
                                 toolBarContainer = hostkeyboard;
                             }
@@ -667,11 +671,10 @@
     }
     
     if(toolBarContainer){
-        if ([toolBarContainer.subviews containsObject:self.keyboardControl]) {
-            [toolBarContainer bringSubviewToFront:self.keyboardControl];
-        } else {
+        if (![toolBarContainer.subviews containsObject:self.keyboardControl]) {
             [toolBarContainer addSubview:self.keyboardControl];
         }
+        [toolBarContainer bringSubviewToFront:self.keyboardControl];
     }
     keyboardWindow = nil;
     

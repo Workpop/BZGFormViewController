@@ -11,7 +11,7 @@
 #import "BZGInfoCell.h"
 #import "Constants.h"
 
-@interface BZGRichTextViewCell () <UITextViewDelegate, ZSSRichTextEditorDelegate>
+@interface BZGRichTextViewCell () <UITextViewDelegate, ZSSRichTextEditorDelegate, UIGestureRecognizerDelegate>
 
 @property (nonatomic, strong) UIView *holder;
 
@@ -33,6 +33,7 @@
     self.contentView.backgroundColor = [UIColor clearColor];
 
     [self configureLabel];
+    [self configureRichText];
     [self configureTap];
 }
 
@@ -41,8 +42,8 @@
     [super layoutSubviews];
     
     CGRect textViewFrame = self.holder.frame;
-    textViewFrame.size.width = self.contentView.bounds.size.width;
-    textViewFrame.size.height = self.contentView.frame.size.height;
+    textViewFrame.size.width = self.contentView.bounds.size.width - self.separatorInset.left - self.separatorInset.left;
+    textViewFrame.size.height = self.contentView.frame.size.height - CGRectGetHeight(self.label.frame);
     self.holder.frame = textViewFrame;
     
     CGRect contentViewFrame = self.contentView.frame;
@@ -57,24 +58,51 @@
 
 - (void)configureLabel
 {
-    self.holder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, BZG_TEXTVIEW_MIN_HEIGHT)];
-    self.holder.backgroundColor = [UIColor blueColor];
+    CGFloat labelX = self.separatorInset.left;
+    CGRect labelFrame = CGRectMake(labelX,
+                                   0,
+                                   self.bounds.size.width - labelX - self.separatorInset.right,
+                                   30);
+    self.label = [[UILabel alloc] initWithFrame:labelFrame];
+    self.label.font = BZG_STANDARD_FONT;
+    self.label.textColor = BZG_BLACK_COLOR;
+    self.label.backgroundColor = [UIColor clearColor];
+    [self addSubview:self.label];
+}
+
+- (void)configureRichText
+{
+    self.holder = [[UIView alloc] initWithFrame:CGRectMake(self.separatorInset.left, CGRectGetHeight(self.label.frame), self.contentView.bounds.size.width - self.separatorInset.left - self.separatorInset.left, BZG_TEXTVIEW_MIN_HEIGHT)];
+    self.holder.backgroundColor = [UIColor clearColor];
     [self.contentView addSubview:self.holder];
     
     self.richText = [[ZSSRichTextEditor alloc] initWithView:self.holder];
     self.richText.enabledToolbarItems = @[ZSSRichTextEditorToolbarBold, ZSSRichTextEditorToolbarItalic, ZSSRichTextEditorToolbarUnorderedList, ZSSRichTextEditorToolbarOrderedList];
-    [self.richText setPlaceholder:@"This is a test"];
+    self.richText.editorView.backgroundColor = [UIColor blueColor];
 }
 
 - (void)configureTap {
     
     self.contentView.userInteractionEnabled = YES;
     self.holder.userInteractionEnabled = YES;
+    self.richText.editorView.userInteractionEnabled = YES;
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(becomeFirstResponder)];
     [tap setNumberOfTapsRequired:1];
     [tap setNumberOfTouchesRequired:1];
-    [self.holder addGestureRecognizer:tap];
+    tap.delegate = self;
+    [self.richText.editorView addGestureRecognizer:tap];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    // only listen to tap gesture when there's no text since the user wouldn't know where to tap
+    // when there's text they'll see the text and tap in this area
+    if (!self.richText.getText.length) {
+        return YES;
+    }
+    
+    return NO;
 }
 
 + (BZGRichTextViewCell *)parentCellForRichTextView:(UIView *)view
@@ -91,6 +119,11 @@
     [self.richText setHTML:text];
 }
 
+- (void)handleTap
+{
+    [self.richText focusTextEditor];
+}
+
 - (BOOL)becomeFirstResponder
 {
     [self.richText focusTextEditor];
@@ -102,17 +135,21 @@
     if([self.richText.delegate respondsToSelector:@selector(richTextEditorViewDidBeginEditing:)]) {
         [self.richText.delegate richTextEditorViewDidBeginEditing:self.richText];
     }
+    
+    return YES;
 }
 
 - (BOOL)resignFirstResponder
 {
     [self.richText blurTextEditor];
+    
+    return YES;
 }
 
 - (CGFloat)cellHeight
 {
-    CGFloat height = ceilf(self.richText.contentHeight);
-    return self.richText.contentHeight < BZG_TEXTVIEW_MIN_HEIGHT ? BZG_TEXTVIEW_MIN_HEIGHT: self.richText.contentHeight;
+    CGFloat height = ceilf(self.richText.contentHeight) + CGRectGetHeight(self.label.frame);
+    return height < BZG_TEXTVIEW_MIN_HEIGHT ? BZG_TEXTVIEW_MIN_HEIGHT: height;
 }
 
 -(BOOL)canBecomeFirstResponder

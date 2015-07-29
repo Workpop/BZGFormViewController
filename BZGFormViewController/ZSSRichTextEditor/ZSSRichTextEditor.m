@@ -239,6 +239,10 @@ static Class hackishFixClass = Nil;
 
 - (void)setPlaceholderText {
     
+    if (!self.placeholder.length) {
+        return;
+    }
+    
     NSString *js = [NSString stringWithFormat:@"zss_editor.setPlaceholder(\"%@\");", self.placeholder];
     [self.editorView stringByEvaluatingJavaScriptFromString:js];
     
