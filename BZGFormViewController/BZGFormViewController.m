@@ -211,7 +211,9 @@
         for (NSInteger r = startRow; r < [formCellsInSection count]; ++r) {
             UITableViewCell *cell = formCellsInSection[r];
             if ([cell isKindOfClass:[BZGFormCell class]]) {
-                return (BZGFormCell *)cell;
+                if (cell.userInteractionEnabled) {
+                    return (BZGFormCell *)cell;
+                }
             }
         }
     }
@@ -230,7 +232,9 @@
         for (NSInteger r = startRow; r >= 0; r--) {
             UITableViewCell *cell = formCellsInSection[r];
             if ([cell isKindOfClass:[BZGFormCell class]]) {
-                return (BZGFormCell *)cell;
+                if (cell.userInteractionEnabled) {
+                    return (BZGFormCell *)cell;
+                }
             }
         }
     }
