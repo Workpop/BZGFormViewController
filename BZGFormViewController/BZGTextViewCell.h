@@ -55,6 +55,8 @@
 /// Set the textField text
 -(void)setText:(NSString *)text;
 
+- (void)validate;
+
 - (CGFloat)cellHeight;
 
 /**
