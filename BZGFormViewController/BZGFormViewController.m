@@ -28,6 +28,11 @@
 @property (nonatomic, strong) NSMutableArray *formCellsBySection;
 @property (nonatomic, strong) NSArray *allFormCellsFlattened;
 @property (nonatomic, weak) BZGFormCell *currentlyEditingCell;
+
+@property (nonatomic, strong) UIWindow *keyboardWindow;
+@property (nonatomic, strong) UIView* toolBarContainer;
+@property (nonatomic, strong) UIView* currentToolBar;
+
 @property CGSize keyboardSize;
 
 
@@ -53,6 +58,8 @@
 
 - (void)dealloc
 {
+    [self restoreKeyboardTopBar];
+    
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -68,19 +75,19 @@
     }
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.backgroundColor = BZG_TABLEVIEW_BACKGROUND_COLOR;
-
+    
     UIView *contentView = [[UIView alloc] initWithFrame:CGRectZero];
     contentView.autoresizesSubviews = YES;
     contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [contentView addSubview:self.tableView];
-
+    
     self.view = contentView;
-
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow:)
                                                  name:UIKeyboardWillShowNotification
                                                object:nil];
-
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
@@ -95,13 +102,13 @@
     NSArray *formCellsInSection = [self formCellsInSection:cellIndexPath.section];
     
     if (cellIndexPath == nil || cellIndexPath.row + 1 >= [formCellsInSection count]) { return nil; }
-
+    
     UITableViewCell *cellBelow = formCellsInSection[cellIndexPath.row + 1];
     if ([cellBelow isKindOfClass:[BZGInfoCell class]]) {
         [self styleInfoCell:cell];
         return (BZGInfoCell *)cellBelow;
     }
-
+    
     return nil;
 }
 
@@ -109,11 +116,11 @@
 {
     NSIndexPath *cellIndexPath = [self indexPathOfCell:cell];
     if (cellIndexPath == nil) { return; }
-
+    
     // if an info cell is already showing, do nothing
     BZGInfoCell *infoCell = [self infoCellBelowFormCell:cell];
     if (infoCell) { return; }
-
+    
     // otherwise, add the cell's info cell to the table view
     NSIndexPath *infoCellIndexPath = [NSIndexPath indexPathForRow:cellIndexPath.row + 1
                                                         inSection:cellIndexPath.section];
@@ -136,11 +143,11 @@
 {
     NSIndexPath *cellIndexPath = [self indexPathOfCell:cell];
     if (cellIndexPath == nil) { return; }
-
+    
     // if no info cell is showing, do nothing
     BZGInfoCell *infoCell = [self infoCellBelowFormCell:cell];
     if (!infoCell) return;
-
+    
     // otherwise, remove it
     NSIndexPath *infoCellIndexPath = [NSIndexPath indexPathForRow:cellIndexPath.row + 1
                                                         inSection:cellIndexPath.section];
@@ -203,7 +210,7 @@
 {
     NSIndexPath *cellIndexPath = [self indexPathOfCell:cell];
     if (cellIndexPath == nil) { return nil; }
-
+    
     for (NSInteger s = cellIndexPath.section; s < [self.formCellsBySection count]; s++) {
         NSArray* formCellsInSection = [self formCellsInSection:s];
         
@@ -389,7 +396,7 @@
     if (cell.didBeginEditingBlock) {
         cell.didBeginEditingBlock(cell, [richTextEditor getHTML]);
     }
-
+    
     CGRect cursorRect = CGRectMake(0, richTextEditor.carrotPositionY, 2, 20);
     CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:richTextEditor.view];
     [self.tableView scrollRectToVisible:tableViewrect animated:YES];
@@ -445,7 +452,7 @@
     if (cell.didBeginEditingBlock) {
         cell.didBeginEditingBlock(cell, textField.text);
     }
-
+    
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
     [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
     if (self.showsKeyboardControl) {
@@ -460,25 +467,25 @@
     if (!cell) {
         return YES;
     }
-
+    
     if ([cell isMemberOfClass:[BZGPhoneTextFieldCell class]]) {
         BZGPhoneTextFieldCell *phoneCell = (BZGPhoneTextFieldCell *)cell;
         BOOL shouldChange = [phoneCell shouldChangeCharactersInRange:range replacementString:string];
         [self updateInfoCellBelowFormCell:phoneCell];
         return shouldChange;
     }
-
+    
     NSString *newText = [textField.text stringByReplacingCharactersInRange:range withString:string];
     if (cell.shouldChangeTextBlock) {
         shouldChange = cell.shouldChangeTextBlock(cell, newText);
     }
-
+    
     [self updateInfoCellBelowFormCell:cell];
     return shouldChange;
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
-{    
+{
     BZGTextFieldCell *cell = [BZGTextFieldCell parentCellForTextField:textField];
     if (!cell) {
         return;
@@ -489,7 +496,7 @@
     if (cell.didEndEditingBlock) {
         cell.didEndEditingBlock(cell, textField.text);
     }
-
+    
     [self updateInfoCellBelowFormCell:cell];
 }
 
@@ -500,11 +507,11 @@
     if (!cell) {
         return YES;
     }
-
+    
     if (cell.shouldReturnBlock) {
         shouldReturn = cell.shouldReturnBlock(cell, textField.text);
     }
-
+    
     BZGFormCell *nextCell = [self nextFormCell:cell];
     if (!nextCell) {
         [cell resignFirstResponder];
@@ -512,7 +519,7 @@
     else {
         [nextCell becomeFirstResponder];
     }
-
+    
     [self updateInfoCellBelowFormCell:cell];
     return shouldReturn;
 }
@@ -569,14 +576,14 @@
 - (void)keyboardWillShow:(NSNotification *)notification
 {
     self.keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
-
+    
     UIEdgeInsets contentInsets;
     if (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation])) {
         contentInsets = UIEdgeInsetsMake(0.0, 0.0, (self.keyboardSize.height), 0.0);
     } else {
         contentInsets = UIEdgeInsetsMake(0.0, 0.0, (self.keyboardSize.width), 0.0);
     }
-
+    
     self.tableView.contentInset = contentInsets;
     self.tableView.scrollIndicatorInsets = contentInsets;
     
@@ -628,27 +635,27 @@
     self.keyboardControl.previousCell = [self previousFormCell:cell];
     self.keyboardControl.currentCell = cell;
     self.keyboardControl.nextCell = [self nextFormCell:cell];
-
+    
     [self removeKeyboardTopBar];
 }
 
 - (void)removeKeyboardTopBar{
     // Locate non-UIWindow.
     
-    UIWindow *keyboardWindow = nil;
-    UIView* toolBarContainer = nil;
-    UIView* currentToolBar = nil;
+    self.keyboardWindow = nil;
+    self.toolBarContainer = nil;
+    self.currentToolBar = nil;
     NSArray* windows = [[UIApplication sharedApplication] windows];
     for (UIWindow *possibleWindow in windows) {
         if (![[possibleWindow class] isEqual:[UIWindow class]]) {
-            keyboardWindow = possibleWindow;
+            self.keyboardWindow = possibleWindow;
             break;
         }
     }
-    CGRect frm = keyboardWindow.frame;
+    CGRect frm = self.keyboardWindow.frame;
     CGRect toolbarFrame = CGRectMake(0.0f, frm.size.height, frm.size.width, 44.0f);
     // Locate UIWebFormView.
-    for (UIView *possibleFormView in [keyboardWindow subviews])
+    for (UIView *possibleFormView in [self.keyboardWindow subviews])
     {
         if ([[[UIDevice currentDevice] systemVersion] floatValue] > 8.0) {
             if([[possibleFormView description] hasPrefix:@"<UIInputSetContainerView"])
@@ -662,10 +669,10 @@
                         {
                             if ([[temp description] hasPrefix:@"<UIWebFormAccessory"])
                             {
-                                currentToolBar = (UIView*)temp;
-                                currentToolBar.hidden = true;
-                                toolbarFrame = currentToolBar.frame;
-                                toolBarContainer = hostkeyboard;
+                                self.currentToolBar = (UIView*)temp;
+                                self.currentToolBar.hidden = true;
+                                toolbarFrame = self.currentToolBar.frame;
+                                self.toolBarContainer = hostkeyboard;
                             }
                         }
                     }
@@ -682,13 +689,13 @@
         }
     }
     
-    if(toolBarContainer){
-        if (![toolBarContainer.subviews containsObject:self.keyboardControl]) {
-            [toolBarContainer addSubview:self.keyboardControl];
+    if(self.toolBarContainer){
+        if (![self.toolBarContainer.subviews containsObject:self.keyboardControl]) {
+            [self.toolBarContainer addSubview:self.keyboardControl];
         }
-        [toolBarContainer bringSubviewToFront:self.keyboardControl];
+        [self.toolBarContainer bringSubviewToFront:self.keyboardControl];
     }
-    keyboardWindow = nil;
+    self.keyboardWindow = nil;
     
     // add more insets for richtext bar
     NSInteger barHeight = 44;
@@ -701,6 +708,48 @@
     
     self.tableView.contentInset = contentInsets;
     self.tableView.scrollIndicatorInsets = contentInsets;
+}
+
+- (void)restoreKeyboardTopBar {
+    self.keyboardWindow = nil;
+    self.toolBarContainer = nil;
+    self.currentToolBar = nil;
+    NSArray* windows = [[UIApplication sharedApplication] windows];
+    for (UIWindow *possibleWindow in windows) {
+        if (![[possibleWindow class] isEqual:[UIWindow class]]) {
+            self.keyboardWindow = possibleWindow;
+            break;
+        }
+    }
+    
+    // Locate UIWebFormView.
+    for (UIView *possibleFormView in [self.keyboardWindow subviews])
+    {
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] > 8.0) {
+            
+            if([[possibleFormView description] hasPrefix:@"<UIInputSetContainerView"]) {
+                for (UIView *hostkeyboard in [possibleFormView subviews]) {
+                    if([[hostkeyboard description] hasPrefix:@"<UIInputSetHostView"])
+                    {
+                        for (id temp in hostkeyboard.subviews)
+                        {
+                            if ([[temp class] isEqual:[BZGKeyboardControl class]]) {
+                                [temp removeFromSuperview];
+                            }
+                        }
+                    }
+                }
+            }
+        } else{
+            if ([[possibleFormView description] rangeOfString:@"UIPeripheralHostView"].location != NSNotFound) {
+                for (UIView *subviewWhichIsPossibleFormView in [possibleFormView subviews]) {
+                    if ([[subviewWhichIsPossibleFormView class] isEqual:[BZGKeyboardControl class]]) {
+                        [subviewWhichIsPossibleFormView removeFromSuperview];
+                    }
+                }
+            }
+        }
+    }
 }
 
 - (BZGKeyboardControl *)keyboardControl
