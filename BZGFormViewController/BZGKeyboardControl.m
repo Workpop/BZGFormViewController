@@ -10,8 +10,8 @@
 #import "BZGRichTextViewCell.h"
 
 const CGFloat BZGKeyboardControlButtonSpacing = 22;
-NSString * const kNext = @"NEXT";
-NSString * const kPrev = @"PREV";
+NSString * const kNext = @"Next";
+NSString * const kPrev = @"Prev";
 
 @implementation BZGKeyboardControl
 
@@ -30,10 +30,10 @@ NSString * const kPrev = @"PREV";
         
         self.previousButton = [[UIBarButtonItem alloc] initWithTitle:kPrev style:UIBarButtonItemStylePlain target:nil action:nil];
         self.nextButton = [[UIBarButtonItem alloc] initWithTitle:kNext style:UIBarButtonItemStylePlain target:nil action:nil];
-
+        
         self.previousButton.enabled     = NO;
         self.nextButton.enabled         = NO;
-
+        
         UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:self.frame];
         toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         
@@ -45,7 +45,7 @@ NSString * const kPrev = @"PREV";
         toolbar.barTintColor = [UIColor colorWithRed: 209/255.f green:213/255.f blue:219/255.f alpha:1];
         
         //button colors
-        toolbar.tintColor = [UIColor blueColor];
+        //        toolbar.tintColor = [UIColor blueColor];
         
         [toolbar setItems:@[self.previousButton,
                             [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
