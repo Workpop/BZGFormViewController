@@ -797,10 +797,25 @@ function waitforpastedata (elem, savedcontent) {
     }
 }
 
+function removeStyles(el) {
+    el.removeAttribute('style');
+    
+    if(el.childNodes.length > 0) {
+        for(var child in el.childNodes) {
+            /* filter element nodes only */
+            if(el.childNodes[child].nodeType == 1)
+                removeStyles(el.childNodes[child]);
+        }
+    }
+}
+
 function processpaste (elem, savedcontent) {
     
+    // remove any style tags
+    removeStyles(elem);
+    
     // santize pasteddata
-    pasteddata = zss_editor.strip_tags(elem.innerHTML,"<b><ul><ol><li><strong><i><em><br>");
+    pasteddata = zss_editor.strip_tags(elem.innerHTML,"<p><b><ul><ol><li><strong><i><em><br>");
     
     // set final
     elem.innerHTML = savedcontent + pasteddata;
