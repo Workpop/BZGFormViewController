@@ -34,7 +34,18 @@ call: function call(functionName, args, callback) {
 }
 };
 
-
+console = new Object();
+console.log = function(log) {
+    var iframe = document.createElement("IFRAME");
+    iframe.setAttribute("src", "ios-log:#iOS#" + log);
+    document.documentElement.appendChild(iframe);
+    iframe.parentNode.removeChild(iframe);
+    iframe = null;
+};
+console.debug = console.log;
+console.info = console.log;
+console.warn = console.log;
+console.error = console.log;
 
 
 /*!
@@ -505,9 +516,26 @@ zss_editor.insertImage = function(url, alt) {
 }
 
 zss_editor.setHTML = function(html) {
+    
+    // strip anything out other than the following characters
+    html = zss_editor.strip_tags(html,"<p><b><ul><ol><li><strong><i><em>");
+    
+    // set contents
     var editor = $('#zss_editor_content');
     editor.html(html);
+
+    // wrap any unwrapped text elements in p tags
+    var textnodes = zss_editor.getTextNodesIn($("#zss_editor_content")[0]);
+    for(var i=0; i < textnodes.length; i++){
+        if($(textnodes[i]).parent().is("#zss_editor_content")){
+            $(textnodes[i]).wrap("<p>");
+        }
+    }
     
+    // remove any empty tags
+    $('*').filter(function(){return $(this).text().trim().length==0}).remove();
+
+    // notify new height
     var e = document.getElementById('zss_editor_content');
     NativeBridge.call("updateContentHeight", [e.scrollHeight]);
 }
@@ -518,40 +546,7 @@ zss_editor.insertHTML = function(html) {
 }
 
 zss_editor.getHTML = function() {
-    
-    // Images
-    var img = $('img');
-    if (img.length != 0) {
-        $('img').removeClass('zs_active');
-        $('img').each(function(index, e) {
-                      var image = $(this);
-                      var zs_class = image.attr('class');
-                      if (typeof(zs_class) != "undefined") {
-                      if (zs_class == '') {
-                      image.removeAttr('class');
-                      }
-                      }
-                      });
-    }
-    
-    // Blockquote
-    var bq = $('blockquote');
-    if (bq.length != 0) {
-        bq.each(function() {
-                var b = $(this);
-                if (b.css('border').indexOf('none') != -1) {
-                b.css({
-                      'border': ''
-                      });
-                }
-                if (b.css('padding').indexOf('0px') != -1) {
-                b.css({
-                      'padding': ''
-                      });
-                }
-                });
-    }
-    
+           
     // wrap any unwrapped text elements in p tags
     var textnodes = zss_editor.getTextNodesIn($("#zss_editor_content")[0]);
     for(var i=0; i < textnodes.length; i++){
@@ -815,10 +810,18 @@ function processpaste (elem, savedcontent) {
     removeStyles(elem);
     
     // santize pasteddata
-    pasteddata = zss_editor.strip_tags(elem.innerHTML,"<p><b><ul><ol><li><strong><i><em><br>");
+    pasteddata = zss_editor.strip_tags(elem.innerHTML,"<p><b><ul><ol><li><strong><i><em>");
     
     // set final
     elem.innerHTML = savedcontent + pasteddata;
+    
+    // wrap any unwrapped text elements in p tags
+    var textnodes = zss_editor.getTextNodesIn($("#zss_editor_content")[0]);
+    for(var i=0; i < textnodes.length; i++){
+        if($(textnodes[i]).parent().is("#zss_editor_content")){
+            $(textnodes[i]).wrap("<p>");
+        }
+    }
     
     // height changed after adding text
     zss_editor.dispatchContentHeightChanged();

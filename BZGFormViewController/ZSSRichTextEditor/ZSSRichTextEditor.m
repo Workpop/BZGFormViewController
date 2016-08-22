@@ -557,14 +557,12 @@ static Class hackishFixClass = Nil;
     
 }
 
-- (void)updateHTML {
-    
+- (void)updateHTML {    
     NSString *html = self.internalHTML;
     self.sourceView.text = html;
     NSString *cleanedHTML = [self removeQuotesFromHTML:self.sourceView.text];
     NSString *trigger = [NSString stringWithFormat:@"zss_editor.setHTML(\"%@\");", cleanedHTML];
     [self.editorView stringByEvaluatingJavaScriptFromString:trigger];
-    
 }
 
 - (NSString *)getHTML {
@@ -1015,7 +1013,14 @@ static Class hackishFixClass = Nil;
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 
     NSString *urlString = [[request URL] absoluteString];
-//    NSLog(@"web request %@", urlString);
+    
+    NSString *requestString = [urlString stringByReplacingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+    if ([requestString hasPrefix:@"ios-log:"]) {
+        NSString* logString = [[requestString componentsSeparatedByString:@":#iOS#"] objectAtIndex:1];
+        NSLog(@"UIWebView console: %@", logString);
+        return NO;
+    }
+
     if (navigationType == UIWebViewNavigationTypeLinkClicked) {
         return NO;
     } else if ([urlString rangeOfString:@"callback://0/"].location != NSNotFound) {
@@ -1206,14 +1211,6 @@ static Class hackishFixClass = Nil;
 
 - (NSString *)tidyHTML:(NSString *)html {
     
-    // turn <div> into <p>
-    html = [html stringByReplacingOccurrencesOfString:@"<div>" withString:@"<p>"];
-    html = [html stringByReplacingOccurrencesOfString:@"</div>" withString:@"</p>"];
-    
-    // remove br
-    html = [html stringByReplacingOccurrencesOfString:@"<br>" withString:@""];
-    html = [html stringByReplacingOccurrencesOfString:@"<br />" withString:@""];
-    
     // remove p tag around unordered lists
     html = [html stringByReplacingOccurrencesOfString:@"<p><ul>" withString:@"<ul>"];
     html = [html stringByReplacingOccurrencesOfString:@"</ul></p>" withString:@"</ul>"];
@@ -1222,8 +1219,6 @@ static Class hackishFixClass = Nil;
     html = [html stringByReplacingOccurrencesOfString:@"<p><ol>" withString:@"<ol>"];
     html = [html stringByReplacingOccurrencesOfString:@"</ol></p>" withString:@"</ol>"];
 
-    // remove hr
-    html = [html stringByReplacingOccurrencesOfString:@"<hr>" withString:@""];
     if (self.formatHTML) {
         html = [self.editorView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"style_html(\"%@\");", html]];
     }
