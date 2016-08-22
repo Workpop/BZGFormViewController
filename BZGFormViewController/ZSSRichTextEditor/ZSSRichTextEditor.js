@@ -534,9 +534,12 @@ zss_editor.setHTML = function(html) {
     
     // remove any empty tags
     $('*').filter(function(){return $(this).text().trim().length==0}).remove();
-
+    
     // notify new height
     var e = document.getElementById('zss_editor_content');
+    
+    console.log("settings html: " + e.innerHTML);
+    
     NativeBridge.call("updateContentHeight", [e.scrollHeight]);
 }
 

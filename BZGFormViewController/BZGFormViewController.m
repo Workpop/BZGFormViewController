@@ -397,7 +397,7 @@
         cell.didBeginEditingBlock(cell, [richTextEditor getHTML]);
     }
     
-    CGRect cursorRect = CGRectMake(0, richTextEditor.carrotPositionY, 2, 20);
+    CGRect cursorRect = CGRectMake(0, richTextEditor.carrotPositionY, 2, 76); // 76 effects scroll position
     CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:richTextEditor.view];
     [self.tableView scrollRectToVisible:tableViewrect animated:YES];
 }
@@ -410,7 +410,7 @@
     
     [self fixSeparator];
     
-    CGRect cursorRect = CGRectMake(0, richTextEditor.carrotPositionY, 2, 20);
+    CGRect cursorRect = CGRectMake(0, richTextEditor.carrotPositionY, 2, 76); // 76 effects scroll position
     CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:richTextEditor.view];
     [self.tableView scrollRectToVisible:tableViewrect animated:YES];
 }

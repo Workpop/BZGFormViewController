@@ -51,16 +51,30 @@
 {
     [super layoutSubviews];
     
-    // update rich text richTextContainer
-    CGRect richTextContainerFrame = self.richTextContainer.frame;
-    richTextContainerFrame.size.width = self.contentView.bounds.size.width - self.separatorInset.left - self.separatorInset.right;
-    richTextContainerFrame.size.height = self.contentView.frame.size.height - CGRectGetHeight(self.label.frame);
-    self.richTextContainer.frame = richTextContainerFrame;
-    
-    // update contentViewFrame
-    CGRect contentViewFrame = self.contentView.frame;
-    contentViewFrame.size.height = self.richTextContainer.frame.origin.y + self.richTextContainer.frame.size.height;
-    self.contentView.frame = contentViewFrame;
+    if (!self.label.text.length) {
+        // update rich text richTextContainer
+        CGRect richTextContainerFrame = self.richTextContainer.frame;
+        richTextContainerFrame.size.width = self.contentView.bounds.size.width - self.separatorInset.left - self.separatorInset.right;
+        richTextContainerFrame.size.height = self.contentView.frame.size.height;
+        richTextContainerFrame.origin.y = 0;
+        self.richTextContainer.frame = richTextContainerFrame;
+        
+        // update contentViewFrame
+        CGRect contentViewFrame = self.contentView.frame;
+        contentViewFrame.size.height = self.richTextContainer.frame.origin.y + self.richTextContainer.frame.size.height;
+        self.contentView.frame = contentViewFrame;
+    } else {
+        // update rich text richTextContainer
+        CGRect richTextContainerFrame = self.richTextContainer.frame;
+        richTextContainerFrame.size.width = self.contentView.bounds.size.width - self.separatorInset.left - self.separatorInset.right;
+        richTextContainerFrame.size.height = self.contentView.frame.size.height - CGRectGetHeight(self.label.frame);
+        self.richTextContainer.frame = richTextContainerFrame;
+        
+        // update contentViewFrame
+        CGRect contentViewFrame = self.contentView.frame;
+        contentViewFrame.size.height = self.richTextContainer.frame.origin.y + self.richTextContainer.frame.size.height;
+        self.contentView.frame = contentViewFrame;
+    }
     
     // update label frame
     CGRect labelFrame = self.label.frame;
@@ -165,7 +179,7 @@
 
 - (CGFloat)cellHeight
 {
-    CGFloat height = ceilf(self.richText.contentHeight) + CGRectGetHeight(self.label.frame) + 20;// 20 for padding;
+    CGFloat height = ceilf(self.richText.contentHeight) + CGRectGetHeight(self.label.frame) + 16;// 16 for padding;
     return height < BZG_TEXTVIEW_MIN_HEIGHT ? BZG_TEXTVIEW_MIN_HEIGHT: height;
 }
 
