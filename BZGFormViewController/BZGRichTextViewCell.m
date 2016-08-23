@@ -56,7 +56,7 @@
         CGRect richTextContainerFrame = self.richTextContainer.frame;
         richTextContainerFrame.size.width = self.contentView.bounds.size.width - self.separatorInset.left - self.separatorInset.right;
         richTextContainerFrame.size.height = self.contentView.frame.size.height;
-        richTextContainerFrame.origin.y = 0;
+        richTextContainerFrame.origin.y = 16;
         self.richTextContainer.frame = richTextContainerFrame;
         
         // update contentViewFrame
