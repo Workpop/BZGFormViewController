@@ -87,7 +87,6 @@ zss_editor.init = function() {
         var editor = $('#zss_editor_content');
 
         editor.on('click', function(e) {
-            console.log("click");
             var c = zss_editor.getCaretYPosition();
             var e = document.getElementById('zss_editor_content');
             var contentHeight = e.scrollHeight;
@@ -115,7 +114,7 @@ zss_editor.init = function() {
                         containerNode = sel.createRange().parentElement();
                     }
                     while (containerNode) {
-                        console.log(containerNode.tagName);
+//                        console.log(containerNode.tagName);
                         if (containerNode.nodeType == 1 && containerNode.tagName == tagName) {
                             return true;
                         }
@@ -559,27 +558,17 @@ zss_editor.setHTML = function(html) {
     editor.html(html);
 
     // wrap any unwrapped text elements in p tags
-    var textnodes = zss_editor.getTextNodesIn($("#zss_editor_content")[0]);
+    var textnodes = zss_editor.getTextNodesIn(editor[0]);
     for (var i = 0; i < textnodes.length; i++) {
-        if ($(textnodes[i]).parent().is("#zss_editor_content")) {
+        if ($(textnodes[i]).parent().is('#zss_editor_content')) {
             $(textnodes[i]).wrap("<p>");
         }
     }
-
-    // remove any empty tags
-    $("#zss_editor_content")[0].filter(function() {
-        return $(this).text().trim().length == 0
-    }).remove();
-
+    
     // notify new height
     var e = document.getElementById('zss_editor_content');
 
-    console.log("settings html: " + e.innerHTML);
-
     NativeBridge.call("updateContentHeight", [e.scrollHeight]);
-
-    // dispatch content height change
-    zss_editor.dispatchContentHeightChanged();
 }
 
 zss_editor.insertHTML = function(html) {
