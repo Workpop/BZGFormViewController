@@ -73,6 +73,9 @@
     if ([self.tableView respondsToSelector:@selector(setSeparatorInset:)]) {
         [self.tableView setSeparatorInset:UIEdgeInsetsZero];
     }
+    if ([self.tableView respondsToSelector:@selector(cellLayoutMarginsFollowReadableWidth)]) {
+        [self.tableView setCellLayoutMarginsFollowReadableWidth:NO];
+    }
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.backgroundColor = BZG_TABLEVIEW_BACKGROUND_COLOR;
     
