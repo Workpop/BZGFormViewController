@@ -580,12 +580,7 @@
 {
     self.keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
     
-    UIEdgeInsets contentInsets;
-    if (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation])) {
-        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (self.keyboardSize.height), 0.0);
-    } else {
-        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (self.keyboardSize.width), 0.0);
-    }
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, (self.keyboardSize.height), 0.0);
     
     self.tableView.contentInset = contentInsets;
     self.tableView.scrollIndicatorInsets = contentInsets;
@@ -702,12 +697,7 @@
     
     // add more insets for richtext bar
     NSInteger barHeight = 44;
-    UIEdgeInsets contentInsets;
-    if (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation])) {
-        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (self.keyboardSize.height) + barHeight, 0.0);
-    } else {
-        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (self.keyboardSize.width) + barHeight, 0.0);
-    }
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, (self.keyboardSize.height) + barHeight, 0.0);
     
     self.tableView.contentInset = contentInsets;
     self.tableView.scrollIndicatorInsets = contentInsets;
@@ -758,7 +748,7 @@
 - (BZGKeyboardControl *)keyboardControl
 {
     if (!_keyboardControl) {
-        _keyboardControl = [[BZGKeyboardControl alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), BZG_KEYBOARD_CONTROL_HEIGHT)];
+        _keyboardControl = [[BZGKeyboardControl alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, BZG_KEYBOARD_CONTROL_HEIGHT)];
         _keyboardControl.previousButton.target = self;
         _keyboardControl.previousButton.action = @selector(navigateToPreviousCell:);
         _keyboardControl.nextButton.target = self;

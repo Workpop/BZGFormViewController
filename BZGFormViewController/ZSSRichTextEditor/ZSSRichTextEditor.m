@@ -139,7 +139,7 @@ static Class hackishFixClass = Nil;
         // Editor View
         self.editorView = [[UIWebView alloc] initWithFrame:frame];
         self.editorView.delegate = self;
-//        self.editorView.hidesInputAccessoryView = YES;
+        //        self.editorView.hidesInputAccessoryView = YES;
         self.editorView.keyboardDisplayRequiresUserAction = NO;
         self.editorView.scalesPageToFit = YES;
         self.editorView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleLeftMargin;
@@ -154,7 +154,7 @@ static Class hackishFixClass = Nil;
         [self.view addSubview:self.editorView];
         
         // Scrolling View
-        self.toolBarScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, [self isIpad] ? CGRectGetHeight([UIScreen mainScreen].bounds) : CGRectGetWidth([UIScreen mainScreen].bounds) /*- 44*/, 44)];
+        self.toolBarScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth([UIScreen mainScreen].bounds), 44)];
         self.toolBarScroll.backgroundColor = [UIColor clearColor];
         self.toolBarScroll.showsHorizontalScrollIndicator = NO;
         
@@ -210,6 +210,7 @@ static Class hackishFixClass = Nil;
 
 - (void)dealloc
 {
+    [self.toolbarHolder removeFromSuperview];
     [self stopMonitoring];
 }
 
@@ -256,7 +257,7 @@ static Class hackishFixClass = Nil;
     // add a flexible space first
     ZSSBarButtonItem *flexibleBeginSpace = [[ZSSBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     [items addObject:flexibleBeginSpace];
-
+    
     // None
     if(_enabledToolbarItems && [_enabledToolbarItems containsObject:ZSSRichTextEditorToolbarNone])
     {
@@ -503,7 +504,7 @@ static Class hackishFixClass = Nil;
     
     // get the width before we add custom buttons
     CGFloat toolbarWidth = items.count == 0 ? 0.0f : (CGFloat)(items.count * 39) - 10;
-   
+    
     if(self.customBarButtonItems != nil)
     {
         items = [items arrayByAddingObjectsFromArray:self.customBarButtonItems];
@@ -512,7 +513,7 @@ static Class hackishFixClass = Nil;
             toolbarWidth += buttonItem.customView.frame.size.width + 11.0f;
         }
     }
-
+    
     self.toolbar.items = items;
     for (ZSSBarButtonItem *item in items) {
         item.tintColor = [self barButtonItemDefaultColor];
@@ -557,7 +558,7 @@ static Class hackishFixClass = Nil;
     
 }
 
-- (void)updateHTML {    
+- (void)updateHTML {
     NSString *html = self.internalHTML;
     self.sourceView.text = html;
     NSString *cleanedHTML = [self removeQuotesFromHTML:self.sourceView.text];
@@ -1011,7 +1012,7 @@ static Class hackishFixClass = Nil;
 #pragma mark - UIWebView Delegate
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-
+    
     NSString *urlString = [[request URL] absoluteString];
     
     NSString *requestString = [urlString stringByReplacingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
@@ -1020,7 +1021,7 @@ static Class hackishFixClass = Nil;
         NSLog(@"UIWebView console: %@", logString);
         return NO;
     }
-
+    
     if (navigationType == UIWebViewNavigationTypeLinkClicked) {
         return NO;
     } else if ([urlString rangeOfString:@"callback://0/"].location != NSNotFound) {
@@ -1043,12 +1044,12 @@ static Class hackishFixClass = Nil;
         NSString *function = (NSString*)[components objectAtIndex:1];
         int callbackId = [((NSString*)[components objectAtIndex:2]) intValue];
         NSString *argsAsString = [[[(NSString*)[components objectAtIndex:3]
-                                   stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+                                    stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
                                    stringByReplacingOccurrencesOfString:@"[" withString:@""] stringByReplacingOccurrencesOfString:@"]" withString:@""];
         NSArray *args = [argsAsString componentsSeparatedByString:@","];
-       [self handleCall:function callbackId:callbackId args:args];
+        [self handleCall:function callbackId:callbackId args:args];
     }
-
+    
     return YES;
     
 }//end
@@ -1064,7 +1065,7 @@ static Class hackishFixClass = Nil;
             NSLog(@"contentHeightDidChange needs exactly 2 arguments!");
             return;
         }
-
+        
         self.contentHeight = [[args objectAtIndex:0] integerValue];
         self.carrotPositionY = [[args objectAtIndex:1] integerValue];
         
@@ -1169,11 +1170,11 @@ static Class hackishFixClass = Nil;
     if (isInFirstResponderChain && [notification.name isEqualToString:UIKeyboardWillShowNotification]) {
         
         self.toolbarHolder.alpha = 0;
-            
+        
         [UIView animateWithDuration:duration delay:0 options:animationOptions animations:^{
             
             self.toolbarHolder.alpha = 1;
-
+            
             // Toolbar
             CGRect frame = self.toolbarHolder.frame;
             frame.origin.y = self.keyboardEnd.origin.y - sizeOfToolbar;
@@ -1218,7 +1219,7 @@ static Class hackishFixClass = Nil;
     // remove p tag around ordered lists
     html = [html stringByReplacingOccurrencesOfString:@"<p><ol>" withString:@"<ol>"];
     html = [html stringByReplacingOccurrencesOfString:@"</ol></p>" withString:@"</ol>"];
-
+    
     if (self.formatHTML) {
         html = [self.editorView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"style_html(\"%@\");", html]];
     }
