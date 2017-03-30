@@ -550,6 +550,9 @@ static Class hackishFixClass = Nil;
 
 - (void)setHTML:(NSString *)html {
     
+    // remove backslash that causes html not to render
+    html = [html stringByReplacingOccurrencesOfString:@"\\\"" withString:@"\""];
+
     self.internalHTML = html;
     
     if (self.editorLoaded) {
