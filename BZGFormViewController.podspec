@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   s.dependency 'JVFloatLabeledTextField', '~>0.0.9'
   s.dependency 'TOMSMorphingLabel', '~> 0.2.3'
   s.requires_arc = true
-  s.platform = :ios, '7.0'
+  s.platform = :ios, '10.0'
   s.source_files = "BZGFormViewController/*.{h,m}", "BZGFormViewController/ZSSRichTextEditor/*.{h,m}"
   s.resources = "**/ZSS*.png", "**/ZSSRichTextEditor.js", "**/editor.html"
   s.frameworks = "CoreGraphics", "CoreText"
