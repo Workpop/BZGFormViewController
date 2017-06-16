@@ -5,8 +5,6 @@
 //
 
 #import <ReactiveCocoa/ReactiveCocoa.h>
-#import <libextobjc/EXTScope.h>
-
 #import "BZGTextFieldCell.h"
 #import "BZGInfoCell.h"
 #import "Constants.h"
@@ -154,11 +152,11 @@
 
 - (void)configureBindings
 {
-    @weakify(self);
+    __weak typeof(self) weakSelf = self;
     
     RAC(self.textField, textColor) =
     [RACObserve(self, validationState) map:^UIColor *(NSNumber *validationState) {
-        @strongify(self);
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
         if (self.textField.editing &&
             !self.showsValidationWhileEditing) {
             return self.textFieldNormalColor;
@@ -179,7 +177,7 @@
     
     RAC(self.activityIndicatorView, hidden) =
     [RACObserve(self, validationState) map:^NSNumber *(NSNumber *validationState) {
-        @strongify(self);
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
         if (validationState.integerValue == BZGValidationStateValidating) {
             [self.activityIndicatorView startAnimating];
             return @NO;
@@ -191,7 +189,7 @@
     
     RAC(self, accessoryType) =
     [RACObserve(self, validationState) map:^NSNumber *(NSNumber *validationState) {
-        @strongify(self);
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
         if (validationState.integerValue == BZGValidationStateValid &&
             (!self.textField.editing || self.showsValidationWhileEditing) &&
             self.showsCheckmarkWhenValid) {

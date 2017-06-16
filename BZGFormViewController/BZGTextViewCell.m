@@ -5,8 +5,6 @@
 //
 
 #import <ReactiveCocoa/ReactiveCocoa.h>
-#import <libextobjc/EXTScope.h>
-
 #import "BZGTextViewCell.h"
 #import "BZGInfoCell.h"
 #import "Constants.h"

@@ -10,7 +10,6 @@ Pod::Spec.new do |s|
     :tag => "v#{s.version}"
   }
   s.dependency 'ReactiveCocoa', '~>2.0'
-  s.dependency 'libextobjc', '~>0.4'
   s.dependency 'libPhoneNumber-iOS', '~>0.8.16'
   s.dependency 'JVFloatLabeledTextField', '~>0.0.9'
   s.dependency 'TOMSMorphingLabel', '~> 0.2.3'
