@@ -7,8 +7,8 @@
 #import "BZGPhoneTextFieldCell.h"
 #import "NSError+BZGFormViewController.h"
 
-#import <libPhoneNumber-iOS/NBAsYouTypeFormatter.h>
-#import <libPhoneNumber-iOS/NBPhoneNumberUtil.h>
+#import <libPhoneNumber_iOS/NBAsYouTypeFormatter.h>
+#import <libPhoneNumber_iOS/NBPhoneNumberUtil.h>
 
 @interface BZGPhoneTextFieldCell ()
 

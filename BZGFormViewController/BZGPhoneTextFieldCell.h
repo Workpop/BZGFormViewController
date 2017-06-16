@@ -5,7 +5,9 @@
 //
 
 #import "BZGTextFieldCell.h"
-#import <libPhoneNumber-iOS/NBAsYouTypeFormatter.h>
+
+#import <libPhoneNumber_iOS/NBAsYouTypeFormatter.h>
+
 
 @interface BZGPhoneTextFieldCell : BZGTextFieldCell
 
