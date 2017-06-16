@@ -14,6 +14,7 @@ Pod::Spec.new do |s|
   s.dependency 'libPhoneNumber-iOS', '~>0.8.16'
   s.dependency 'JVFloatLabeledTextField', '~>0.0.9'
   s.dependency 'TOMSMorphingLabel', '~> 0.2.3'
+  s.dependency 'BZGMailgunEmailValidation', '~> 1.1.1'
   s.requires_arc = true
   s.platform = :ios, '10.0'
   s.source_files = "BZGFormViewController/*.{h,m}", "BZGFormViewController/ZSSRichTextEditor/*.{h,m}"
