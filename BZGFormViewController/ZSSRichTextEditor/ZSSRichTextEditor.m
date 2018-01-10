@@ -1071,7 +1071,7 @@ static Class hackishFixClass = Nil;
         
         self.contentHeight = [[args objectAtIndex:0] integerValue];
         self.carrotPositionY = [[args objectAtIndex:1] integerValue];
-        self.carrotRelativePositionY = [[args objectAtIndex:3] integerValue];
+        self.carrotRelativePositionY = [[args objectAtIndex:2] integerValue];
 
         if ([self.delegate respondsToSelector:@selector(richTextEditorViewDidChange:)]) {
             [self.delegate richTextEditorViewDidChange:self];
@@ -1086,7 +1086,7 @@ static Class hackishFixClass = Nil;
         
         self.contentHeight = [[args objectAtIndex:0] integerValue];
         self.carrotPositionY = [[args objectAtIndex:1] integerValue];
-        self.carrotRelativePositionY = [[args objectAtIndex:3] integerValue];
+        self.carrotRelativePositionY = [[args objectAtIndex:2] integerValue];
 
         if ([self.delegate respondsToSelector:@selector(richTextEditorViewShouldBeginEditing:)]) {
             [self.delegate richTextEditorViewShouldBeginEditing:self];
