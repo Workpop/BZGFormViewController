@@ -77,7 +77,7 @@ function style_html(html_source, options) {
 	indent_character = options.indent_char || ' ';
 	brace_style = options.brace_style || 'collapse';
 	wrap_line_length =  parseInt(options.wrap_line_length, 10) === 0 ? 32786 : parseInt(options.wrap_line_length || 250, 10);
-	unformatted = options.unformatted || ['a', 'span', 'bdo', 'em', 'strong', 'dfn', 'code', 'samp', 'kbd', 'var', 'cite', 'abbr', 'acronym', 'q', 'sub', 'sup', 'tt', 'i', 'b', 'big', 'small', 'u', 's', 'strike', 'font', 'ins', 'del', 'pre', 'address', 'dt', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+	unformatted = options.unformatted || ['a', 'span', 'bdo', 'em', 'strong', 'dfn', 'code', 'samp', 'kbd', 'var', 'cite', 'abbr', 'acronym', 'q', 'sub', 'sup', 'tt', 'i', 'b', 'big', 'small', 'u', 's', 'strike', /*'font',*/ 'ins', 'del', 'pre', 'address', 'dt', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
 	preserve_newlines = options.preserve_newlines || true;
 	max_preserve_newlines = preserve_newlines ? parseInt(options.max_preserve_newlines || 32786, 10) : 0;
 	indent_handlebars = options.indent_handlebars || false;
@@ -786,20 +786,12 @@ function style_html(html_source, options) {
     </script>
     
     <style type="text/css">
-      * {outline: 0px solid transparent; -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-touch-callout: none;}
-      html, body {-webkit-text-size-adjust: none; font-size-adjust:none; padding:0; margin:0; font-family:'GothamRndSSm-Book'; -webkit-font-smoothing: antialiased; -webkit-transform: translate3d(0,0,0); font-size: 13px; color:#232323; background-color:transparent; line-height: 1.2em;}
-      body {overflow-y: scroll; -webkit-overflow-scrolling: touch; height:100%; width:100%}
-      img.zs_active {border: 2px dashed #000;}
-      audio {padding: 20px 0;}
-      iframe {display:none}
-      i, em {
-          font-family:'GothamRndSSm-Book';
-      }
-      strong, b {
-          font-family:'GothamRndSSm-Bold';
-      }
-  }
-
+        * {outline: 0px solid transparent; -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-touch-callout: none;}
+        html, body {-webkit-text-size-adjust: none; font-size-adjust:none; padding:0; margin:0; font-family:'HelveticaNeue'; -webkit-font-smoothing: antialiased; -webkit-transform: translate3d(0,0,0); font-size: 13px; color:#232323; background-color:transparent; line-height: 1.2em;}
+        body {overflow-y: scroll; -webkit-overflow-scrolling: touch; height:100%; width:100%}
+        img.zs_active {border: 2px dashed #000;}
+        audio {padding: 20px 0;}
+        iframe {display:none}
 	</style>
   </head>
   <body onLoad="zss_editor.init();">
