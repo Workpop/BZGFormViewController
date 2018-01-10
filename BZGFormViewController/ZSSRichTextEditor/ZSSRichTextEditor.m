@@ -1064,28 +1064,30 @@ static Class hackishFixClass = Nil;
 {
     if ([functionName isEqualToString:@"contentHeightDidChange"]) {
         
-        if ([args count]!=2) {
+        if ([args count]!=3) {
             NSLog(@"contentHeightDidChange needs exactly 2 arguments!");
             return;
         }
         
         self.contentHeight = [[args objectAtIndex:0] integerValue];
         self.carrotPositionY = [[args objectAtIndex:1] integerValue];
-        
+        self.carrotRelativePositionY = [[args objectAtIndex:3] integerValue];
+
         if ([self.delegate respondsToSelector:@selector(richTextEditorViewDidChange:)]) {
             [self.delegate richTextEditorViewDidChange:self];
         }
         
     } else if ([functionName isEqualToString:@"editorDidBeginEditing"]) {
         
-        if ([args count]!=2) {
+        if ([args count]!=3) {
             NSLog(@"editorDidBeginEditing needs exactly 2 arguments!");
             return;
         }
         
         self.contentHeight = [[args objectAtIndex:0] integerValue];
         self.carrotPositionY = [[args objectAtIndex:1] integerValue];
-        
+        self.carrotRelativePositionY = [[args objectAtIndex:3] integerValue];
+
         if ([self.delegate respondsToSelector:@selector(richTextEditorViewShouldBeginEditing:)]) {
             [self.delegate richTextEditorViewShouldBeginEditing:self];
         }
@@ -1096,12 +1098,13 @@ static Class hackishFixClass = Nil;
         
     } else if ([functionName isEqualToString:@"updateCarretPosition"]) {
         
-        if ([args count]!=1) {
+        if ([args count]!=2) {
             NSLog(@"updateCarretPosition needs exactly 1 arguments!");
             return;
         }
         
         self.carrotPositionY = [[args objectAtIndex:0] integerValue];
+        self.carrotRelativePositionY = [[args objectAtIndex:1] integerValue];
         
     } else if ([functionName isEqualToString:@"updateContentHeight"]) {
         

@@ -88,9 +88,10 @@ zss_editor.init = function() {
 
         editor.on('click', function(e) {
             var c = zss_editor.getCaretYPosition();
+            var relativeCaretYPosition = zss_editor.getRelativeCaretYPosition();
             var e = document.getElementById('zss_editor_content');
             var contentHeight = e.scrollHeight;
-            NativeBridge.call("editorDidBeginEditing", [contentHeight, c]);
+            NativeBridge.call("editorDidBeginEditing", [contentHeight, c, relativeCaretYPosition]);
         });
 
         editor.keyup(function(e) {
@@ -134,7 +135,7 @@ zss_editor.init = function() {
 
         editor.onselectionchange = function() {
             zss_editor.saveSelection();
-            NativeBridge.call("updateCarretPosition", [zss_editor.getCaretYPosition()]);
+            NativeBridge.call("updateCarretPosition", [zss_editor.getCaretYPosition(), zss_editor.getRelativeCaretYPosition()]);
         };
 
         editor.focusout(function() {
@@ -251,7 +252,6 @@ zss_editor.setPlaceholder = function(placeholder) {
 }
 
 zss_editor.getCaretYPosition = function() {
-
     var sel = window.getSelection();
     // Next line is comented to prevent deselecting selection. It looks like work but if there are any issues will appear then uconmment it as well as code above.
     //sel.collapseToStart();
@@ -262,6 +262,28 @@ zss_editor.getCaretYPosition = function() {
     span.parentNode.removeChild(span);
 
     return topPosition;
+}
+
+zss_editor.getRelativeCaretYPosition = function() {
+    var y = 0;
+    var sel = window.getSelection();
+    if (sel.rangeCount) {
+        var range = sel.getRangeAt(0);
+        var needsWorkAround = (range.startOffset == 0)
+        /* Removing fixes bug when node name other than 'div' */
+        // && range.startContainer.nodeName.toLowerCase() == 'div');
+        if (needsWorkAround) {
+            y = range.startContainer.offsetTop - window.pageYOffset;
+        } else {
+            if (range.getClientRects) {
+                var rects=range.getClientRects();
+                if (rects.length > 0) {
+                    y = rects[0].top;
+                }
+            }
+        }
+    }
+    return y;
 }
 
 zss_editor.backuprange = function() {
@@ -777,9 +799,10 @@ zss_editor.restoreSelection = function() {
 zss_editor.dispatchContentHeightChanged = function() {
 
     var c = zss_editor.getCaretYPosition();
+    var relativeCaretYPosition = zss_editor.getRelativeCaretYPosition();
     var e = document.getElementById('zss_editor_content');
     var contentHeight = e.scrollHeight;
-    NativeBridge.call("contentHeightDidChange", [contentHeight, c]);
+    NativeBridge.call("contentHeightDidChange", [contentHeight, c, relativeCaretYPosition]);
 }
 
 // pasting
