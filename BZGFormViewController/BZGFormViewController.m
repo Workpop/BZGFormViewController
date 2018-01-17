@@ -400,7 +400,7 @@
         cell.didBeginEditingBlock(cell, [richTextEditor getHTML]);
     }
     
-    CGRect cursorRect = CGRectMake(0, richTextEditor.carrotPositionY, 2, 76); // 76 effects scroll position
+    CGRect cursorRect = CGRectMake(0, richTextEditor.carrotPositionY, 2, 18 + 44); // 76 effects scroll position
     CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:richTextEditor.view];
     [self.tableView scrollRectToVisible:tableViewrect animated:YES];
 }
@@ -412,10 +412,11 @@
     [self.tableView endUpdates];
     
     [self fixSeparator];
-    
-    CGRect cursorRect = CGRectMake(0, richTextEditor.carrotPositionY, 2, 76); // 76 effects scroll position
-    CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:richTextEditor.view];
-    [self.tableView scrollRectToVisible:tableViewrect animated:YES];
+
+    // TODO: This isn't scrolling correctly.
+//    CGRect cursorRect = CGRectMake(0, richTextEditor.carrotPositionY, 2, 18 + 44); // 76 effects scroll position
+//    CGRect tableViewrect = [self.tableView convertRect:cursorRect fromView:richTextEditor.view];
+//    [self.tableView scrollRectToVisible:tableViewrect animated:NO];
 }
 
 - (void)richTextEditorViewDidEndEditing:(ZSSRichTextEditor *)richTextEditor
