@@ -131,7 +131,7 @@ static Class hackishFixClass = Nil;
         self.sourceView.hidden = YES;
         self.sourceView.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.sourceView.autocorrectionType = UITextAutocorrectionTypeNo;
-        self.sourceView.font = [UIFont fontWithName:@"Courier" size:13.0];
+        self.sourceView.font = [UIFont fontWithName:@"HelveticaNeue" size:13.0];
         self.sourceView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         self.sourceView.autoresizesSubviews = YES;
         [self.view addSubview:self.sourceView];
@@ -1185,9 +1185,11 @@ static Class hackishFixClass = Nil;
             CGRect frame = self.toolbarHolder.frame;
             frame.origin.y = self.keyboardEnd.origin.y - sizeOfToolbar;
             self.toolbarHolder.frame = frame;
-            
-            self.editorView.scrollView.contentInset = UIEdgeInsetsZero;
-            self.editorView.scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
+
+            if (!self.editorView.scrollView.scrollEnabled) {
+                self.editorView.scrollView.contentInset = UIEdgeInsetsZero;
+                self.editorView.scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
+            }
         } completion:nil];
         
     } else {
