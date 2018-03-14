@@ -609,9 +609,10 @@ zss_editor.getHTML = function() {
     }
 
     // remove any empty tags
-    $('*').filter(function() {
+    $("#zss_editor_content").find("*").filter(function() {
         return $(this).text().trim().length == 0
     }).remove();
+
 
     // Get the contents
     var h = document.getElementById("zss_editor_content").innerHTML;
